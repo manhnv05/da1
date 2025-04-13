@@ -11,6 +11,7 @@ import da.service.SanPhamService;
 import java.awt.Color;
 import java.awt.Component;
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashSet;
 import javax.swing.BorderFactory;
@@ -35,11 +36,13 @@ import raven.toast.Notifications;
 public class FormDonHang extends javax.swing.JPanel {
     SanPhamService service = new SanPhamService();
     GioHangService service1 = new GioHangService();
+        private String Email;
     
     /**
      * Creates new form FormDonHang
      */
-    public FormDonHang() {
+    public FormDonHang(String Email) {
+                this.Email = Email;
         initComponents();
         initMS();
         initKT();
@@ -47,7 +50,9 @@ public class FormDonHang extends javax.swing.JPanel {
         applyTableStyle(tblSanPham);
         applyTableStyle(tblGioHang);
         loadSanPhamData(service.searchSanPham(""));
-        loadGioHangData(service1.getAllGioHang());
+        //loadGioHangData(service1.getAllGioHang());
+        refreshGioHangData();
+        
     }
     
     private void applyTableStyle(JTable table) {
@@ -300,7 +305,7 @@ private void addToCart() {
             return;
         }
 
-        java.sql.Timestamp ngayThem = new java.sql.Timestamp(System.currentTimeMillis());
+        Timestamp ngayThem = new Timestamp(System.currentTimeMillis());
 
         // Tạo đối tượng GioHang và thêm vào cơ sở dữ liệu
         GioHang gioHang = new GioHang(0, idNguoiDung, idSanPham, maSP, tenSP, tongTien, soLuong, ngayThem);
@@ -327,7 +332,9 @@ private void addToCart() {
     }
 }
 public void refreshGioHangData() {
-    ArrayList<GioHang> gioHangList = service1.getAllGioHang();
+    // Sửa cứng ID người dùng
+
+    ArrayList<GioHang> gioHangList = service1.getGioHangByEmail(Email); // Lấy giỏ hàng theo ID người dùng
     loadGioHangData(gioHangList);
 }
 

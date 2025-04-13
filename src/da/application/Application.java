@@ -5,7 +5,6 @@ import com.formdev.flatlaf.FlatLaf;
 import com.formdev.flatlaf.FlatLightLaf;
 import com.formdev.flatlaf.extras.FlatAnimatedLafChange;
 import com.formdev.flatlaf.fonts.roboto.FlatRobotoFont;
-import com.formdev.flatlaf.themes.FlatMacDarkLaf;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -46,7 +45,6 @@ public class Application extends javax.swing.JFrame {
     }
 
     public static void login(String email, String userName) {
-        
         FlatAnimatedLafChange.showSnapshot();
         Menu menu = new Menu(email, userName); // Truyền thêm tên người dùng
         app.mainForm = new MainForm(menu, email); // Truyền thêm tham số email
@@ -72,13 +70,13 @@ public class Application extends javax.swing.JFrame {
     }
     
     public static int getCurrentUserId() {
-    String email = mainForm.getCurrentUserEmail();
-    if (email != null) {
-        NguoiDungService nguoiDungService = new NguoiDungService();
-        return nguoiDungService.getIdNguoiDungByEmail(email);
+        String email = mainForm.getCurrentUserEmail();
+        if (email != null) {
+            NguoiDungService nguoiDungService = new NguoiDungService();
+            return nguoiDungService.getIdNguoiDungByEmail(email);
+        }
+        return -1;
     }
-    return -1; // Trả về -1 nếu không tìm thấy email
-}
 
 
     @SuppressWarnings("unchecked")

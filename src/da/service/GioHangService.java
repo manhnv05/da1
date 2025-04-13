@@ -82,34 +82,35 @@ public class GioHangService {
     }
     
     
-    public ArrayList<GioHang> getGioHangByUserId(int idNguoiDung) {
-    ArrayList<GioHang> list = new ArrayList<>();
-    String SQL = "SELECT gh.id, gh.idNguoiDung, gh.idSanPham, sp.maSP, sp.tenSP, gh.tongTien, gh.soLuong, gh.ngayThem " +
-                 "FROM GioHang gh " +
-                 "JOIN SanPham sp ON gh.idSanPham = sp.id " +
-                 "WHERE gh.idNguoiDung = ?"; // Lọc theo idNguoiDung
+    public ArrayList<GioHang> getGioHangByEmail(String email) {
+        ArrayList<GioHang> list = new ArrayList<>();
+        String SQL = "SELECT gh.id, gh.idNguoiDung, gh.idSanPham, sp.maSP, sp.tenSP, gh.tongTien, gh.soLuong, gh.ngayThem " +
+                     "FROM GioHang gh " +
+                     "JOIN SanPham sp ON gh.idSanPham = sp.id " +
+                     "JOIN NguoiDung nd ON gh.idNguoiDung = nd.id " + // Thêm JOIN với bảng NguoiDung
+                     "WHERE nd.email = ?"; // Lọc theo email người dùng
 
-    try (PreparedStatement ps = conn.prepareStatement(SQL)) {
-        ps.setInt(1, idNguoiDung); // Gán giá trị idNguoiDung vào câu truy vấn
-        try (ResultSet rs = ps.executeQuery()) {
-            while (rs.next()) {
-                GioHang gh = new GioHang(
-                    rs.getInt("id"),
-                    rs.getInt("idNguoiDung"),
-                    rs.getInt("idSanPham"),
-                    rs.getString("maSP"),
-                    rs.getString("tenSP"),
-                    rs.getBigDecimal("tongTien"),
-                    rs.getInt("soLuong"),
-                    rs.getTimestamp("ngayThem")
-                );
-                list.add(gh);
+        try (PreparedStatement ps = conn.prepareStatement(SQL)) {
+            ps.setString(1, email); // Gán giá trị email vào câu truy vấn
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    GioHang gh = new GioHang(
+                        rs.getInt("id"),
+                        rs.getInt("idNguoiDung"),
+                        rs.getInt("idSanPham"),
+                        rs.getString("maSP"),
+                        rs.getString("tenSP"),
+                        rs.getBigDecimal("tongTien"),
+                        rs.getInt("soLuong"),
+                        rs.getTimestamp("ngayThem")
+                    );
+                    list.add(gh);
+                }
             }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-    } catch (SQLException e) {
-        e.printStackTrace();
-    }
 
-    return list;
-}
+        return list;
+    }
 }

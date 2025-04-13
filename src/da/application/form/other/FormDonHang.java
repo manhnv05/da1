@@ -42,7 +42,7 @@ public class FormDonHang extends javax.swing.JPanel {
      * Creates new form FormDonHang
      */
     public FormDonHang(String Email) {
-                this.Email = Email;
+        this.Email = Email;
         initComponents();
         initMS();
         initKT();
@@ -50,7 +50,6 @@ public class FormDonHang extends javax.swing.JPanel {
         applyTableStyle(tblSanPham);
         applyTableStyle(tblGioHang);
         loadSanPhamData(service.searchSanPham(""));
-        //loadGioHangData(service1.getAllGioHang());
         refreshGioHangData();
         
     }
@@ -101,241 +100,299 @@ public class FormDonHang extends javax.swing.JPanel {
         private void applyListStyle(JList<String> list) {
             list.setFixedCellHeight(50);
             list.setCellRenderer(new DefaultListCellRenderer() {
-        @Override
-        public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-            JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-            label.setBorder(BorderFactory.createEmptyBorder(10, 5, 10, 5)); // Padding trên, trái, dưới, phải
-            boolean isDarkMode = UIManager.getLookAndFeel().getName().toLowerCase().contains("dark");
-            Color evenColor = isDarkMode ? new Color(50, 50, 50) : new Color(220, 220, 220);
-            Color oddColor = list.getBackground();
-            if (index % 2 == 0) {
-                label.setBackground(evenColor);
-            } else {
-                label.setBackground(oddColor);
-            }
-            if (isSelected) {
-                label.setBackground(list.getSelectionBackground());
-                label.setForeground(list.getSelectionForeground());
-            }
+                @Override
+                public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+                    JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                    label.setBorder(BorderFactory.createEmptyBorder(10, 5, 10, 5)); // Padding trên, trái, dưới, phải
+                    boolean isDarkMode = UIManager.getLookAndFeel().getName().toLowerCase().contains("dark");
+                    Color evenColor = isDarkMode ? new Color(50, 50, 50) : new Color(220, 220, 220);
+                    Color oddColor = list.getBackground();
+                    if (index % 2 == 0) {
+                        label.setBackground(evenColor);
+                    } else {
+                        label.setBackground(oddColor);
+                    }
+                    if (isSelected) {
+                        label.setBackground(list.getSelectionBackground());
+                        label.setForeground(list.getSelectionForeground());
+                    }
 
-            return label;
+                    return label;
+                }
+            });
         }
-    });
-}
         
         public void loadSanPhamData(ArrayList<SanPham> list) {
-        DefaultTableModel tblModel = (DefaultTableModel) tblSanPham.getModel();
-        tblModel.setRowCount(0);
-        for (SanPham sanPham : list) {
-            Object[] thongTinSanPham = {
-                sanPham.getMasp(),
-                sanPham.getTensp(),
-                sanPham.getSoluongton(),
-                sanPham.getId(),
-            };
-            tblModel.addRow(thongTinSanPham);
+            DefaultTableModel tblModel = (DefaultTableModel) tblSanPham.getModel();
+            tblModel.setRowCount(0);
+            for (SanPham sanPham : list) {
+                Object[] thongTinSanPham = {
+                    sanPham.getMasp(),
+                    sanPham.getTensp(),
+                    sanPham.getSoluongton(),
+                    sanPham.getId(),
+                };
+                tblModel.addRow(thongTinSanPham);
+            }
         }
-    }
         
         public void refreshSanPham() {
-        ArrayList<SanPham> danhSachSanPham = service.getAll();
-        loadSanPhamData(danhSachSanPham);
-        Notifications.getInstance().show(Notifications.Type.INFO, Notifications.Location.TOP_CENTER, "Đã làm mới danh sách sản phẩm!");
-    }
+            ArrayList<SanPham> danhSachSanPham = service.getAll();
+            loadSanPhamData(danhSachSanPham);
+            Notifications.getInstance().show(Notifications.Type.INFO, Notifications.Location.TOP_CENTER, "Đã làm mới danh sách sản phẩm!");
+        }
         
         public void initMS() {
-        DefaultComboBoxModel<String> boxModel = new DefaultComboBoxModel<>();
-        boxModel.addElement("-- Chọn màu sắc --");
-        HashSet<String> mauSacSet = service.getAllMauSac();
-        for (String mauSac : mauSacSet) {
-            if (mauSac != null) {
-                boxModel.addElement(mauSac);
+            DefaultComboBoxModel<String> boxModel = new DefaultComboBoxModel<>();
+            boxModel.addElement("-- Chọn màu sắc --");
+            HashSet<String> mauSacSet = service.getAllMauSac();
+            for (String mauSac : mauSacSet) {
+                if (mauSac != null) {
+                    boxModel.addElement(mauSac);
+                }
             }
+            cboMau.setModel(boxModel);
         }
-        cboMau.setModel(boxModel);
-    }
         
         public void initKT() {
-        DefaultComboBoxModel<String> boxModel = new DefaultComboBoxModel<>();
-        boxModel.addElement("-- Chọn kích thước --");
-        HashSet<String> kichThuocSet = service.getAllKichThuoc();
-        for (String kichThuoc : kichThuocSet) {
-            if (kichThuoc != null) {
-                boxModel.addElement(kichThuoc);
+            DefaultComboBoxModel<String> boxModel = new DefaultComboBoxModel<>();
+            boxModel.addElement("-- Chọn kích thước --");
+            HashSet<String> kichThuocSet = service.getAllKichThuoc();
+            for (String kichThuoc : kichThuocSet) {
+                if (kichThuoc != null) {
+                    boxModel.addElement(kichThuoc);
+                }
             }
+            cboKichThuoc.setModel(boxModel);
         }
-        cboKichThuoc.setModel(boxModel);
-    }
         
         public void detail(){
             int selectedRow = tblSanPham.getSelectedRow();
-    if (selectedRow == -1) {
-        Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng chọn sản phẩm!");
-        return;
-    }
-
-    Object idObj = tblSanPham.getValueAt(selectedRow, 3); // Cột chứa ID sản phẩm
-    if (idObj == null) {
-        Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "ID sản phẩm không hợp lệ!");
-        return;
-    }
-
-    int id = 0;
-    try {
-        id = Integer.parseInt(idObj.toString()); // Chuyển đổi giá trị sang kiểu Integer
-    } catch (NumberFormatException e) {
-        Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "ID sản phẩm không hợp lệ!");
-        return;
-    }
-
-    SanPham sanPham = service.getSanPhamById(id); // Phương thức lấy sản phẩm theo ID từ service hoặc database
-    if (sanPham == null) {
-        Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Sản phẩm không tồn tại!");
-        return;
-    }
-
-    txtMa.setText(sanPham.getMasp());
-    txtTen.setText(sanPham.getTensp());
-    txtSoLuongTon.setText(String.valueOf(sanPham.getSoluongton()));
-    txtGia.setText(String.valueOf(sanPham.getGia()));
-    cboMau.setSelectedIndex(sanPham.getIdMauSac());
-    cboKichThuoc.setSelectedIndex(sanPham.getIdMauSac());    
+            if (selectedRow == -1) {
+                Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng chọn sản phẩm!");
+                return;
+            }
+            Object idObj = tblSanPham.getValueAt(selectedRow, 3); // Cột chứa ID sản phẩm
+            if (idObj == null) {
+                Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "ID sản phẩm không hợp lệ!");
+                return;
+            }
+            int id = 0;
+            try {
+                id = Integer.parseInt(idObj.toString()); // Chuyển đổi giá trị sang kiểu Integer
+            } catch (NumberFormatException e) {
+                Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "ID sản phẩm không hợp lệ!");
+                return;
+            }
+            SanPham sanPham = service.getSanPhamById(id); // Phương thức lấy sản phẩm theo ID từ service hoặc database
+            if (sanPham == null) {
+                Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Sản phẩm không tồn tại!");
+                return;
+            }
+            txtMa.setText(sanPham.getMasp());
+            txtTen.setText(sanPham.getTensp());
+            txtSoLuongTon.setText(String.valueOf(sanPham.getSoluongton()));
+            txtGia.setText(String.valueOf(sanPham.getGia()));
+            //cboMau.setSelectedIndex(sanPham.getIdMauSac());
+            //cboKichThuoc.setSelectedIndex(sanPham.getIdMauSac());    
         }
         
         
         
         
     public void loadGioHangData(ArrayList<GioHang> list) {
-    DefaultTableModel tblModel = (DefaultTableModel) tblGioHang.getModel();
-    tblModel.setRowCount(0);
-    for (GioHang gioHang : list) {
-        Object[] rowData = {
-            gioHang.getId(),        
-            gioHang.getMaSP(), 
-            gioHang.getTenSP(),
-            gioHang.getSoLuong(),       
-            gioHang.getTongTien(),
-            gioHang.getNgayThem()    
-        };
-        tblModel.addRow(rowData);
+        DefaultTableModel tblModel = (DefaultTableModel) tblGioHang.getModel();
+        tblModel.setRowCount(0);
+        for (GioHang gioHang : list) {
+            Object[] rowData = {
+                gioHang.getId(),        
+                gioHang.getMaSP(), 
+                gioHang.getTenSP(),
+                gioHang.getSoLuong(),       
+                gioHang.getTongTien(),
+                gioHang.getNgayThem()    
+            };
+            tblModel.addRow(rowData);
+        }
     }
-}
     
     
     private boolean checkForm() {
-    // Kiểm tra mã sản phẩm
-    if (txtMa.getText().trim().isEmpty()) {
-        JOptionPane.showMessageDialog(this, "Mã sản phẩm không được để trống!", "Cảnh báo", JOptionPane.WARNING_MESSAGE);
-        txtMa.requestFocus();
-        return false;
-    }
+        if (txtMa.getText().trim().isEmpty()) {
+            Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Mã Sản Phẩm không được để trống!");
+            txtMa.requestFocus();
+            return false;
+        }
+        if (txtTen.getText().trim().isEmpty()) {
+            Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Tên Sản phẩm không được để trống!");
+            txtTen.requestFocus();
+            return false;
+        }
 
-    // Kiểm tra tên sản phẩm
-    if (txtTen.getText().trim().isEmpty()) {
-        JOptionPane.showMessageDialog(this, "Tên sản phẩm không được để trống!", "Cảnh báo", JOptionPane.WARNING_MESSAGE);
-        txtTen.requestFocus();
-        return false;
-    }
-
-    // Kiểm tra số lượng tồn
-    try {
-        int soLuongTon = Integer.parseInt(txtSoLuongTon.getText().trim());
-        if (soLuongTon < 0) {
-            JOptionPane.showMessageDialog(this, "Số lượng tồn phải là số dương!", "Cảnh báo", JOptionPane.WARNING_MESSAGE);
+        // Kiểm tra trống cho txtSoLuongTon
+        if (txtSoLuongTon.getText().trim().isEmpty()) {
+            Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Số lượng tồn không được để trống!");
             txtSoLuongTon.requestFocus();
             return false;
         }
-    } catch (NumberFormatException e) {
-        JOptionPane.showMessageDialog(this, "Số lượng tồn phải là một số hợp lệ!", "Cảnh báo", JOptionPane.WARNING_MESSAGE);
-        txtSoLuongTon.requestFocus();
-        return false;
-    }
+        int soLuongTon;
+        try {
+            soLuongTon = Integer.parseInt(txtSoLuongTon.getText().trim());
+            if (soLuongTon < 0) {
+                Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Số lượng tồn phải là số dương!");
+                txtSoLuongTon.requestFocus();
+                return false;
+            }
+        } catch (NumberFormatException e) {
+            Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Số lượng tồn phải là số hợp lệ!");
+            txtSoLuongTon.requestFocus();
+            return false;
+        }
 
-    // Kiểm tra giá
-    try {
-        double gia = Double.parseDouble(txtGia.getText().trim());
-        if (gia <= 0) {
-            JOptionPane.showMessageDialog(this, "Giá sản phẩm phải lớn hơn 0!", "Cảnh báo", JOptionPane.WARNING_MESSAGE);
+        // Kiểm tra trống cho txtGia
+        if (txtGia.getText().trim().isEmpty()) {
+            Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Giá không được để trống!");
             txtGia.requestFocus();
             return false;
         }
-    } catch (NumberFormatException e) {
-        JOptionPane.showMessageDialog(this, "Giá sản phẩm phải là một số hợp lệ!", "Cảnh báo", JOptionPane.WARNING_MESSAGE);
-        txtGia.requestFocus();
-        return false;
-    }
+        try {
+            double gia = Double.parseDouble(txtGia.getText().trim());
+            if (gia <= 0) {
+                Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Giá phải lớn hơn 0!");
+                txtGia.requestFocus();
+                return false;
+            }
+        } catch (NumberFormatException e) {
+            Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Giá phải là số hợp lệ!");
+            txtGia.requestFocus();
+            return false;
+        }
 
-    // Kiểm tra màu sắc
-    if (cboMau.getSelectedIndex() == 0) {
-        JOptionPane.showMessageDialog(this, "Vui lòng chọn màu sắc!", "Cảnh báo", JOptionPane.WARNING_MESSAGE);
-        cboMau.requestFocus();
-        return false;
-    }
+        if (cboMau.getSelectedIndex() == 0) {
+            Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng chọn màu sắc!");
+            cboMau.requestFocus();
+            return false;
+        }
+        if (cboKichThuoc.getSelectedIndex() == 0) {
+            Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng chọn kích thước!");
+            cboKichThuoc.requestFocus();
+            return false;
+        }
 
-    // Kiểm tra kích thước
-    if (cboKichThuoc.getSelectedIndex() == 0) {
-        JOptionPane.showMessageDialog(this, "Vui lòng chọn kích thước!", "Cảnh báo", JOptionPane.WARNING_MESSAGE);
-        cboKichThuoc.requestFocus();
-        return false;
-    }
+        // Kiểm tra trống cho txtSoLuong
+        if (txtSoLuong.getText().trim().isEmpty()) {
+            Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Số lượng không được để trống!");
+            txtSoLuong.requestFocus();
+            return false;
+        }
+        try {
+            int soLuong = Integer.parseInt(txtSoLuong.getText().trim());
+            if (soLuong < 0) {
+                Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Số lượng phải là số dương!");
+                txtSoLuong.requestFocus();
+                return false;
+            }
+            if (soLuong > soLuongTon) { // Kiểm tra số lượng lớn hơn số lượng tồn
+                Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Số lượng không được lớn hơn số lượng tồn!");
+                txtSoLuong.requestFocus();
+                return false;
+            }
+        } catch (NumberFormatException e) {
+            Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Số lượng phải là số hợp lệ!");
+            txtSoLuong.requestFocus();
+            return false;
+        }
 
-    return true; // Nếu tất cả các kiểm tra hợp lệ
-}
+        return true;
+    }
     
-private void addToCart() {
-    if (!checkForm()) {
+    private void addToCart() {
+        if (!checkForm()) {
+            return;
+        }
+        try {
+            String maSP = txtMa.getText().trim();
+            String tenSP = txtTen.getText().trim();
+            int soLuong = Integer.parseInt(txtSoLuong.getText().trim());
+            BigDecimal gia = new BigDecimal(txtGia.getText().trim());
+            int idSanPham = service1.getIdByMaSP(maSP); 
+            if (idSanPham == -1) {
+                Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Sản Phẩm không tồn tại!");
+                return;
+            }
+            BigDecimal tongTien = gia.multiply(BigDecimal.valueOf(soLuong));
+            int idNguoiDung = Application.getCurrentUserId();
+            if (idNguoiDung == -1) {
+                Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Không tìm thấy thông tin người dùng!");
+                return;
+            }
+            Timestamp ngayThem = new Timestamp(System.currentTimeMillis());
+            // Tạo đối tượng GioHang và thêm vào cơ sở dữ liệu
+            GioHang gioHang = new GioHang(0, idNguoiDung, idSanPham, maSP, tenSP, tongTien, soLuong, ngayThem);
+            boolean success = service1.addGioHang(gioHang);
+            if (success) {
+                boolean updated = service.updateSoLuongTon(idSanPham, soLuong);
+                if (updated) {
+                    refreshSanPham();
+                } else {
+                    Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Không thể giảm số lượng tồn vui lòng kiểm tra lại!");
+                }
+                refreshGioHangData();
+                Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Thêm sản phẩm vào giỏ hàng thành công!");
+            } else {
+                Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Thêm thất bại!");
+            }
+        } catch (NumberFormatException e) {
+            Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Số lượng phải là số hợp lệ!");
+            txtSoLuong.requestFocus();
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Đã xảy ra lỗi: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+        }
+    }
+
+    public void refreshGioHangData() {
+        ArrayList<GioHang> gioHangList = service1.getGioHangByEmail(Email); // Lấy giỏ hàng theo ID người dùng
+        loadGioHangData(gioHangList);
+    }
+    
+    private void deleteFromCart() {
+    // Lấy hàng được chọn từ bảng tblGioHang
+    int selectedRow = tblGioHang.getSelectedRow();
+    if (selectedRow == -1) {
+        Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng chọn mục cần xóa khỏi giỏ hàng!");
         return;
     }
-    try {
-        String maSP = txtMa.getText().trim();
-        String tenSP = txtTen.getText().trim();
-        int soLuong = Integer.parseInt(txtSoLuong.getText().trim());
-        BigDecimal gia = new BigDecimal(txtGia.getText().trim());
-        int idSanPham = service1.getIdByMaSP(maSP); 
-        if (idSanPham == -1) {
-            JOptionPane.showMessageDialog(this, "Sản phẩm không tồn tại!", "Lỗi", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-        BigDecimal tongTien = gia.multiply(BigDecimal.valueOf(soLuong));
 
-        // Lấy ID người dùng hiện tại từ Application
-        int idNguoiDung = Application.getCurrentUserId();
-        if (idNguoiDung == -1) {
-            JOptionPane.showMessageDialog(this, "Không tìm thấy thông tin người dùng!", "Lỗi", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
+    // Lấy ID của mục giỏ hàng từ cột đầu tiên
+    int idGioHang = (int) tblGioHang.getValueAt(selectedRow, 0);
 
-        Timestamp ngayThem = new Timestamp(System.currentTimeMillis());
+    // Lấy số lượng và ID sản phẩm để khôi phục số lượng tồn trong kho
+    int soLuong = (int) tblGioHang.getValueAt(selectedRow, 3);
+    String maSP = (String) tblGioHang.getValueAt(selectedRow, 1);
+    int idSanPham = service1.getIdByMaSP(maSP);
 
-        // Tạo đối tượng GioHang và thêm vào cơ sở dữ liệu
-        GioHang gioHang = new GioHang(0, idNguoiDung, idSanPham, maSP, tenSP, tongTien, soLuong, ngayThem);
-        boolean success = service1.addGioHang(gioHang);
-        if (success) {
-            boolean updated = service.updateSoLuongTon(idSanPham, soLuong);
-            if (updated) {
-                refreshSanPham();
-            } else {
-                JOptionPane.showMessageDialog(this, "Không thể giảm số lượng tồn, vui lòng kiểm tra lại!", "Lỗi", JOptionPane.ERROR_MESSAGE);
-            }
-
-            refreshGioHangData();
-            JOptionPane.showMessageDialog(this, "Thêm sản phẩm vào giỏ hàng thành công!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
-        } else {
-            JOptionPane.showMessageDialog(this, "Thêm sản phẩm vào giỏ hàng thất bại!", "Lỗi", JOptionPane.ERROR_MESSAGE);
-        }
-    } catch (NumberFormatException e) {
-        JOptionPane.showMessageDialog(this, "Số lượng và giá phải là số hợp lệ!", "Lỗi", JOptionPane.WARNING_MESSAGE);
-        txtSoLuong.requestFocus();
-    } catch (Exception e) {
-        JOptionPane.showMessageDialog(this, "Đã xảy ra lỗi: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
-        e.printStackTrace();
+    // Hiển thị hộp thoại xác nhận
+    int confirm = JOptionPane.showConfirmDialog(this, "Bạn có chắc chắn muốn xóa mục này khỏi giỏ hàng?", "Xác nhận", JOptionPane.YES_NO_OPTION);
+    if (confirm != JOptionPane.YES_OPTION) {
+        return; // Người dùng chọn "Không"
     }
-}
-public void refreshGioHangData() {
-    // Sửa cứng ID người dùng
 
-    ArrayList<GioHang> gioHangList = service1.getGioHangByEmail(Email); // Lấy giỏ hàng theo ID người dùng
-    loadGioHangData(gioHangList);
+    // Xóa mục giỏ hàng
+    boolean deleted = service1.deleteGioHangById(idGioHang);
+    if (deleted) {
+        // Khôi phục số lượng tồn kho của sản phẩm
+        boolean restored = service.updateSoLuongTon(idSanPham, -soLuong); // Số âm để tăng số lượng tồn
+        if (restored) {
+            Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Xóa sản phẩm khỏi giỏ hàng thành công!");
+            refreshGioHangData(); // Làm mới bảng giỏ hàng
+            refreshSanPham(); // Làm mới bảng sản phẩm
+        } else {
+            Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Không thể khôi phục số lượng tồn, vui lòng kiểm tra lại!");
+        }
+    } else {
+        Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Xóa sản phẩm khỏi giỏ hàng thất bại!");
+    }
 }
 
 
@@ -688,6 +745,11 @@ public void refreshGioHangData() {
         crazyPanel23.add(cmdAdd);
 
         cmdDelete.setText("Delete");
+        cmdDelete.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cmdDeleteActionPerformed(evt);
+            }
+        });
         crazyPanel23.add(cmdDelete);
 
         cmdExcel.setText("Excel");
@@ -839,7 +901,7 @@ public void refreshGioHangData() {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(materialTabbed1, javax.swing.GroupLayout.PREFERRED_SIZE, 583, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(21, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -866,6 +928,10 @@ public void refreshGioHangData() {
     private void cmdAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdAddActionPerformed
         addToCart();
     }//GEN-LAST:event_cmdAddActionPerformed
+
+    private void cmdDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdDeleteActionPerformed
+        deleteFromCart();
+    }//GEN-LAST:event_cmdDeleteActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

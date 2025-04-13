@@ -313,4 +313,18 @@ public boolean updateSoLuongTon(int idSanPham, int soLuongDaBan) {
         return false;
     }
 }
+
+public boolean restoreSoLuongTon(int idSanPham, int soLuongDaXoa) {
+    String SQL = "UPDATE SanPham SET soluongton = soluongton + ? WHERE id = ?";
+    try (PreparedStatement ps = conn.prepareStatement(SQL)) {
+        ps.setInt(1, soLuongDaXoa); // Số lượng cần tăng
+        ps.setInt(2, idSanPham);    // ID của sản phẩm
+
+        int rowsAffected = ps.executeUpdate();
+        return rowsAffected > 0; // Trả về true nếu cập nhật thành công
+    } catch (SQLException e) {
+        e.printStackTrace();
+        return false;
+    }
+}
 }

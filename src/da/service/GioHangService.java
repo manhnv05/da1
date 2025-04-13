@@ -7,7 +7,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.math.BigDecimal;
 
 public class GioHangService {
 
@@ -112,5 +111,17 @@ public class GioHangService {
         }
 
         return list;
+    }
+    
+    public boolean deleteGioHangById(int id) {
+        String SQL = "DELETE FROM GioHang WHERE id = ?";
+        try (PreparedStatement ps = conn.prepareStatement(SQL)) {
+            ps.setInt(1, id); // Gán giá trị id vào câu truy vấn
+
+            return ps.executeUpdate() > 0; // Kiểm tra xem có dòng nào bị xóa hay không
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false; // Trả về false nếu xảy ra lỗi
+        }
     }
 }

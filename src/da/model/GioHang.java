@@ -1,23 +1,17 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package da.model;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 
-/**
- *
- * @author ADMIN
- */
 public class GioHang {
     private int id;
     private int idNguoiDung;
     private int idSanPham;
     private String maSP;
     private String tenSP;
-    private BigDecimal tongTien; // Cập nhật từ "gia" thành "tongTien" để phản ánh đúng cột cơ sở dữ liệu
+    private String tenMauSac;   // Thêm tên màu sắc
+    private String kichThuoc;   // Thêm kích thước
+    private BigDecimal tongTien;
     private int soLuong;
     private Timestamp ngayThem;
 
@@ -26,18 +20,22 @@ public class GioHang {
     }
 
     // Constructor đầy đủ
-    public GioHang(int id, int idNguoiDung, int idSanPham, String maSP, String tenSP, BigDecimal tongTien, int soLuong, Timestamp ngayThem) {
+    public GioHang(int id, int idNguoiDung, int idSanPham, String maSP, String tenSP,
+                   String tenMauSac, String kichThuoc,
+                   BigDecimal tongTien, int soLuong, Timestamp ngayThem) {
         this.id = id;
         this.idNguoiDung = idNguoiDung;
         this.idSanPham = idSanPham;
         this.maSP = maSP;
         this.tenSP = tenSP;
+        this.tenMauSac = tenMauSac;
+        this.kichThuoc = kichThuoc;
         this.tongTien = tongTien;
         this.soLuong = soLuong;
         this.ngayThem = ngayThem;
     }
 
-    // Getter và Setter
+    // Getters và Setters
     public int getId() {
         return id;
     }
@@ -78,6 +76,22 @@ public class GioHang {
         this.tenSP = tenSP;
     }
 
+    public String getTenMauSac() {
+        return tenMauSac;
+    }
+
+    public void setTenMauSac(String tenMauSac) {
+        this.tenMauSac = tenMauSac;
+    }
+
+    public String getKichThuoc() {
+        return kichThuoc;
+    }
+
+    public void setKichThuoc(String kichThuoc) {
+        this.kichThuoc = kichThuoc;
+    }
+
     public BigDecimal getTongTien() {
         return tongTien;
     }
@@ -102,7 +116,6 @@ public class GioHang {
         this.ngayThem = ngayThem;
     }
 
-    // Phương thức toString để debug
     @Override
     public String toString() {
         return "GioHang{" +
@@ -111,6 +124,8 @@ public class GioHang {
                ", idSanPham=" + idSanPham +
                ", maSP='" + maSP + '\'' +
                ", tenSP='" + tenSP + '\'' +
+               ", tenMauSac='" + tenMauSac + '\'' +
+               ", kichThuoc='" + kichThuoc + '\'' +
                ", tongTien=" + tongTien +
                ", soLuong=" + soLuong +
                ", ngayThem=" + ngayThem +

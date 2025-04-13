@@ -2,6 +2,7 @@ package da.service;
 
 import da.model.GioHang;
 import da.util.connectDB;
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -19,7 +20,8 @@ public class GioHangService {
     // Lấy tất cả dữ liệu giỏ hàng
     public ArrayList<GioHang> getAllGioHang() {
         ArrayList<GioHang> list = new ArrayList<>();
-        String SQL = "SELECT gh.id, gh.idNguoiDung, gh.idSanPham, sp.maSP, sp.tenSP, gh.tongTien, gh.soLuong, gh.ngayThem " +
+        String SQL = "SELECT gh.id, gh.idNguoiDung, gh.idSanPham, sp.maSP, sp.tenSP, " +
+                     "gh.tenMauSac, gh.kichThuoc, gh.tongTien, gh.soLuong, gh.ngayThem " +
                      "FROM GioHang gh " +
                      "JOIN SanPham sp ON gh.idSanPham = sp.id";
 
@@ -33,6 +35,8 @@ public class GioHangService {
                     rs.getInt("idSanPham"),
                     rs.getString("maSP"),
                     rs.getString("tenSP"),
+                    rs.getString("tenMauSac"),
+                    rs.getString("kichThuoc"),
                     rs.getBigDecimal("tongTien"),
                     rs.getInt("soLuong"),
                     rs.getTimestamp("ngayThem")
@@ -49,13 +53,16 @@ public class GioHangService {
 
     // Thêm sản phẩm vào giỏ hàng
     public boolean addGioHang(GioHang gioHang) {
-        String SQL = "INSERT INTO GioHang (idNguoiDung, idSanPham, tongTien, soLuong, ngayThem) VALUES (?, ?, ?, ?, ?)";
+        String SQL = "INSERT INTO GioHang (idNguoiDung, idSanPham, tenMauSac, kichThuoc, tongTien, soLuong, ngayThem) " +
+                     "VALUES (?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement ps = conn.prepareStatement(SQL)) {
             ps.setInt(1, gioHang.getIdNguoiDung());
             ps.setInt(2, gioHang.getIdSanPham());
-            ps.setBigDecimal(3, gioHang.getTongTien()); // Thêm tổng tiền
-            ps.setInt(4, gioHang.getSoLuong());
-            ps.setTimestamp(5, gioHang.getNgayThem());
+            ps.setString(3, gioHang.getTenMauSac());
+            ps.setString(4, gioHang.getKichThuoc());
+            ps.setBigDecimal(5, gioHang.getTongTien());
+            ps.setInt(6, gioHang.getSoLuong());
+            ps.setTimestamp(7, gioHang.getNgayThem());
 
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -79,18 +86,19 @@ public class GioHangService {
         }
         return -1;
     }
-    
-    
+
+    // Lấy giỏ hàng theo email người dùng
     public ArrayList<GioHang> getGioHangByEmail(String email) {
         ArrayList<GioHang> list = new ArrayList<>();
-        String SQL = "SELECT gh.id, gh.idNguoiDung, gh.idSanPham, sp.maSP, sp.tenSP, gh.tongTien, gh.soLuong, gh.ngayThem " +
+        String SQL = "SELECT gh.id, gh.idNguoiDung, gh.idSanPham, sp.maSP, sp.tenSP, " +
+                     "gh.tenMauSac, gh.kichThuoc, gh.tongTien, gh.soLuong, gh.ngayThem " +
                      "FROM GioHang gh " +
                      "JOIN SanPham sp ON gh.idSanPham = sp.id " +
-                     "JOIN NguoiDung nd ON gh.idNguoiDung = nd.id " + // Thêm JOIN với bảng NguoiDung
-                     "WHERE nd.email = ?"; // Lọc theo email người dùng
+                     "JOIN NguoiDung nd ON gh.idNguoiDung = nd.id " +
+                     "WHERE nd.email = ?";
 
         try (PreparedStatement ps = conn.prepareStatement(SQL)) {
-            ps.setString(1, email); // Gán giá trị email vào câu truy vấn
+            ps.setString(1, email);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     GioHang gh = new GioHang(
@@ -99,6 +107,8 @@ public class GioHangService {
                         rs.getInt("idSanPham"),
                         rs.getString("maSP"),
                         rs.getString("tenSP"),
+                        rs.getString("tenMauSac"),
+                        rs.getString("kichThuoc"),
                         rs.getBigDecimal("tongTien"),
                         rs.getInt("soLuong"),
                         rs.getTimestamp("ngayThem")
@@ -112,16 +122,32 @@ public class GioHangService {
 
         return list;
     }
-    
+
+    // Xóa sản phẩm khỏi giỏ hàng theo id
     public boolean deleteGioHangById(int id) {
         String SQL = "DELETE FROM GioHang WHERE id = ?";
         try (PreparedStatement ps = conn.prepareStatement(SQL)) {
-            ps.setInt(1, id); // Gán giá trị id vào câu truy vấn
-
-            return ps.executeUpdate() > 0; // Kiểm tra xem có dòng nào bị xóa hay không
+            ps.setInt(1, id);
+            return ps.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
-            return false; // Trả về false nếu xảy ra lỗi
+            return false;
         }
     }
+
+    public boolean updateGioHang(int id, int soLuong, BigDecimal tongTien, String tenMauSac, String kichThuoc) {
+    String SQL = "UPDATE GioHang SET soLuong = ?, tongTien = ?, tenMauSac = ?, kichThuoc = ? WHERE id = ?";
+    try (PreparedStatement ps = conn.prepareStatement(SQL)) {
+        ps.setInt(1, soLuong);
+        ps.setBigDecimal(2, tongTien);
+        ps.setString(3, tenMauSac);
+        ps.setString(4, kichThuoc);
+        ps.setInt(5, id);
+        return ps.executeUpdate() > 0;
+    } catch (SQLException e) {
+        e.printStackTrace();
+        return false;
+    }
+}
+
 }

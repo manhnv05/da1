@@ -210,6 +210,8 @@ public class FormDonHang extends javax.swing.JPanel {
                 gioHang.getTenSP(),
                 gioHang.getSoLuong(),       
                 gioHang.getTongTien(),
+                gioHang.getTenMauSac(),
+                gioHang.getKichThuoc(),
                 gioHang.getNgayThem()    
             };
             tblModel.addRow(rowData);
@@ -326,9 +328,11 @@ public class FormDonHang extends javax.swing.JPanel {
                 Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Không tìm thấy thông tin người dùng!");
                 return;
             }
+            String tenMauSac = cboMau.getSelectedItem().toString();
+            String kichThuoc = cboKichThuoc.getSelectedItem().toString();
             Timestamp ngayThem = new Timestamp(System.currentTimeMillis());
             // Tạo đối tượng GioHang và thêm vào cơ sở dữ liệu
-            GioHang gioHang = new GioHang(0, idNguoiDung, idSanPham, maSP, tenSP, tongTien, soLuong, ngayThem);
+            GioHang gioHang = new GioHang(0, idNguoiDung, idSanPham, maSP, tenSP,tenMauSac,kichThuoc, tongTien, soLuong, ngayThem);
             boolean success = service1.addGioHang(gioHang);
             if (success) {
                 boolean updated = service.updateSoLuongTon(idSanPham, soLuong);
@@ -394,6 +398,62 @@ public class FormDonHang extends javax.swing.JPanel {
         Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Xóa sản phẩm khỏi giỏ hàng thất bại!");
     }
 }
+    
+//    private void updateCart() {
+//    // Lấy hàng được chọn từ bảng tblGioHang
+//    int selectedRow = tblGioHang.getSelectedRow();
+//    if (selectedRow == -1) {
+//        Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng chọn mục cần cập nhật!");
+//        return;
+//    }
+//
+//    // Lấy thông tin từ bảng giỏ hàng
+//    int idGioHang = (int) tblGioHang.getValueAt(selectedRow, 0);
+//    int oldSoLuong = (int) tblGioHang.getValueAt(selectedRow, 3);
+//    String maSP = (String) tblGioHang.getValueAt(selectedRow, 1);
+//    BigDecimal gia = new BigDecimal(txtGia.getText().trim());
+//
+//    // Nhập số lượng mới
+//    String newSoLuongStr = JOptionPane.showInputDialog(this, "Nhập số lượng mới:", oldSoLuong);
+//    if (newSoLuongStr == null || newSoLuongStr.trim().isEmpty()) {
+//        Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Số lượng không được để trống!");
+//        return;
+//    }
+//
+//    int newSoLuong;
+//    try {
+//        newSoLuong = Integer.parseInt(newSoLuongStr.trim());
+//        if (newSoLuong <= 0) {
+//            Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Số lượng phải lớn hơn 0!");
+//            return;
+//        }
+//    } catch (NumberFormatException e) {
+//        Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Số lượng phải là số hợp lệ!");
+//        return;
+//    }
+//
+//    // Tính toán tổng tiền mới
+//    BigDecimal newTongTien = gia.multiply(BigDecimal.valueOf(newSoLuong));
+//
+//    // Gọi service để cập nhật giỏ hàng
+//    boolean updated = service1.updateGioHang(idGioHang, newSoLuong, newTongTien);
+//    if (updated) {
+//        // Cập nhật số lượng tồn kho
+//        int idSanPham = service1.getIdByMaSP(maSP);
+//        int diffSoLuong = newSoLuong - oldSoLuong;
+//        boolean stockUpdated = service.updateSoLuongTon(idSanPham, diffSoLuong);
+//
+//        if (stockUpdated) {
+//            Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Cập nhật giỏ hàng thành công!");
+//            refreshGioHangData(); // Làm mới bảng giỏ hàng
+//            refreshSanPham(); // Làm mới bảng sản phẩm
+//        } else {
+//            Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Không thể cập nhật số lượng tồn, vui lòng kiểm tra lại!");
+//        }
+//    } else {
+//        Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Cập nhật giỏ hàng thất bại!");
+//    }
+//}
 
 
 
@@ -761,6 +821,11 @@ public class FormDonHang extends javax.swing.JPanel {
         crazyPanel23.add(cmdExcel);
 
         cmdUpdate.setText("Update");
+        cmdUpdate.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cmdUpdateActionPerformed(evt);
+            }
+        });
         crazyPanel23.add(cmdUpdate);
 
         cmdQR.setText("QR code");
@@ -774,11 +839,11 @@ public class FormDonHang extends javax.swing.JPanel {
 
             },
             new String [] {
-                "ID", "Mã Sản Phẩm", "Tên SP", "Số lượng", "Tổng tiền", "Ngày"
+                "ID", "Mã Sản Phẩm", "Tên SP", "Số lượng", "Tổng tiền", "Size", "Color", "Ngày"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, true
+                false, false, false, false, false, false, true, true
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -932,6 +997,10 @@ public class FormDonHang extends javax.swing.JPanel {
     private void cmdDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdDeleteActionPerformed
         deleteFromCart();
     }//GEN-LAST:event_cmdDeleteActionPerformed
+
+    private void cmdUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdUpdateActionPerformed
+        //updateCart();
+    }//GEN-LAST:event_cmdUpdateActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

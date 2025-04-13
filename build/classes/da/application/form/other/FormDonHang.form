@@ -462,19 +462,6 @@
                             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cmdExcelActionPerformed"/>
                           </Events>
                         </Component>
-                        <Component class="javax.swing.JButton" name="cmdUpdate">
-                          <Properties>
-                            <Property name="text" type="java.lang.String" value="Update"/>
-                          </Properties>
-                          <Events>
-                            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cmdUpdateActionPerformed"/>
-                          </Events>
-                        </Component>
-                        <Component class="javax.swing.JButton" name="cmdQR">
-                          <Properties>
-                            <Property name="text" type="java.lang.String" value="QR code"/>
-                          </Properties>
-                        </Component>
                       </SubComponents>
                     </Container>
                     <Container class="javax.swing.JScrollPane" name="jScrollPane8">
@@ -498,8 +485,8 @@
                                 <Column editable="false" title="T&#xea;n SP" type="java.lang.Object"/>
                                 <Column editable="false" title="S&#x1ed1; l&#x1b0;&#x1ee3;ng" type="java.lang.Object"/>
                                 <Column editable="false" title="T&#x1ed5;ng ti&#x1ec1;n" type="java.lang.Object"/>
-                                <Column editable="false" title="Size" type="java.lang.Object"/>
-                                <Column editable="true" title="Color" type="java.lang.Object"/>
+                                <Column editable="true" title="M&#xe0;u S&#x1eaf;c" type="java.lang.Object"/>
+                                <Column editable="true" title="Size" type="java.lang.Object"/>
                                 <Column editable="true" title="Ng&#xe0;y" type="java.lang.Object"/>
                               </Table>
                             </Property>

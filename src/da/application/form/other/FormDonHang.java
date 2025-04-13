@@ -56,11 +56,9 @@ public class FormDonHang extends javax.swing.JPanel {
     
     private void applyTableStyle(JTable table) {
 
-        cmdUpdate.setIcon(new FlatSVGIcon("da/icon/svg/edit.svg", 0.35f));
         cmdDelete.setIcon(new FlatSVGIcon("da/icon/svg/delete.svg", 0.35f));
         cmdExcel.setIcon(new FlatSVGIcon("da/icon/svg/print.svg", 0.35f));
         cmdAdd.setIcon(new FlatSVGIcon("da/icon/svg/add.svg", 0.35f));
-        cmdQR.setIcon(new FlatSVGIcon("da/icon/svg/qr.svg", 0.35f));
 
         txtSearch.putClientProperty(FlatClientProperties.TEXT_FIELD_TRAILING_ICON, new FlatSVGIcon("da/icon/svg/search.svg", 0.35f));
         //  Change scroll style
@@ -399,61 +397,10 @@ public class FormDonHang extends javax.swing.JPanel {
     }
 }
     
-//    private void updateCart() {
-//    // Lấy hàng được chọn từ bảng tblGioHang
-//    int selectedRow = tblGioHang.getSelectedRow();
-//    if (selectedRow == -1) {
-//        Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng chọn mục cần cập nhật!");
-//        return;
-//    }
-//
-//    // Lấy thông tin từ bảng giỏ hàng
-//    int idGioHang = (int) tblGioHang.getValueAt(selectedRow, 0);
-//    int oldSoLuong = (int) tblGioHang.getValueAt(selectedRow, 3);
-//    String maSP = (String) tblGioHang.getValueAt(selectedRow, 1);
-//    BigDecimal gia = new BigDecimal(txtGia.getText().trim());
-//
-//    // Nhập số lượng mới
-//    String newSoLuongStr = JOptionPane.showInputDialog(this, "Nhập số lượng mới:", oldSoLuong);
-//    if (newSoLuongStr == null || newSoLuongStr.trim().isEmpty()) {
-//        Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Số lượng không được để trống!");
-//        return;
-//    }
-//
-//    int newSoLuong;
-//    try {
-//        newSoLuong = Integer.parseInt(newSoLuongStr.trim());
-//        if (newSoLuong <= 0) {
-//            Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Số lượng phải lớn hơn 0!");
-//            return;
-//        }
-//    } catch (NumberFormatException e) {
-//        Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Số lượng phải là số hợp lệ!");
-//        return;
-//    }
-//
-//    // Tính toán tổng tiền mới
-//    BigDecimal newTongTien = gia.multiply(BigDecimal.valueOf(newSoLuong));
-//
-//    // Gọi service để cập nhật giỏ hàng
-//    boolean updated = service1.updateGioHang(idGioHang, newSoLuong, newTongTien);
-//    if (updated) {
-//        // Cập nhật số lượng tồn kho
-//        int idSanPham = service1.getIdByMaSP(maSP);
-//        int diffSoLuong = newSoLuong - oldSoLuong;
-//        boolean stockUpdated = service.updateSoLuongTon(idSanPham, diffSoLuong);
-//
-//        if (stockUpdated) {
-//            Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Cập nhật giỏ hàng thành công!");
-//            refreshGioHangData(); // Làm mới bảng giỏ hàng
-//            refreshSanPham(); // Làm mới bảng sản phẩm
-//        } else {
-//            Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Không thể cập nhật số lượng tồn, vui lòng kiểm tra lại!");
-//        }
-//    } else {
-//        Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Cập nhật giỏ hàng thất bại!");
-//    }
-//}
+    
+
+    
+    
 
 
 
@@ -501,8 +448,6 @@ public class FormDonHang extends javax.swing.JPanel {
         cmdAdd = new javax.swing.JButton();
         cmdDelete = new javax.swing.JButton();
         cmdExcel = new javax.swing.JButton();
-        cmdUpdate = new javax.swing.JButton();
-        cmdQR = new javax.swing.JButton();
         jScrollPane8 = new javax.swing.JScrollPane();
         tblGioHang = new javax.swing.JTable();
         crazyPanel13 = new raven.crazypanel.CrazyPanel();
@@ -820,17 +765,6 @@ public class FormDonHang extends javax.swing.JPanel {
         });
         crazyPanel23.add(cmdExcel);
 
-        cmdUpdate.setText("Update");
-        cmdUpdate.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cmdUpdateActionPerformed(evt);
-            }
-        });
-        crazyPanel23.add(cmdUpdate);
-
-        cmdQR.setText("QR code");
-        crazyPanel23.add(cmdQR);
-
         panelTransparent1.add(crazyPanel23);
         crazyPanel23.setBounds(0, 270, 500, 37);
 
@@ -839,11 +773,11 @@ public class FormDonHang extends javax.swing.JPanel {
 
             },
             new String [] {
-                "ID", "Mã Sản Phẩm", "Tên SP", "Số lượng", "Tổng tiền", "Size", "Color", "Ngày"
+                "ID", "Mã Sản Phẩm", "Tên SP", "Số lượng", "Tổng tiền", "Màu Sắc", "Size", "Ngày"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, true, true
+                false, false, false, false, false, true, true, true
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -998,10 +932,6 @@ public class FormDonHang extends javax.swing.JPanel {
         deleteFromCart();
     }//GEN-LAST:event_cmdDeleteActionPerformed
 
-    private void cmdUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdUpdateActionPerformed
-        //updateCart();
-    }//GEN-LAST:event_cmdUpdateActionPerformed
-
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox<String> cboKichThuoc;
@@ -1009,8 +939,6 @@ public class FormDonHang extends javax.swing.JPanel {
     private javax.swing.JButton cmdAdd;
     private javax.swing.JButton cmdDelete;
     private javax.swing.JButton cmdExcel;
-    private javax.swing.JButton cmdQR;
-    private javax.swing.JButton cmdUpdate;
     private javax.swing.JButton cmdUpdate5;
     private raven.crazypanel.CrazyPanel crazyPanel13;
     private raven.crazypanel.CrazyPanel crazyPanel15;

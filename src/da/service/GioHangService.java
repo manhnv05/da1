@@ -149,5 +149,38 @@ public class GioHangService {
         return false;
     }
 }
+    
+    
+    public GioHang getGioHangById(int id) {
+    String SQL = "SELECT gh.id, gh.idNguoiDung, gh.idSanPham, sp.maSP, sp.tenSP, "
+               + "gh.tongTien, gh.soLuong, gh.tenMauSac, gh.kichThuoc, gh.ngayThem "
+               + "FROM GioHang gh "
+               + "JOIN SanPham sp ON gh.idSanPham = sp.id "
+               + "WHERE gh.id = ?";
+
+    try (PreparedStatement ps = conn.prepareStatement(SQL)) {
+        ps.setInt(1, id);
+
+        try (ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                return new GioHang(
+                    rs.getInt("id"),
+                    rs.getInt("idNguoiDung"),
+                    rs.getInt("idSanPham"),
+                    rs.getString("maSP"),
+                    rs.getString("tenSP"),
+                    rs.getString("tenMauSac"),
+                    rs.getString("kichThuoc"),
+                    rs.getBigDecimal("tongTien"),
+                    rs.getInt("soLuong"),
+                    rs.getTimestamp("ngayThem")
+                );
+            }
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return null;
+}
 
 }

@@ -114,85 +114,69 @@ public class ThongTinCaNhaForm extends JPanel {
     }
 
     public boolean isMatchPassword() {
-    char[] password = txtPasswordNew.getPassword();
-    char[] confirmPassword = txtConfirmPassword.getPassword();
+        char[] password = txtPasswordNew.getPassword();
+        char[] confirmPassword = txtConfirmPassword.getPassword();
 
-    boolean isMatch = Arrays.equals(password, confirmPassword);
+        boolean isMatch = Arrays.equals(password, confirmPassword);
 
-    // Xóa dữ liệu sau khi sử dụng
-    Arrays.fill(password, ' ');
-    Arrays.fill(confirmPassword, ' ');
+        // Xóa dữ liệu sau khi sử dụng
+        Arrays.fill(password, ' ');
+        Arrays.fill(confirmPassword, ' ');
 
-    return isMatch;
+        return isMatch;
     }
     
     public void detail(){
         NguoiDung nd = service.getNguoiDungByEmail(Email);
-    if (nd == null) {
-        Notifications.getInstance().show(Notifications.Type.WARNING, "Không tìm thấy thông tin người dùng!");
-        return;
+        if (nd == null) {
+            Notifications.getInstance().show(Notifications.Type.WARNING, "Không tìm thấy thông tin người dùng!");
+            return;
+        }
+        txtFirstName.setText(nd.getTen());
+        txtLastName.setText(nd.getHo());
+        txtUsername.setText(nd.getEmail());
+        txtPassword.setText(""); // Mật khẩu hiện tại
+        txtPasswordNew.setText(""); // Mật khẩu mới
+        txtConfirmPassword.setText(""); // Xác nhận mật khẩu
     }
-
-    // Hiển thị thông tin người dùng lên các trường
-    txtFirstName.setText(nd.getTen());
-    txtLastName.setText(nd.getHo());
-    txtUsername.setText(nd.getEmail());
-
-    // Mật khẩu hiện tại và mật khẩu mới không được hiển thị
-    txtPassword.setText(""); // Mật khẩu hiện tại
-    txtPasswordNew.setText(""); // Mật khẩu mới
-    txtConfirmPassword.setText(""); // Xác nhận mật khẩu
-
-    Notifications.getInstance().show(Notifications.Type.INFO, "Thông tin người dùng đã được tải lên!");
-}
     
-private void updateNguoiDung() {
-    String ho = txtLastName.getText().trim();
-    String ten = txtFirstName.getText().trim();
-    String matKhauHienTai = String.valueOf(txtPassword.getPassword()).trim();
-    String matKhauMoi = String.valueOf(txtPasswordNew.getPassword()).trim();
-    String matKhauXacNhan = String.valueOf(txtConfirmPassword.getPassword()).trim();
-
-    // Kiểm tra các trường nhập liệu
-    if (ho.isEmpty() || ten.isEmpty() || matKhauHienTai.isEmpty() || matKhauMoi.isEmpty() || matKhauXacNhan.isEmpty()) {
-        Notifications.getInstance().show(Notifications.Type.WARNING, "Vui lòng điền đầy đủ thông tin!");
-        return;
+    private void updateNguoiDung() {
+        String ho = txtLastName.getText().trim();
+        String ten = txtFirstName.getText().trim();
+        String matKhauHienTai = String.valueOf(txtPassword.getPassword()).trim();
+        String matKhauMoi = String.valueOf(txtPasswordNew.getPassword()).trim();
+        String matKhauXacNhan = String.valueOf(txtConfirmPassword.getPassword()).trim();
+        if (ho.isEmpty() || ten.isEmpty() || matKhauHienTai.isEmpty() || matKhauMoi.isEmpty() || matKhauXacNhan.isEmpty()) {
+            Notifications.getInstance().show(Notifications.Type.WARNING, "Vui lòng điền đầy đủ thông tin!");
+            return;
+        }
+        if (!matKhauMoi.equals(matKhauXacNhan)) {
+            Notifications.getInstance().show(Notifications.Type.ERROR, "Mật khẩu mới không khớp với xác nhận mật khẩu!");
+            return;
+        }
+        NguoiDung nd = service.getNguoiDungByEmail(Email);
+        if (nd == null) {
+            Notifications.getInstance().show(Notifications.Type.ERROR, "Không tìm thấy thông tin người dùng!");
+            return;
+        }
+        if (!matKhauHienTai.equals(nd.getMatKhau())) {
+            Notifications.getInstance().show(Notifications.Type.ERROR, "Mật khẩu hiện tại không chính xác!");
+            return;
+        }
+        boolean updated = service.updateNguoiDungByEmail(Email, ho, ten, matKhauMoi);
+        if (updated) {
+            Notifications.getInstance().show(Notifications.Type.SUCCESS, "Cập nhật thông tin thành công!");
+            clear();
+        } else {
+            Notifications.getInstance().show(Notifications.Type.ERROR, "Cập nhật thông tin thất bại!");
+        }
     }
 
-    // Kiểm tra mật khẩu mới và xác nhận mật khẩu
-    if (!matKhauMoi.equals(matKhauXacNhan)) {
-        Notifications.getInstance().show(Notifications.Type.ERROR, "Mật khẩu mới không khớp với xác nhận mật khẩu!");
-        return;
+    public void clear(){
+        txtPassword.setText("");
+        txtPasswordNew.setText("");
+        txtConfirmPassword.setText("");
     }
-
-    // Lấy thông tin người dùng từ cơ sở dữ liệu
-    NguoiDung nd = service.getNguoiDungByEmail(Email);
-    if (nd == null) {
-        Notifications.getInstance().show(Notifications.Type.ERROR, "Không tìm thấy thông tin người dùng!");
-        return;
-    }
-
-    // Kiểm tra mật khẩu hiện tại (so sánh trực tiếp, không mã hóa)
-    if (!matKhauHienTai.equals(nd.getMatKhau())) {
-        Notifications.getInstance().show(Notifications.Type.ERROR, "Mật khẩu hiện tại không chính xác!");
-        return;
-    }
-
-    // Gọi phương thức cập nhật từ service
-    boolean updated = service.updateNguoiDungByEmail(Email, ho, ten, matKhauMoi);
-    if (updated) {
-        Notifications.getInstance().show(Notifications.Type.SUCCESS, "Cập nhật thông tin thành công!");
-        clear();
-    } else {
-        Notifications.getInstance().show(Notifications.Type.ERROR, "Cập nhật thông tin thất bại!");
-    }
-}
-
-public void clear(){
-    txtPassword.setText("");
-    txtPasswordNew.setText("");
-    txtConfirmPassword.setText("");
-}
     
 
     

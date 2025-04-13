@@ -10,34 +10,47 @@ import com.formdev.flatlaf.extras.FlatAnimatedLafChange;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import com.formdev.flatlaf.themes.FlatMacDarkLaf;
 import com.formdev.flatlaf.themes.FlatMacLightLaf;
+import da.model.KhuVucKho;
+import da.service.KhuVucKhoService;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.EventQueue;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.util.ArrayList;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
+import raven.toast.Notifications;
 
 /**
  *
  * @author ADMIN
  */
 public class FormKhoHang extends javax.swing.JPanel {
-
+    KhuVucKhoService service = new KhuVucKhoService();
     /**
      * Creates new form FormKhoHang
      */
     public FormKhoHang() {
         initComponents();
-        applyTableStyle(jTable1);
+        applyTableStyle(tblKhuVuc);
         applyTableStyle(jTable2);
         applyListStyle(jList1);
+        loadKhuVucKhoData(service.searchKhuVucKhoByName(""));
     }
     
     private void applyTableStyle(JTable table) {
@@ -78,25 +91,9 @@ public class FormKhoHang extends javax.swing.JPanel {
                 if (com instanceof JLabel label) {
                     switch (column) {
                         case 0, 4 -> label.setHorizontalAlignment(SwingConstants.CENTER);
-                        case 2, 3 -> label.setHorizontalAlignment(SwingConstants.TRAILING);
+                        case  3 -> label.setHorizontalAlignment(SwingConstants.TRAILING);
                         default -> label.setHorizontalAlignment(SwingConstants.LEADING);
-                    }
-                    if (header == false) {
-                        if (column == 4) {
-                            if (Double.parseDouble(value.toString()) > 0) {
-                                com.setForeground(new Color(17, 182, 60));
-                                label.setText("+" + value);
-                            } else {
-                                com.setForeground(new Color(202, 48, 48));
-                            }
-                        } else {
-                            if (isSelected) {
-                                com.setForeground(table.getSelectionForeground());
-                            } else {
-                                com.setForeground(table.getForeground());
-                            }
-                        }
-                    }
+                    }             
                 }
                 return com;
             }
@@ -136,6 +133,219 @@ public class FormKhoHang extends javax.swing.JPanel {
         }
     });
 }
+    
+    public void loadKhuVucKhoData(ArrayList<KhuVucKho> list) {
+        DefaultTableModel tblModel = (DefaultTableModel) tblKhuVuc.getModel();
+        tblModel.setRowCount(0); // Xóa dữ liệu cũ trong bảng
+
+        for (KhuVucKho kvk : list) {
+            Object[] rowData = {
+                kvk.getId(),
+                kvk.getTenKhuVuc(),       // Tên khu vực
+                kvk.getMoTa(),            // Mô tả khu vực
+            };
+            tblModel.addRow(rowData);
+        }
+    }
+    
+    public void search() {
+        String keyword = txtSearch.getText().trim();
+        loadKhuVucKhoData(service.searchKhuVucKhoByName(keyword));
+    }
+    
+
+
+    public void add() {
+        KhuVucKho khuVucKho = showInputDialog();
+        if (khuVucKho == null) {
+            return;
+        }
+
+        boolean isAdded = service.addKhuVucKho(khuVucKho);
+        if (isAdded) {
+            Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Thêm khu vực kho thành công!");
+            loadKhuVucKhoData(service.getAllKhuVucKho());
+        } else {
+            Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Thêm khu vực kho thất bại!");
+        }
+    }
+
+    private KhuVucKho showInputDialog() {
+        JTextField txtTenKhuVuc = new JTextField();
+        JTextArea txtMoTa = new JTextArea(5, 20);
+        JScrollPane scrollMoTa = new JScrollPane(txtMoTa);
+
+        JPanel panel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10, 10, 10, 10);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        panel.add(new JLabel("Tên Khu Vực:"), gbc);
+        gbc.gridx = 1;
+        panel.add(txtTenKhuVuc, gbc);
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        panel.add(new JLabel("Mô Tả:"), gbc);
+        gbc.gridx = 1;
+        panel.add(scrollMoTa, gbc);
+        while (true) {
+            int result = JOptionPane.showConfirmDialog(
+                null,
+                panel,
+                "Thêm Khu Vực Kho",
+                JOptionPane.OK_CANCEL_OPTION,
+                JOptionPane.PLAIN_MESSAGE
+            );
+            if (result != JOptionPane.OK_OPTION) {
+                return null;
+            }
+            String tenKhuVuc = txtTenKhuVuc.getText().trim();
+            String moTa = txtMoTa.getText().trim();
+
+            if (tenKhuVuc.isEmpty()) {
+                Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Tên khu vực kho không được để trống!");
+                continue;
+            }
+            if (tenKhuVuc.length() > 50) {
+                Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Tên khu vực không được vượt quá 50 kí tự!");
+                continue;
+            }
+            if (moTa.isEmpty()) {
+                Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Mô tả không được để trống!");
+                continue;
+            }
+            if (moTa.length() > 255) {
+                Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Mô tả không được vượt quá 255 kí tự!");
+                continue;
+            }
+            return new KhuVucKho(0, tenKhuVuc, moTa);
+        }
+    }
+    
+    public void update() {
+        // Lấy dòng được chọn trong bảng
+        int selectedRow = tblKhuVuc.getSelectedRow();
+        if (selectedRow == -1) {
+            Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng chọn một khu vực để cập nhật!");
+            return;
+        }
+
+        // Lấy thông tin hiện tại từ bảng
+        int id = (int) tblKhuVuc.getValueAt(selectedRow, 0);
+        String currentTenKhuVuc = (String) tblKhuVuc.getValueAt(selectedRow, 1);
+        String currentMoTa = (String) tblKhuVuc.getValueAt(selectedRow, 2);
+
+        // Tạo các trường nhập liệu cho hộp thoại
+        JTextField txtTenKhuVuc = new JTextField(currentTenKhuVuc);
+        JTextArea txtMoTa = new JTextArea(currentMoTa, 5, 20);
+        JScrollPane scrollMoTa = new JScrollPane(txtMoTa);
+
+        // Panel để sắp xếp các trường nhập liệu
+        JPanel panel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10, 10, 10, 10);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        panel.add(new JLabel("Tên Khu Vực:"), gbc);
+        gbc.gridx = 1;
+        panel.add(txtTenKhuVuc, gbc);
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        panel.add(new JLabel("Mô Tả:"), gbc);
+        gbc.gridx = 1;
+        panel.add(scrollMoTa, gbc);
+
+        // Hiển thị hộp thoại với vòng lặp kiểm tra
+        while (true) {
+            int result = JOptionPane.showConfirmDialog(
+                null,
+                panel,
+                "Cập nhật Khu Vực Kho",
+                JOptionPane.OK_CANCEL_OPTION,
+                JOptionPane.PLAIN_MESSAGE
+            );
+            if (result != JOptionPane.OK_OPTION) {
+                return; // Người dùng nhấn "Cancel"
+            }
+
+            String tenKhuVuc = txtTenKhuVuc.getText().trim();
+            String moTa = txtMoTa.getText().trim();
+
+            // Kiểm tra dữ liệu đầu vào
+            if (tenKhuVuc.isEmpty()) {
+                Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Tên khu vực không được để trống!");
+                txtTenKhuVuc.requestFocus();
+                continue;
+            }
+            if (tenKhuVuc.length() > 50) {
+                Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Tên khu vực không được vượt quá 50 ký tự!");
+                txtTenKhuVuc.requestFocus();
+                continue;
+            }
+            if (moTa.isEmpty()) {
+                Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Mô tả không được để trống!");
+                txtMoTa.requestFocus();
+                continue;
+            }
+            if (moTa.length() > 255) {
+                Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Mô tả không được vượt quá 255 ký tự!");
+                txtMoTa.requestFocus();
+                continue;
+            }
+
+            // Tạo đối tượng KhuVucKho với dữ liệu đã chỉnh sửa
+            KhuVucKho updatedKhuVucKho = new KhuVucKho(id, tenKhuVuc, moTa);
+
+            // Gọi service để cập nhật thông tin khu vực kho
+            boolean isUpdated = service.updateKhuVucKho(updatedKhuVucKho);
+            if (isUpdated) {
+                Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Cập nhật khu vực kho thành công!");
+                loadKhuVucKhoData(service.getAllKhuVucKho()); // Tải lại danh sách khu vực kho
+            } else {
+                Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Cập nhật khu vực kho thất bại!");
+            }
+            return; // Thoát vòng lặp sau khi cập nhật thành công
+        }
+    }
+    
+    public void delete() {
+        // Lấy dòng được chọn trong bảng
+        int selectedRow = tblKhuVuc.getSelectedRow();
+        if (selectedRow == -1) {
+            Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng chọn một khu vực để xóa!");
+            return;
+        }
+
+        // Lấy thông tin khu vực từ bảng
+        int id = (int) tblKhuVuc.getValueAt(selectedRow, 0);
+        String tenKhuVuc = (String) tblKhuVuc.getValueAt(selectedRow, 1);
+
+        // Hiển thị hộp thoại xác nhận
+        int confirm = JOptionPane.showConfirmDialog(
+            this,
+            "Bạn có chắc chắn muốn xóa khu vực kho \"" + tenKhuVuc + "\"?",
+            "Xác nhận xóa",
+            JOptionPane.YES_NO_OPTION,
+            JOptionPane.WARNING_MESSAGE
+        );
+
+        // Nếu người dùng chọn "No", thoát
+        if (confirm != JOptionPane.YES_OPTION) {
+            return;
+        }
+
+        // Gọi service để xóa khu vực kho
+        boolean isDeleted = service.deleteKhuVucKho(id);
+        if (isDeleted) {
+            Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Xóa khu vực kho thành công!");
+            loadKhuVucKhoData(service.getAllKhuVucKho()); // Tải lại danh sách khu vực kho
+        } else {
+            Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Xóa khu vực kho thất bại!");
+        }
+    }
+
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -156,7 +366,7 @@ public class FormKhoHang extends javax.swing.JPanel {
         cmdDelete = new javax.swing.JButton();
         cmdExcel = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        tblKhuVuc = new javax.swing.JTable();
         crazyPanel3 = new raven.crazypanel.CrazyPanel();
         jLabel1 = new javax.swing.JLabel();
         jScrollPane3 = new javax.swing.JScrollPane();
@@ -220,44 +430,57 @@ public class FormKhoHang extends javax.swing.JPanel {
         ));
         crazyPanel2.add(txtSearch);
 
-        cmdDetails.setText("Chi tiết");
+        cmdDetails.setText("Search");
+        cmdDetails.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cmdDetailsActionPerformed(evt);
+            }
+        });
         crazyPanel2.add(cmdDetails);
 
-        cmdUpdate.setText("Update");
+        cmdUpdate.setText("Add");
+        cmdUpdate.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cmdUpdateActionPerformed(evt);
+            }
+        });
         crazyPanel2.add(cmdUpdate);
 
         cmdDelete.setText("Delete");
+        cmdDelete.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cmdDeleteActionPerformed(evt);
+            }
+        });
         crazyPanel2.add(cmdDelete);
 
-        cmdExcel.setText("Excel");
+        cmdExcel.setText("Update");
+        cmdExcel.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cmdExcelActionPerformed(evt);
+            }
+        });
         crazyPanel2.add(cmdExcel);
 
         crazyPanel1.add(crazyPanel2);
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        tblKhuVuc.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
             new String [] {
-                "", "ID", "Mã", "Tên", "Status"
+                "ID", "Tên Khu Vực", "Mô tả"
             }
         ) {
-            Class[] types = new Class [] {
-                java.lang.Boolean.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class
-            };
             boolean[] canEdit = new boolean [] {
-                true, false, false, false, false
+                false, false, false
             };
-
-            public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
-            }
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
             }
         });
-        jScrollPane1.setViewportView(jTable1);
+        jScrollPane1.setViewportView(tblKhuVuc);
 
         crazyPanel1.add(jScrollPane1);
 
@@ -552,6 +775,22 @@ public class FormKhoHang extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    private void cmdUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdUpdateActionPerformed
+        add();
+    }//GEN-LAST:event_cmdUpdateActionPerformed
+
+    private void cmdExcelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdExcelActionPerformed
+        update();
+    }//GEN-LAST:event_cmdExcelActionPerformed
+
+    private void cmdDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdDeleteActionPerformed
+        delete();
+    }//GEN-LAST:event_cmdDeleteActionPerformed
+
+    private void cmdDetailsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdDetailsActionPerformed
+        search();
+    }//GEN-LAST:event_cmdDetailsActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton cmdAdd1;
@@ -587,13 +826,13 @@ public class FormKhoHang extends javax.swing.JPanel {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
-    private javax.swing.JTable jTable1;
     private javax.swing.JTable jTable2;
     private javax.swing.JTextField jTextField3;
     private javax.swing.JTextField jTextField4;
     private javax.swing.JLabel lblFilter1;
     private da.component.MaterialTabbed materialTabbed2;
     private da.component.PanelTransparent panelTransparent2;
+    private javax.swing.JTable tblKhuVuc;
     private javax.swing.JTextField txtSearch;
     private javax.swing.JTextField txtSearch1;
     // End of variables declaration//GEN-END:variables

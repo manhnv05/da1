@@ -10,6 +10,9 @@ import da.service.GioHangService;
 import da.service.SanPhamService;
 import java.awt.Color;
 import java.awt.Component;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -17,6 +20,7 @@ import java.util.HashSet;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListCellRenderer;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
@@ -27,6 +31,10 @@ import javax.swing.UIManager;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import raven.toast.Notifications;
 
 /**
@@ -359,51 +367,93 @@ public class FormDonHang extends javax.swing.JPanel {
     }
     
     private void deleteFromCart() {
-    // Lấy hàng được chọn từ bảng tblGioHang
-    int selectedRow = tblGioHang.getSelectedRow();
-    if (selectedRow == -1) {
-        Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng chọn mục cần xóa khỏi giỏ hàng!");
-        return;
-    }
-
-    // Lấy ID của mục giỏ hàng từ cột đầu tiên
-    int idGioHang = (int) tblGioHang.getValueAt(selectedRow, 0);
-
-    // Lấy số lượng và ID sản phẩm để khôi phục số lượng tồn trong kho
-    int soLuong = (int) tblGioHang.getValueAt(selectedRow, 3);
-    String maSP = (String) tblGioHang.getValueAt(selectedRow, 1);
-    int idSanPham = service1.getIdByMaSP(maSP);
-
-    // Hiển thị hộp thoại xác nhận
-    int confirm = JOptionPane.showConfirmDialog(this, "Bạn có chắc chắn muốn xóa mục này khỏi giỏ hàng?", "Xác nhận", JOptionPane.YES_NO_OPTION);
-    if (confirm != JOptionPane.YES_OPTION) {
-        return; // Người dùng chọn "Không"
-    }
-
-    // Xóa mục giỏ hàng
-    boolean deleted = service1.deleteGioHangById(idGioHang);
-    if (deleted) {
-        // Khôi phục số lượng tồn kho của sản phẩm
-        boolean restored = service.updateSoLuongTon(idSanPham, -soLuong); // Số âm để tăng số lượng tồn
-        if (restored) {
-            Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Xóa sản phẩm khỏi giỏ hàng thành công!");
-            refreshGioHangData(); // Làm mới bảng giỏ hàng
-            refreshSanPham(); // Làm mới bảng sản phẩm
-        } else {
-            Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Không thể khôi phục số lượng tồn, vui lòng kiểm tra lại!");
+        // Lấy hàng được chọn từ bảng tblGioHang
+        int selectedRow = tblGioHang.getSelectedRow();
+        if (selectedRow == -1) {
+            Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng chọn mục cần xóa khỏi giỏ hàng!");
+            return;
         }
-    } else {
-        Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Xóa sản phẩm khỏi giỏ hàng thất bại!");
+
+        // Lấy ID của mục giỏ hàng từ cột đầu tiên
+        int idGioHang = (int) tblGioHang.getValueAt(selectedRow, 0);
+
+        // Lấy số lượng và ID sản phẩm để khôi phục số lượng tồn trong kho
+        int soLuong = (int) tblGioHang.getValueAt(selectedRow, 3);
+        String maSP = (String) tblGioHang.getValueAt(selectedRow, 1);
+        int idSanPham = service1.getIdByMaSP(maSP);
+
+        // Hiển thị hộp thoại xác nhận
+        int confirm = JOptionPane.showConfirmDialog(this, "Bạn có chắc chắn muốn xóa mục này khỏi giỏ hàng?", "Xác nhận", JOptionPane.YES_NO_OPTION);
+        if (confirm != JOptionPane.YES_OPTION) {
+            return; // Người dùng chọn "Không"
+        }
+
+        // Xóa mục giỏ hàng
+        boolean deleted = service1.deleteGioHangById(idGioHang);
+        if (deleted) {
+            // Khôi phục số lượng tồn kho của sản phẩm
+            boolean restored = service.updateSoLuongTon(idSanPham, -soLuong); // Số âm để tăng số lượng tồn
+            if (restored) {
+                Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Xóa sản phẩm khỏi giỏ hàng thành công!");
+                refreshGioHangData(); // Làm mới bảng giỏ hàng
+                refreshSanPham(); // Làm mới bảng sản phẩm
+            } else {
+                Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Không thể khôi phục số lượng tồn, vui lòng kiểm tra lại!");
+            }
+        } else {
+            Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Xóa sản phẩm khỏi giỏ hàng thất bại!");
+        }
     }
-}
     
+    private void exportGioHangToExcel() {
+        JFileChooser jFileChooser = new JFileChooser();
+        if (jFileChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
+            File saveFile = new File(jFileChooser.getSelectedFile().getAbsolutePath() + ".xlsx");
+
+            // Lấy danh sách giỏ hàng từ cơ sở dữ liệu
+            ArrayList<GioHang> gioHangList = service1.getGioHangByEmail(Email);
+
+            try (Workbook wb = new XSSFWorkbook(); FileOutputStream out = new FileOutputStream(saveFile)) {
+                Sheet sheet = wb.createSheet("Danh Sách Giỏ Hàng");
+
+                // Tiêu đề cột
+                String[] headers = {"STT", "ID Giỏ Hàng", "Mã Sản Phẩm", "Tên Sản Phẩm", "Số Lượng", 
+                                    "Tổng Tiền", "Màu Sắc", "Kích Thước", "Ngày Thêm"};
+                Row rowCol = sheet.createRow(0);
+                for (int i = 0; i < headers.length; i++) {
+                    rowCol.createCell(i).setCellValue(headers[i]);
+                }
+
+                // Dữ liệu
+                int rowIndex = 1;
+                for (GioHang gh : gioHangList) {
+                    Row row = sheet.createRow(rowIndex++);
+                    row.createCell(0).setCellValue(rowIndex - 1); // STT
+                    row.createCell(1).setCellValue(gh.getId());
+                    row.createCell(2).setCellValue(gh.getMaSP());
+                    row.createCell(3).setCellValue(gh.getTenSP());
+                    row.createCell(4).setCellValue(gh.getSoLuong());
+                    row.createCell(5).setCellValue(gh.getTongTien().toString());
+                    row.createCell(6).setCellValue(gh.getTenMauSac());
+                    row.createCell(7).setCellValue(gh.getKichThuoc());
+                    row.createCell(8).setCellValue(gh.getNgayThem().toString());
+                }
+
+                // Ghi dữ liệu ra file
+                wb.write(out);
+                Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Xuất file thành công!");
+            } catch (IOException e) {
+                e.printStackTrace();
+                Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Lỗi khi xuất file!");
+            }
+        }
+    }
     
-
+    public void search() {
+        String keyword = txtSearch.getText().trim();
+        loadSanPhamData(service.searchSanPham(keyword));
+    }
     
-    
-
-
-
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -555,6 +605,11 @@ public class FormDonHang extends javax.swing.JPanel {
         crazyPanel16.add(txtSearch);
 
         jButton2.setText("Search");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
         crazyPanel16.add(jButton2);
 
         jButton3.setText("Refesh");
@@ -909,7 +964,7 @@ public class FormDonHang extends javax.swing.JPanel {
     }//GEN-LAST:event_cboMauActionPerformed
 
     private void cmdExcelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdExcelActionPerformed
-        // TODO add your handling code here:
+        exportGioHangToExcel();
     }//GEN-LAST:event_cmdExcelActionPerformed
 
     private void txtTenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtTenActionPerformed
@@ -931,6 +986,10 @@ public class FormDonHang extends javax.swing.JPanel {
     private void cmdDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdDeleteActionPerformed
         deleteFromCart();
     }//GEN-LAST:event_cmdDeleteActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        search();
+    }//GEN-LAST:event_jButton2ActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

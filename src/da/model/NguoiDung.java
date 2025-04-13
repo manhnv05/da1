@@ -40,6 +40,16 @@ public class NguoiDung {
         this.email = email;
         this.matKhau = matKhau;
     }
+
+    public NguoiDung(int id, String ho, String ten, String email, String matKhau) {
+        this.id = id;
+        this.ho = ho;
+        this.ten = ten;
+        this.email = email;
+        this.matKhau = matKhau;
+    }
+    
+    
     
     
     

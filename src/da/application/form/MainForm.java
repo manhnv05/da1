@@ -73,7 +73,7 @@ public class MainForm extends JLayeredPane {
         formMap.put(6, new FormKhoHang());
         formMap.put(7, new FormNhanVien());
         formMap.put(8, new DashboardForm());
-        formMap.put(9, new ThongTinCaNhaForm());
+        formMap.put(9, new ThongTinCaNhaForm(currentUserEmail));
         formMap.put(10, new FprmSanPham());
         formMap.put(11, new FormNhanVien());
     }
@@ -132,7 +132,7 @@ public class MainForm extends JLayeredPane {
                         Application.showForm(new FormDonHang(currentUserEmail));
                         break;
                     case 9:
-                        Application.showForm(new FormVoucher());
+                        Application.showForm(new ThongTinCaNhaForm(currentUserEmail));
                         break;
                     case 10:
                         Application.showForm(new FormKhoHang());

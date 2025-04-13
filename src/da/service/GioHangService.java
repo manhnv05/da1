@@ -135,52 +135,5 @@ public class GioHangService {
         }
     }
 
-    public boolean updateGioHang(int id, int soLuong, BigDecimal tongTien, String tenMauSac, String kichThuoc) {
-    String SQL = "UPDATE GioHang SET soLuong = ?, tongTien = ?, tenMauSac = ?, kichThuoc = ? WHERE id = ?";
-    try (PreparedStatement ps = conn.prepareStatement(SQL)) {
-        ps.setInt(1, soLuong);
-        ps.setBigDecimal(2, tongTien);
-        ps.setString(3, tenMauSac);
-        ps.setString(4, kichThuoc);
-        ps.setInt(5, id);
-        return ps.executeUpdate() > 0;
-    } catch (SQLException e) {
-        e.printStackTrace();
-        return false;
-    }
-}
-    
-    
-    public GioHang getGioHangById(int id) {
-    String SQL = "SELECT gh.id, gh.idNguoiDung, gh.idSanPham, sp.maSP, sp.tenSP, "
-               + "gh.tongTien, gh.soLuong, gh.tenMauSac, gh.kichThuoc, gh.ngayThem "
-               + "FROM GioHang gh "
-               + "JOIN SanPham sp ON gh.idSanPham = sp.id "
-               + "WHERE gh.id = ?";
-
-    try (PreparedStatement ps = conn.prepareStatement(SQL)) {
-        ps.setInt(1, id);
-
-        try (ResultSet rs = ps.executeQuery()) {
-            if (rs.next()) {
-                return new GioHang(
-                    rs.getInt("id"),
-                    rs.getInt("idNguoiDung"),
-                    rs.getInt("idSanPham"),
-                    rs.getString("maSP"),
-                    rs.getString("tenSP"),
-                    rs.getString("tenMauSac"),
-                    rs.getString("kichThuoc"),
-                    rs.getBigDecimal("tongTien"),
-                    rs.getInt("soLuong"),
-                    rs.getTimestamp("ngayThem")
-                );
-            }
-        }
-    } catch (SQLException e) {
-        e.printStackTrace();
-    }
-    return null;
-}
 
 }

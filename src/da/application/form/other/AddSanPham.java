@@ -108,68 +108,42 @@ public class AddSanPham extends javax.swing.JPanel {
         return true;
     }
     
-    public boolean checkForm(){
+    public boolean checkForm() {
         String ma = "^[A-Z]{2}\\d{4}$";
         String ten = "^[\\p{L}\\s]+$";
         if (txtMa.getText().trim().isEmpty()) {
             Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Bạn chưa nhập mã sản phẩm!");
             txtMa.requestFocus();
             return false;
-        } else if (!txtMa.getText().trim().matches(ma)) {
+        }
+        if (!txtMa.getText().trim().matches(ma)) {
             Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Mã Không Hợp lệ!");
             txtMa.requestFocus();
             return false;
-        } else if(txtTen.getText().trim().isEmpty()){
+        }
+        if (txtTen.getText().trim().isEmpty()) {
             Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Bạn chưa nhập tên sản phẩm!");
             txtTen.requestFocus();
             return false;
-        } else if (txtTen.getText().trim().length() > 255) {
+        }
+        if (txtTen.getText().trim().length() > 255) {
             Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Tên sản phẩm không được vượt quá 255 ký tự!");
             txtTen.requestFocus();
             return false;
-        }else if (txtTen.getText().trim().length() < 6) {
+        }
+        if (txtTen.getText().trim().length() < 6) {
             Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Tên sản phẩm không được ít hơn 6 kí tự!");
             txtTen.requestFocus();
             return false;
-        }else if (!txtTen.getText().trim().matches(ten)) {
+        }
+        if (!txtTen.getText().trim().matches(ten)) {
             Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Tên Không Hợp lệ!");
             txtTen.requestFocus();
             return false;
-        }else if(txtGia.getText().trim().isEmpty()){
+        }
+        if (txtGia.getText().trim().isEmpty()) {
             Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Bạn chưa nhập giá sản phẩm!");
             txtGia.requestFocus();
-            return false;
-        } else if (txtSoLuong.getText().trim().isEmpty()) {
-            Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Bạn chưa nhập số lượng tồn!");
-            txtSoLuong.requestFocus();
-            return false;
-        }else if (txaMoTa.getText().trim().isEmpty()) {
-            Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Bạn chưa nhập mô tả sản phẩm!");
-            txaMoTa.requestFocus();
-            return false;
-        } else if (txaMoTa.getText().trim().length() > 500) {
-            Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Mô tả không được vượt quá 500 ký tự!");
-            txaMoTa.requestFocus();
-            return false;
-        }else if (cboChatLieu.getSelectedItem() == null || cboChatLieu.getSelectedItem().toString().trim().isEmpty()) {
-            Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Bạn chưa chọn chất liệu!");
-            cboChatLieu.requestFocus();
-            return false;
-        } else if (cboXuatXu.getSelectedItem() == null || cboXuatXu.getSelectedItem().toString().trim().isEmpty()) {
-            Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Bạn chưa chọn xuất xứ!");
-            cboXuatXu.requestFocus();
-            return false;
-        } else if (cboNhaCC.getSelectedItem() == null || cboNhaCC.getSelectedItem().toString().trim().isEmpty()) {
-            Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Bạn chưa chọn nhà cung cấp!");
-            cboNhaCC.requestFocus();
-            return false;
-        } else if (cboKichThuoc.getSelectedItem() == null || cboKichThuoc.getSelectedItem().toString().trim().isEmpty()) {
-            Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Bạn chưa chọn kích thước!");
-            cboKichThuoc.requestFocus();
-            return false;
-        } else if (cboMauSac.getSelectedItem() == null || cboMauSac.getSelectedItem().toString().trim().isEmpty()) {
-            Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Bạn chưa chọn màu sắc!");
-            cboMauSac.requestFocus();
             return false;
         }
         try {
@@ -178,7 +152,8 @@ public class AddSanPham extends javax.swing.JPanel {
                 Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Giá không được là số âm!");
                 txtGia.requestFocus();
                 return false;
-            } else if (gia.compareTo(new BigDecimal("10000000")) >= 0) {
+            }
+            if (gia.compareTo(new BigDecimal("10000000")) >= 0) {
                 Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Giá phải nhỏ hơn 10 triệu!");
                 txtGia.requestFocus();
                 return false;
@@ -188,13 +163,19 @@ public class AddSanPham extends javax.swing.JPanel {
             txtGia.requestFocus();
             return false;
         }
+        if (txtSoLuong.getText().trim().isEmpty()) {
+            Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Bạn chưa nhập số lượng tồn!");
+            txtSoLuong.requestFocus();
+            return false;
+        }
         try {
             int slt = Integer.parseInt(txtSoLuong.getText().trim());
             if (slt < 0) {
                 Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Số lượng tồn không được âm!");
                 txtSoLuong.requestFocus();
                 return false;
-            } else if (slt > 1000) {
+            }
+            if (slt > 1000) {
                 Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Số lượng tồn không được vượt quá 1000!");
                 txtSoLuong.requestFocus();
                 return false;
@@ -204,6 +185,42 @@ public class AddSanPham extends javax.swing.JPanel {
             txtSoLuong.requestFocus();
             return false;
         }
+        if (txaMoTa.getText().trim().isEmpty()) {
+            Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Bạn chưa nhập mô tả sản phẩm!");
+            txaMoTa.requestFocus();
+            return false;
+        }
+        if (txaMoTa.getText().trim().length() > 500) {
+            Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Mô tả không được vượt quá 500 ký tự!");
+            txaMoTa.requestFocus();
+            return false;
+        }
+        if (cboChatLieu.getSelectedItem() == null || cboChatLieu.getSelectedItem().toString().trim().isEmpty()) {
+            Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Bạn chưa chọn chất liệu!");
+            cboChatLieu.requestFocus();
+            return false;
+        }
+        if (cboXuatXu.getSelectedItem() == null || cboXuatXu.getSelectedItem().toString().trim().isEmpty()) {
+            Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Bạn chưa chọn xuất xứ!");
+            cboXuatXu.requestFocus();
+            return false;
+        }
+        if (cboNhaCC.getSelectedItem() == null || cboNhaCC.getSelectedItem().toString().trim().isEmpty()) {
+            Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Bạn chưa chọn nhà cung cấp!");
+            cboNhaCC.requestFocus();
+            return false;
+        }
+        if (cboKichThuoc.getSelectedItem() == null || cboKichThuoc.getSelectedItem().toString().trim().isEmpty()) {
+            Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Bạn chưa chọn kích thước!");
+            cboKichThuoc.requestFocus();
+            return false;
+        }
+        if (cboMauSac.getSelectedItem() == null || cboMauSac.getSelectedItem().toString().trim().isEmpty()) {
+            Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Bạn chưa chọn màu sắc!");
+            cboMauSac.requestFocus();
+            return false;
+        }
+
         return true;
     }
     

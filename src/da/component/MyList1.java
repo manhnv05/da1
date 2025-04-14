@@ -1,5 +1,6 @@
 package da.component;
 
+import da.model.GioHang;
 import java.awt.*;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -45,16 +46,16 @@ public class MyList1<E> extends JList<E> {
 
         @Override
         public Component getListCellRendererComponent(JList<? extends E> list, E value, int index, boolean isSelected, boolean cellHasFocus) {
-            if (value instanceof ProductItem) {
-                ProductItem kh = (ProductItem) value;
+            if (value instanceof GioHang) {
+                GioHang gh = (GioHang) value;
 
                 // Đặt nội dung
-                lblTitle.setText("<html><b>" + kh.getName() + "</b></html>");
-                lblQuantity.setText("Số lượng: " + kh.getQuantity());
-                lblGia.setText("<html>Giá: <font color='red'>" + kh.getPrice() + " VND</font></html>"); // Đặt giá trị cho lblGia
+                lblTitle.setText("<html><b>" + gh.getTenSP() + "</b></html>");
+                lblQuantity.setText("Số lượng: " + gh.getSoLuong());
+                lblGia.setText("<html>Giá: <font color='red'>" + gh.getTongTien() + " VND</font></html>"); // Đặt giá trị cho lblGia
 
                 // Hiển thị hình ảnh (scale cho vừa)
-                ImageIcon icon = new ImageIcon(kh.getImagePath());
+                ImageIcon icon = new ImageIcon(gh.getHinhAnh());
                 Image img = icon.getImage().getScaledInstance(50, 50, Image.SCALE_SMOOTH);
                 lblImage.setIcon(new ImageIcon(img));
 

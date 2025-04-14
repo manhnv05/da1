@@ -126,8 +126,8 @@ public class AddSanPham extends javax.swing.JPanel {
             txtTen.requestFocus();
             return false;
         }
-        if (txtTen.getText().trim().length() > 255) {
-            Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Tên sản phẩm không được vượt quá 255 ký tự!");
+        if (txtTen.getText().trim().length() > 50) {
+            Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Tên sản phẩm không được vượt quá 50 ký tự!");
             txtTen.requestFocus();
             return false;
         }

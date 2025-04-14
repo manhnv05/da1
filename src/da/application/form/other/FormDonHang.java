@@ -16,9 +16,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JFileChooser;
@@ -53,7 +53,6 @@ public class FormDonHang extends javax.swing.JPanel {
         initComponents();
         initMS();
         initKT();
-        applyListStyle();
         applyTableStyle(tblSanPham);
         applyTableStyle(tblGioHang);
         loadSanPhamData(service.searchSanPham(""));
@@ -102,20 +101,25 @@ public class FormDonHang extends javax.swing.JPanel {
     }
     
     
-    private void applyListStyle() {
-        MyList1<ProductItem> list = new MyList1<>();
-        list.addItem(new ProductItem("Xiaomi Redmi Note 12", 22, new BigDecimal("4990000"), "D:\\da1\\da1\\src\\da\\icon\\png\\img6.png"));
-        list.addItem(new ProductItem("Samsung Galaxy S20 FE", 6, new BigDecimal("8990000"), "D:\\da1\\da1\\src\\da\\icon\\png\\img5.png"));
-        list.addItem(new ProductItem("Samsung Galaxy S22+ 5G", 20, new BigDecimal("15990000"), "D:\\da1\\da1\\src\\da\\icon\\png\\img4.png"));
-        list.addItem(new ProductItem("OPPO Reno6 Pro 5G", 7, new BigDecimal("10990000"), "D:\\da1\\da1\\src\\da\\icon\\png\\aomu.jpg"));
-
-        JScrollPane scrollPane = new JScrollPane(list);
-        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-
-        myList11.setLayout(new BorderLayout()); // Đảm bảo sử dụng BorderLayout
-        myList11.add(scrollPane, BorderLayout.CENTER);
-
+    private void applyListStyle(List<Integer> id) {
+        List<GioHang> khList = service1.getProductsByGioHang(id);
+        myList11.removeAll();
+        if (khList.isEmpty()) {
+            JLabel emptyLabel = new JLabel("Không có sản phẩm nào trong khu vực kho này.");
+            emptyLabel.setHorizontalAlignment(SwingConstants.CENTER);
+            myList11.setLayout(new BorderLayout());
+            myList11.add(emptyLabel, BorderLayout.CENTER);
+        } else {
+            MyList1<GioHang> list = new MyList1<>();
+            for (GioHang kh : khList) {
+                list.addItem(kh);
+            }
+            JScrollPane scrollPane = new JScrollPane(list);
+            scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+            scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+            myList11.setLayout(new BorderLayout());
+            myList11.add(scrollPane, BorderLayout.CENTER);
+        }
         myList11.revalidate();
         myList11.repaint();
     }
@@ -210,8 +214,7 @@ public class FormDonHang extends javax.swing.JPanel {
                 gioHang.getSoLuong(),       
                 gioHang.getTongTien(),
                 gioHang.getTenMauSac(),
-                gioHang.getKichThuoc(),
-                gioHang.getNgayThem()    
+                gioHang.getKichThuoc()
             };
             tblModel.addRow(rowData);
         }
@@ -329,9 +332,8 @@ public class FormDonHang extends javax.swing.JPanel {
             }
             String tenMauSac = cboMau.getSelectedItem().toString();
             String kichThuoc = cboKichThuoc.getSelectedItem().toString();
-            Timestamp ngayThem = new Timestamp(System.currentTimeMillis());
             // Tạo đối tượng GioHang và thêm vào cơ sở dữ liệu
-            GioHang gioHang = new GioHang(0, idNguoiDung, idSanPham, maSP, tenSP,tenMauSac,kichThuoc, tongTien, soLuong, ngayThem);
+            GioHang gioHang = new GioHang(0, idNguoiDung, idSanPham, maSP, tenSP,tenMauSac,kichThuoc, tongTien, soLuong);
             boolean success = service1.addGioHang(gioHang);
             if (success) {
                 boolean updated = service.updateSoLuongTon(idSanPham, soLuong);
@@ -411,7 +413,7 @@ public class FormDonHang extends javax.swing.JPanel {
 
                 // Tiêu đề cột
                 String[] headers = {"STT", "ID Giỏ Hàng", "Mã Sản Phẩm", "Tên Sản Phẩm", "Số Lượng", 
-                                    "Tổng Tiền", "Màu Sắc", "Kích Thước", "Ngày Thêm"};
+                                    "Tổng Tiền", "Màu Sắc", "Kích Thước"};
                 Row rowCol = sheet.createRow(0);
                 for (int i = 0; i < headers.length; i++) {
                     rowCol.createCell(i).setCellValue(headers[i]);
@@ -429,7 +431,6 @@ public class FormDonHang extends javax.swing.JPanel {
                     row.createCell(5).setCellValue(gh.getTongTien().toString());
                     row.createCell(6).setCellValue(gh.getTenMauSac());
                     row.createCell(7).setCellValue(gh.getKichThuoc());
-                    row.createCell(8).setCellValue(gh.getNgayThem().toString());
                 }
 
                 // Ghi dữ liệu ra file
@@ -821,14 +822,14 @@ public class FormDonHang extends javax.swing.JPanel {
 
             },
             new String [] {
-                "ID", "Mã Sản Phẩm", "Tên SP", "Số lượng", "Tổng tiền", "Màu Sắc", "Size", "Ngày", ""
+                "ID", "Mã Sản Phẩm", "Tên SP", "Số lượng", "Tổng tiền", "Màu Sắc", "Size", ""
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Boolean.class
+                java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Boolean.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false, false, true
+                false, false, false, false, false, false, false, true
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -837,6 +838,11 @@ public class FormDonHang extends javax.swing.JPanel {
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
+            }
+        });
+        tblGioHang.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tblGioHangMouseClicked(evt);
             }
         });
         jScrollPane8.setViewportView(tblGioHang);
@@ -989,7 +995,19 @@ public class FormDonHang extends javax.swing.JPanel {
         search();
     }//GEN-LAST:event_jButton2ActionPerformed
 
+    private void tblGioHangMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblGioHangMouseClicked
+        List<Integer> ids = new ArrayList<>();
+    for (int row = 0; row < tblGioHang.getRowCount(); row++) {
+        Boolean isChecked = (Boolean) tblGioHang.getValueAt(row, tblGioHang.getColumnCount() - 1); // Cột checkbox
+        if (isChecked != null && isChecked) { // Kiểm tra nếu checkbox được tick
+            int id = (int) tblGioHang.getValueAt(row, 0); // Lấy ID từ cột đầu tiên
+            ids.add(id);
+        }
+    }
+    applyListStyle(ids); // Gọi phương thức hiển thị danh sách sản phẩm
+    }//GEN-LAST:event_tblGioHangMouseClicked
 
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox<String> cboKichThuoc;
     private javax.swing.JComboBox<String> cboMau;

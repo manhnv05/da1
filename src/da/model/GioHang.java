@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 
 public class GioHang {
-    private int id;
+    private Integer id;
     private int idNguoiDung;
     private int idSanPham;
     private String maSP;
@@ -13,16 +13,16 @@ public class GioHang {
     private String kichThuoc;   // Thêm kích thước
     private BigDecimal tongTien;
     private int soLuong;
-    private Timestamp ngayThem;
+    private String hinhAnh;
 
     // Constructor mặc định
     public GioHang() {
     }
 
     // Constructor đầy đủ
-    public GioHang(int id, int idNguoiDung, int idSanPham, String maSP, String tenSP,
+    public GioHang(Integer id, int idNguoiDung, int idSanPham, String maSP, String tenSP,
                    String tenMauSac, String kichThuoc,
-                   BigDecimal tongTien, int soLuong, Timestamp ngayThem) {
+                   BigDecimal tongTien, int soLuong) {
         this.id = id;
         this.idNguoiDung = idNguoiDung;
         this.idSanPham = idSanPham;
@@ -32,15 +32,36 @@ public class GioHang {
         this.kichThuoc = kichThuoc;
         this.tongTien = tongTien;
         this.soLuong = soLuong;
-        this.ngayThem = ngayThem;
     }
 
-    // Getters và Setters
-    public int getId() {
+    public GioHang(Integer id, int idNguoiDung, int idSanPham, String maSP, String tenSP, String tenMauSac, String kichThuoc, BigDecimal tongTien, int soLuong, String hinhAnh) {
+        this.id = id;
+        this.idNguoiDung = idNguoiDung;
+        this.idSanPham = idSanPham;
+        this.maSP = maSP;
+        this.tenSP = tenSP;
+        this.tenMauSac = tenMauSac;
+        this.kichThuoc = kichThuoc;
+        this.tongTien = tongTien;
+        this.soLuong = soLuong;
+        this.hinhAnh = hinhAnh;
+    }
+
+    public String getHinhAnh() {
+        return hinhAnh;
+    }
+
+    public void setHinhAnh(String hinhAnh) {
+        this.hinhAnh = hinhAnh;
+    }
+    
+
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    // Getters và Setters
+    public void setId(Integer id) {    
         this.id = id;
     }
 
@@ -108,14 +129,6 @@ public class GioHang {
         this.soLuong = soLuong;
     }
 
-    public Timestamp getNgayThem() {
-        return ngayThem;
-    }
-
-    public void setNgayThem(Timestamp ngayThem) {
-        this.ngayThem = ngayThem;
-    }
-
     @Override
     public String toString() {
         return "GioHang{" +
@@ -128,7 +141,6 @@ public class GioHang {
                ", kichThuoc='" + kichThuoc + '\'' +
                ", tongTien=" + tongTien +
                ", soLuong=" + soLuong +
-               ", ngayThem=" + ngayThem +
                '}';
     }
 }

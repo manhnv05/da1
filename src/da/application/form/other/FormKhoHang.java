@@ -12,7 +12,9 @@ import com.formdev.flatlaf.themes.FlatMacDarkLaf;
 import com.formdev.flatlaf.themes.FlatMacLightLaf;
 import da.component.MyList;
 import da.component.ProductItem;
+import da.model.KhoHang;
 import da.model.KhuVucKho;
+import da.service.KhoHangService;
 import da.service.KhuVucKhoService;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -22,6 +24,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.util.ArrayList;
+import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JLabel;
@@ -45,6 +48,8 @@ import raven.toast.Notifications;
  */
 public class FormKhoHang extends javax.swing.JPanel {
     KhuVucKhoService service = new KhuVucKhoService();
+    KhoHangService service1 = new KhoHangService();
+
     /**
      * Creates new form FormKhoHang
      */
@@ -52,7 +57,6 @@ public class FormKhoHang extends javax.swing.JPanel {
         initComponents();
         applyTableStyle(tblKhuVuc);
         applyTableStyle(jTable2);
-        applyListStyle();
         loadKhuVucKhoData(service.searchKhuVucKhoByName(""));
     }
     
@@ -104,23 +108,28 @@ public class FormKhoHang extends javax.swing.JPanel {
     }
     
     
-    private void applyListStyle() {
-    MyList<ProductItem> list = new MyList<>();
-        list.addItem(new ProductItem("Xiaomi Redmi Note 12", 22, "D:\\da1\\da1\\src\\da\\icon\\png\\img6.png"));
-        list.addItem(new ProductItem("Samsung Galaxy S20 FE", 6, "D:\\da1\\da1\\src\\da\\icon\\png\\img5.png"));
-        list.addItem(new ProductItem("Samsung Galaxy S22+ 5G", 20, "D:\\da1\\da1\\src\\da\\icon\\png\\img4.png"));
-        list.addItem(new ProductItem("OPPO Reno6 Pro 5G", 7, "D:\\da1\\da1\\src\\da\\icon\\png\\aomu.jpg"));
-
-        JScrollPane scrollPane = new JScrollPane(list);
-        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-
-        myList1.setLayout(new BorderLayout()); // Đảm bảo sử dụng BorderLayout
-        myList1.add(scrollPane, BorderLayout.CENTER);
-
-        myList1.revalidate();
-        myList1.repaint();
-}
+    private void applyListStyle(int idKhuVucKho) {
+        List<KhoHang> khList = service1.getProductsByKhuVucKho(idKhuVucKho);
+        myList1.removeAll();
+        if (khList.isEmpty()) {
+            JLabel emptyLabel = new JLabel("Không có sản phẩm nào trong khu vực kho này.");
+            emptyLabel.setHorizontalAlignment(SwingConstants.CENTER);
+            myList1.setLayout(new BorderLayout());
+            myList1.add(emptyLabel, BorderLayout.CENTER);
+        } else {
+            MyList<KhoHang> list = new MyList<>();
+            for (KhoHang kh : khList) {
+                list.addItem(kh);
+            }
+            JScrollPane scrollPane = new JScrollPane(list);
+            //scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+            //scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+            myList1.setLayout(new BorderLayout());
+            myList1.add(scrollPane, BorderLayout.CENTER);
+        }
+//        myList1.revalidate();
+//        myList1.repaint();
+    }
     
     public void loadKhuVucKhoData(ArrayList<KhuVucKho> list) {
         DefaultTableModel tblModel = (DefaultTableModel) tblKhuVuc.getModel();
@@ -468,6 +477,11 @@ public class FormKhoHang extends javax.swing.JPanel {
                 return canEdit [columnIndex];
             }
         });
+        tblKhuVuc.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tblKhuVucMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(tblKhuVuc);
 
         crazyPanel1.add(jScrollPane1);
@@ -776,6 +790,16 @@ public class FormKhoHang extends javax.swing.JPanel {
     private void cmdSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdSearchActionPerformed
         search();
     }//GEN-LAST:event_cmdSearchActionPerformed
+
+    private void tblKhuVucMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblKhuVucMouseClicked
+        int selectedRow = tblKhuVuc.getSelectedRow();
+            if (selectedRow != -1) {
+                // Lấy ID khu vực kho từ bảng
+                int idKhuVucKho = (int) tblKhuVuc.getValueAt(selectedRow, 0);
+                // Gọi phương thức để hiển thị danh sách sản phẩm trong khu vực kho
+                applyListStyle(idKhuVucKho);
+            }
+    }//GEN-LAST:event_tblKhuVucMouseClicked
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

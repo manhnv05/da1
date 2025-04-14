@@ -4,10 +4,13 @@ package da.application.form.other;
 import com.formdev.flatlaf.FlatClientProperties;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import da.application.Application;
+import da.component.MyList;
+import da.component.ProductItem;
 import da.model.GioHang;
 import da.model.SanPham;
 import da.service.GioHangService;
 import da.service.SanPhamService;
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.io.File;
@@ -21,12 +24,15 @@ import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.ListCellRenderer;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
@@ -54,7 +60,7 @@ public class FormDonHang extends javax.swing.JPanel {
         initComponents();
         initMS();
         initKT();
-        applyListStyle(jList1);
+        applyListStyle();
         applyTableStyle(tblSanPham);
         applyTableStyle(tblGioHang);
         loadSanPhamData(service.searchSanPham(""));
@@ -103,30 +109,24 @@ public class FormDonHang extends javax.swing.JPanel {
     }
     
     
-        private void applyListStyle(JList<String> list) {
-            list.setFixedCellHeight(50);
-            list.setCellRenderer(new DefaultListCellRenderer() {
-                @Override
-                public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-                    JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-                    label.setBorder(BorderFactory.createEmptyBorder(10, 5, 10, 5)); // Padding trên, trái, dưới, phải
-                    boolean isDarkMode = UIManager.getLookAndFeel().getName().toLowerCase().contains("dark");
-                    Color evenColor = isDarkMode ? new Color(50, 50, 50) : new Color(220, 220, 220);
-                    Color oddColor = list.getBackground();
-                    if (index % 2 == 0) {
-                        label.setBackground(evenColor);
-                    } else {
-                        label.setBackground(oddColor);
-                    }
-                    if (isSelected) {
-                        label.setBackground(list.getSelectionBackground());
-                        label.setForeground(list.getSelectionForeground());
-                    }
+    private void applyListStyle() {
+        MyList<ProductItem> list = new MyList<>();
+        list.addItem(new ProductItem("Xiaomi Redmi Note 12", 22, "D:\\da1\\da1\\src\\da\\icon\\png\\img6.png"));
+        list.addItem(new ProductItem("Samsung Galaxy S20 FE", 6, "D:\\da1\\da1\\src\\da\\icon\\png\\img5.png"));
+        list.addItem(new ProductItem("Samsung Galaxy S22+ 5G", 20, "D:\\da1\\da1\\src\\da\\icon\\png\\img4.png"));
+        list.addItem(new ProductItem("OPPO Reno6 Pro 5G", 7, "D:\\da1\\da1\\src\\da\\icon\\png\\aomu.jpg"));
 
-                    return label;
-                }
-            });
-        }
+        JScrollPane scrollPane = new JScrollPane(list);
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+
+        myList1.setLayout(new BorderLayout()); // Đảm bảo sử dụng BorderLayout
+        myList1.add(scrollPane, BorderLayout.CENTER);
+
+        myList1.revalidate();
+        myList1.repaint();
+    }
+
         
         public void loadSanPhamData(ArrayList<SanPham> list) {
             DefaultTableModel tblModel = (DefaultTableModel) tblSanPham.getModel();
@@ -502,11 +502,11 @@ public class FormDonHang extends javax.swing.JPanel {
         tblGioHang = new javax.swing.JTable();
         crazyPanel13 = new raven.crazypanel.CrazyPanel();
         panelTransparent2 = new da.component.PanelTransparent();
-        jScrollPane3 = new javax.swing.JScrollPane();
-        jList1 = new javax.swing.JList<>();
         jLabel8 = new javax.swing.JLabel();
         crazyPanel24 = new raven.crazypanel.CrazyPanel();
         cmdUpdate5 = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        myList1 = new da.component.MyList<>();
         jPanel2 = new javax.swing.JPanel();
         jButton1 = new javax.swing.JButton();
 
@@ -828,12 +828,19 @@ public class FormDonHang extends javax.swing.JPanel {
 
             },
             new String [] {
-                "ID", "Mã Sản Phẩm", "Tên SP", "Số lượng", "Tổng tiền", "Màu Sắc", "Size", "Ngày"
+                "ID", "Mã Sản Phẩm", "Tên SP", "Số lượng", "Tổng tiền", "Màu Sắc", "Size", "Ngày", ""
             }
         ) {
-            boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, true, true, true
+            Class[] types = new Class [] {
+                java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Boolean.class
             };
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false, false, false, false, true
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
@@ -858,18 +865,6 @@ public class FormDonHang extends javax.swing.JPanel {
         ));
 
         panelTransparent2.setPreferredSize(new java.awt.Dimension(139, 500));
-
-        jList1.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 10, 5, 10));
-        jList1.setModel(new javax.swing.AbstractListModel<String>() {
-            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
-            public int getSize() { return strings.length; }
-            public String getElementAt(int i) { return strings[i]; }
-        });
-        jList1.setFixedCellHeight(40);
-        jScrollPane3.setViewportView(jList1);
-
-        panelTransparent2.add(jScrollPane3);
-        jScrollPane3.setBounds(0, 0, 280, 332);
 
         jLabel8.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
         jLabel8.setForeground(new java.awt.Color(255, 51, 51));
@@ -901,6 +896,16 @@ public class FormDonHang extends javax.swing.JPanel {
 
         panelTransparent2.add(crazyPanel24);
         crazyPanel24.setBounds(30, 380, 210, 40);
+
+        myList1.setModel(new javax.swing.AbstractListModel<String>() {
+            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
+            public int getSize() { return strings.length; }
+            public String getElementAt(int i) { return strings[i]; }
+        });
+        jScrollPane1.setViewportView(myList1);
+
+        panelTransparent2.add(jScrollPane1);
+        jScrollPane1.setBounds(10, 10, 270, 330);
 
         crazyPanel13.add(panelTransparent2);
 
@@ -1022,13 +1027,13 @@ public class FormDonHang extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
-    private javax.swing.JList<String> jList1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane7;
     private javax.swing.JScrollPane jScrollPane8;
     private da.component.MaterialTabbed materialTabbed1;
+    private da.component.MyList<String> myList1;
     private da.component.PanelTransparent panelTransparent1;
     private da.component.PanelTransparent panelTransparent2;
     private javax.swing.JTable tblGioHang;

@@ -10,8 +10,11 @@ import com.formdev.flatlaf.extras.FlatAnimatedLafChange;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import com.formdev.flatlaf.themes.FlatMacDarkLaf;
 import com.formdev.flatlaf.themes.FlatMacLightLaf;
+import da.component.MyList;
+import da.component.ProductItem;
 import da.model.KhuVucKho;
 import da.service.KhuVucKhoService;
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.EventQueue;
@@ -49,16 +52,16 @@ public class FormKhoHang extends javax.swing.JPanel {
         initComponents();
         applyTableStyle(tblKhuVuc);
         applyTableStyle(jTable2);
-        applyListStyle(jList1);
+        applyListStyle();
         loadKhuVucKhoData(service.searchKhuVucKhoByName(""));
     }
     
     private void applyTableStyle(JTable table) {
 
-        cmdDetails.setIcon(new FlatSVGIcon("da/icon/svg/details.svg", 0.35f));
-        cmdUpdate.setIcon(new FlatSVGIcon("da/icon/svg/edit.svg", 0.35f));
+        cmdSearch.setIcon(new FlatSVGIcon("da/icon/svg/search.svg", 0.35f));
+        cmdAdd.setIcon(new FlatSVGIcon("da/icon/svg/add.svg", 0.35f));
         cmdDelete.setIcon(new FlatSVGIcon("da/icon/svg/delete.svg", 0.35f));
-        cmdExcel.setIcon(new FlatSVGIcon("da/icon/svg/print.svg", 0.35f));
+        cmdUpdate.setIcon(new FlatSVGIcon("da/icon/svg/edit.svg", 0.35f));
         cmdDetails1.setIcon(new FlatSVGIcon("da/icon/svg/details.svg", 0.35f));
         cmdUpdate1.setIcon(new FlatSVGIcon("da/icon/svg/edit.svg", 0.35f));
         cmdAdd1.setIcon(new FlatSVGIcon("da/icon/svg/delete.svg", 0.35f));
@@ -101,37 +104,22 @@ public class FormKhoHang extends javax.swing.JPanel {
     }
     
     
-    private void applyListStyle(JList<String> list) {
-    list.setFixedCellHeight(50); // Đặt chiều cao cố định cho mỗi item
+    private void applyListStyle() {
+    MyList<ProductItem> list = new MyList<>();
+        list.addItem(new ProductItem("Xiaomi Redmi Note 12", 22, "D:\\da1\\da1\\src\\da\\icon\\png\\img6.png"));
+        list.addItem(new ProductItem("Samsung Galaxy S20 FE", 6, "D:\\da1\\da1\\src\\da\\icon\\png\\img5.png"));
+        list.addItem(new ProductItem("Samsung Galaxy S22+ 5G", 20, "D:\\da1\\da1\\src\\da\\icon\\png\\img4.png"));
+        list.addItem(new ProductItem("OPPO Reno6 Pro 5G", 7, "D:\\da1\\da1\\src\\da\\icon\\png\\aomu.jpg"));
 
-    list.setCellRenderer(new DefaultListCellRenderer() {
-        @Override
-        public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-            JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-            label.setBorder(BorderFactory.createEmptyBorder(10, 5, 10, 5)); // Padding trên, trái, dưới, phải
+        JScrollPane scrollPane = new JScrollPane(list);
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 
-            // Kiểm tra giao diện hiện tại của Swing
-            boolean isDarkMode = UIManager.getLookAndFeel().getName().toLowerCase().contains("dark");
+        myList1.setLayout(new BorderLayout()); // Đảm bảo sử dụng BorderLayout
+        myList1.add(scrollPane, BorderLayout.CENTER);
 
-            // Màu nền xen kẽ cho Light Mode & Dark Mode
-            Color evenColor = isDarkMode ? new Color(50, 50, 50) : new Color(220, 220, 220);
-            Color oddColor = list.getBackground(); // Giữ nguyên màu nền mặc định
-
-            if (index % 2 == 0) {
-                label.setBackground(evenColor);
-            } else {
-                label.setBackground(oddColor);
-            }
-
-            // Giữ màu khi item được chọn
-            if (isSelected) {
-                label.setBackground(list.getSelectionBackground());
-                label.setForeground(list.getSelectionForeground());
-            }
-
-            return label;
-        }
-    });
+        myList1.revalidate();
+        myList1.repaint();
 }
     
     public void loadKhuVucKhoData(ArrayList<KhuVucKho> list) {
@@ -361,16 +349,16 @@ public class FormKhoHang extends javax.swing.JPanel {
         crazyPanel1 = new raven.crazypanel.CrazyPanel();
         crazyPanel2 = new raven.crazypanel.CrazyPanel();
         txtSearch = new javax.swing.JTextField();
-        cmdDetails = new javax.swing.JButton();
-        cmdUpdate = new javax.swing.JButton();
+        cmdSearch = new javax.swing.JButton();
+        cmdAdd = new javax.swing.JButton();
         cmdDelete = new javax.swing.JButton();
-        cmdExcel = new javax.swing.JButton();
+        cmdUpdate = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         tblKhuVuc = new javax.swing.JTable();
         crazyPanel3 = new raven.crazypanel.CrazyPanel();
         jLabel1 = new javax.swing.JLabel();
-        jScrollPane3 = new javax.swing.JScrollPane();
-        jList1 = new javax.swing.JList<>();
+        jScrollPane4 = new javax.swing.JScrollPane();
+        myList1 = new da.component.MyList<>();
         jPanel4 = new javax.swing.JPanel();
         crazyPanel5 = new raven.crazypanel.CrazyPanel();
         panelTransparent2 = new da.component.PanelTransparent();
@@ -430,21 +418,21 @@ public class FormKhoHang extends javax.swing.JPanel {
         ));
         crazyPanel2.add(txtSearch);
 
-        cmdDetails.setText("Search");
-        cmdDetails.addActionListener(new java.awt.event.ActionListener() {
+        cmdSearch.setText("Search");
+        cmdSearch.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cmdDetailsActionPerformed(evt);
+                cmdSearchActionPerformed(evt);
             }
         });
-        crazyPanel2.add(cmdDetails);
+        crazyPanel2.add(cmdSearch);
 
-        cmdUpdate.setText("Add");
-        cmdUpdate.addActionListener(new java.awt.event.ActionListener() {
+        cmdAdd.setText("Add");
+        cmdAdd.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cmdUpdateActionPerformed(evt);
+                cmdAddActionPerformed(evt);
             }
         });
-        crazyPanel2.add(cmdUpdate);
+        crazyPanel2.add(cmdAdd);
 
         cmdDelete.setText("Delete");
         cmdDelete.addActionListener(new java.awt.event.ActionListener() {
@@ -454,13 +442,13 @@ public class FormKhoHang extends javax.swing.JPanel {
         });
         crazyPanel2.add(cmdDelete);
 
-        cmdExcel.setText("Update");
-        cmdExcel.addActionListener(new java.awt.event.ActionListener() {
+        cmdUpdate.setText("Update");
+        cmdUpdate.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cmdExcelActionPerformed(evt);
+                cmdUpdateActionPerformed(evt);
             }
         });
-        crazyPanel2.add(cmdExcel);
+        crazyPanel2.add(cmdUpdate);
 
         crazyPanel1.add(crazyPanel2);
 
@@ -498,16 +486,14 @@ public class FormKhoHang extends javax.swing.JPanel {
         jLabel1.setText("Danh Sách Sản Phẩm đang có trong khu vực");
         crazyPanel3.add(jLabel1);
 
-        jList1.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 10, 5, 10));
-        jList1.setModel(new javax.swing.AbstractListModel<String>() {
+        myList1.setModel(new javax.swing.AbstractListModel<String>() {
             String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
             public int getSize() { return strings.length; }
             public String getElementAt(int i) { return strings[i]; }
         });
-        jList1.setFixedCellHeight(40);
-        jScrollPane3.setViewportView(jList1);
+        jScrollPane4.setViewportView(myList1);
 
-        crazyPanel3.add(jScrollPane3);
+        crazyPanel3.add(jScrollPane4);
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
@@ -775,31 +761,31 @@ public class FormKhoHang extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void cmdUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdUpdateActionPerformed
+    private void cmdAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdAddActionPerformed
         add();
-    }//GEN-LAST:event_cmdUpdateActionPerformed
+    }//GEN-LAST:event_cmdAddActionPerformed
 
-    private void cmdExcelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdExcelActionPerformed
+    private void cmdUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdUpdateActionPerformed
         update();
-    }//GEN-LAST:event_cmdExcelActionPerformed
+    }//GEN-LAST:event_cmdUpdateActionPerformed
 
     private void cmdDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdDeleteActionPerformed
         delete();
     }//GEN-LAST:event_cmdDeleteActionPerformed
 
-    private void cmdDetailsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdDetailsActionPerformed
+    private void cmdSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdSearchActionPerformed
         search();
-    }//GEN-LAST:event_cmdDetailsActionPerformed
+    }//GEN-LAST:event_cmdSearchActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton cmdAdd;
     private javax.swing.JButton cmdAdd1;
     private javax.swing.JButton cmdDelete;
-    private javax.swing.JButton cmdDetails;
     private javax.swing.JButton cmdDetails1;
-    private javax.swing.JButton cmdExcel;
     private javax.swing.JButton cmdExcel1;
     private javax.swing.JButton cmdNew1;
+    private javax.swing.JButton cmdSearch;
     private javax.swing.JButton cmdUpdate;
     private javax.swing.JButton cmdUpdate1;
     private raven.crazypanel.CrazyPanel crazyPanel1;
@@ -820,17 +806,17 @@ public class FormKhoHang extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
-    private javax.swing.JList<String> jList1;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JTable jTable2;
     private javax.swing.JTextField jTextField3;
     private javax.swing.JTextField jTextField4;
     private javax.swing.JLabel lblFilter1;
     private da.component.MaterialTabbed materialTabbed2;
+    private da.component.MyList<String> myList1;
     private da.component.PanelTransparent panelTransparent2;
     private javax.swing.JTable tblKhuVuc;
     private javax.swing.JTextField txtSearch;

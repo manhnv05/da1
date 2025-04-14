@@ -5,6 +5,7 @@ import com.formdev.flatlaf.FlatClientProperties;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import da.application.Application;
 import da.component.MyList;
+import da.component.MyList1;
 import da.component.ProductItem;
 import da.model.GioHang;
 import da.model.SanPham;
@@ -110,7 +111,7 @@ public class FormDonHang extends javax.swing.JPanel {
     
     
     private void applyListStyle() {
-        MyList<ProductItem> list = new MyList<>();
+        MyList1<ProductItem> list = new MyList1<>();
         list.addItem(new ProductItem("Xiaomi Redmi Note 12", 22, "D:\\da1\\da1\\src\\da\\icon\\png\\img6.png"));
         list.addItem(new ProductItem("Samsung Galaxy S20 FE", 6, "D:\\da1\\da1\\src\\da\\icon\\png\\img5.png"));
         list.addItem(new ProductItem("Samsung Galaxy S22+ 5G", 20, "D:\\da1\\da1\\src\\da\\icon\\png\\img4.png"));
@@ -120,11 +121,11 @@ public class FormDonHang extends javax.swing.JPanel {
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 
-        myList1.setLayout(new BorderLayout()); // Đảm bảo sử dụng BorderLayout
-        myList1.add(scrollPane, BorderLayout.CENTER);
+        myList11.setLayout(new BorderLayout()); // Đảm bảo sử dụng BorderLayout
+        myList11.add(scrollPane, BorderLayout.CENTER);
 
-        myList1.revalidate();
-        myList1.repaint();
+        myList11.revalidate();
+        myList11.repaint();
     }
 
         
@@ -505,8 +506,8 @@ public class FormDonHang extends javax.swing.JPanel {
         jLabel8 = new javax.swing.JLabel();
         crazyPanel24 = new raven.crazypanel.CrazyPanel();
         cmdUpdate5 = new javax.swing.JButton();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        myList1 = new da.component.MyList<>();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        myList11 = new da.component.MyList1<>();
         jPanel2 = new javax.swing.JPanel();
         jButton1 = new javax.swing.JButton();
 
@@ -897,15 +898,15 @@ public class FormDonHang extends javax.swing.JPanel {
         panelTransparent2.add(crazyPanel24);
         crazyPanel24.setBounds(30, 380, 210, 40);
 
-        myList1.setModel(new javax.swing.AbstractListModel<String>() {
+        myList11.setModel(new javax.swing.AbstractListModel<String>() {
             String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
             public int getSize() { return strings.length; }
             public String getElementAt(int i) { return strings[i]; }
         });
-        jScrollPane1.setViewportView(myList1);
+        jScrollPane2.setViewportView(myList11);
 
-        panelTransparent2.add(jScrollPane1);
-        jScrollPane1.setBounds(10, 10, 270, 330);
+        panelTransparent2.add(jScrollPane2);
+        jScrollPane2.setBounds(10, 10, 270, 320);
 
         crazyPanel13.add(panelTransparent2);
 
@@ -1029,11 +1030,11 @@ public class FormDonHang extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel8;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane7;
     private javax.swing.JScrollPane jScrollPane8;
     private da.component.MaterialTabbed materialTabbed1;
-    private da.component.MyList<String> myList1;
+    private da.component.MyList1<String> myList11;
     private da.component.PanelTransparent panelTransparent1;
     private da.component.PanelTransparent panelTransparent2;
     private javax.swing.JTable tblGioHang;

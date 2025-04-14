@@ -122,13 +122,13 @@ public class FormKhoHang extends javax.swing.JPanel {
                 list.addItem(kh);
             }
             JScrollPane scrollPane = new JScrollPane(list);
-            //scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-            //scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+            scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+            scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
             myList1.setLayout(new BorderLayout());
             myList1.add(scrollPane, BorderLayout.CENTER);
         }
-//        myList1.revalidate();
-//        myList1.repaint();
+        myList1.revalidate();
+        myList1.repaint();
     }
     
     public void loadKhuVucKhoData(ArrayList<KhuVucKho> list) {

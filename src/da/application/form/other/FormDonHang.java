@@ -106,10 +106,10 @@ public class FormDonHang extends javax.swing.JPanel {
         List<GioHang> khList = service1.getProductsByGioHang(id);
         myList11.removeAll();
         if (khList.isEmpty()) {
-            JLabel emptyLabel = new JLabel("Không có sản phẩm nào trong khu vực kho này.");
-            emptyLabel.setHorizontalAlignment(SwingConstants.CENTER);
-            myList11.setLayout(new BorderLayout());
-            myList11.add(emptyLabel, BorderLayout.CENTER);
+//            JLabel emptyLabel = new JLabel("Không có sản phẩm nào trong khu vực kho này.");
+//            emptyLabel.setHorizontalAlignment(SwingConstants.CENTER);
+//            myList11.setLayout(new BorderLayout());
+//            myList11.add(emptyLabel, BorderLayout.CENTER);
         } else {
             MyList1<GioHang> list = new MyList1<>();
             for (GioHang kh : khList) {
@@ -920,6 +920,11 @@ public class FormDonHang extends javax.swing.JPanel {
         ));
 
         cmdUpdate5.setText("Tạo Hóa Đơn");
+        cmdUpdate5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cmdUpdate5ActionPerformed(evt);
+            }
+        });
         crazyPanel24.add(cmdUpdate5);
 
         panelTransparent2.add(crazyPanel24);
@@ -1041,6 +1046,10 @@ public class FormDonHang extends javax.swing.JPanel {
     }
     applyListStyle(ids); // Gọi phương thức hiển thị danh sách sản phẩm
     }//GEN-LAST:event_tblGioHangMouseClicked
+
+    private void cmdUpdate5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdUpdate5ActionPerformed
+        Application.showForm(new HoaDonForm());
+    }//GEN-LAST:event_cmdUpdate5ActionPerformed
 
     
     // Variables declaration - do not modify//GEN-BEGIN:variables

@@ -57,6 +57,7 @@ public class FormDonHang extends javax.swing.JPanel {
         applyTableStyle(tblGioHang);
         loadSanPhamData(service.searchSanPham(""));
         refreshGioHangData();
+        //updateTotalOnLabel(jLabel9);
         
     }
     
@@ -448,6 +449,33 @@ public class FormDonHang extends javax.swing.JPanel {
         loadSanPhamData(service.searchSanPham(keyword));
     }
     
+    private void capNhatTongTien(JLabel totalLabel) {
+    List<Integer> selectedIds = getSelectedIdsFromTable();
+    BigDecimal total = tinhTongTien(selectedIds);
+    totalLabel.setText(total.toString() + " VND");
+}
+
+    private List<Integer> getSelectedIdsFromTable() {
+        List<Integer> ids = new ArrayList<>();
+        for (int row = 0; row < tblGioHang.getRowCount(); row++) {
+            Boolean isChecked = (Boolean) tblGioHang.getValueAt(row, tblGioHang.getColumnCount() - 1); // Cột checkbox
+            if (isChecked != null && isChecked) { // Kiểm tra nếu checkbox được tick
+                int id = (int) tblGioHang.getValueAt(row, 0); // Lấy ID từ cột đầu tiên
+                ids.add(id);
+            }
+        }
+        return ids;
+    }
+
+    private BigDecimal tinhTongTien(List<Integer> selectedIds) {
+        BigDecimal total = BigDecimal.ZERO; //
+        List<GioHang> selectedProducts = service1.getProductsByGioHang(selectedIds);
+        for (GioHang product : selectedProducts) {
+            total = total.add(product.getTongTien());
+        }
+        return total;
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -501,6 +529,7 @@ public class FormDonHang extends javax.swing.JPanel {
         cmdUpdate5 = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
         myList11 = new da.component.MyList1<>();
+        jLabel9 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jButton1 = new javax.swing.JButton();
 
@@ -866,7 +895,7 @@ public class FormDonHang extends javax.swing.JPanel {
         panelTransparent2.setPreferredSize(new java.awt.Dimension(139, 500));
 
         jLabel8.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
-        jLabel8.setForeground(new java.awt.Color(255, 51, 51));
+        jLabel8.setForeground(new java.awt.Color(51, 51, 51));
         jLabel8.setText("Tổng Tiền:");
         panelTransparent2.add(jLabel8);
         jLabel8.setBounds(40, 350, 110, 22);
@@ -905,6 +934,11 @@ public class FormDonHang extends javax.swing.JPanel {
 
         panelTransparent2.add(jScrollPane2);
         jScrollPane2.setBounds(10, 10, 270, 320);
+
+        jLabel9.setForeground(new java.awt.Color(255, 0, 51));
+        jLabel9.setText("0 VNĐ");
+        panelTransparent2.add(jLabel9);
+        jLabel9.setBounds(130, 350, 150, 20);
 
         crazyPanel13.add(panelTransparent2);
 
@@ -999,9 +1033,10 @@ public class FormDonHang extends javax.swing.JPanel {
         List<Integer> ids = new ArrayList<>();
     for (int row = 0; row < tblGioHang.getRowCount(); row++) {
         Boolean isChecked = (Boolean) tblGioHang.getValueAt(row, tblGioHang.getColumnCount() - 1); // Cột checkbox
-        if (isChecked != null && isChecked) { // Kiểm tra nếu checkbox được tick
-            int id = (int) tblGioHang.getValueAt(row, 0); // Lấy ID từ cột đầu tiên
+        if (isChecked != null && isChecked) {
+            int id = (int) tblGioHang.getValueAt(row, 0);
             ids.add(id);
+            capNhatTongTien(jLabel9);
         }
     }
     applyListStyle(ids); // Gọi phương thức hiển thị danh sách sản phẩm
@@ -1038,6 +1073,7 @@ public class FormDonHang extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane2;

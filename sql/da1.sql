@@ -232,14 +232,13 @@ CREATE TABLE GioHang (
     kichThuoc NVARCHAR(50),         -- Kích thước thay vì idKichThuoc
     tongTien DECIMAL(18, 0) NOT NULL,
     soLuong INT DEFAULT 1,
-    ngayThem DATETIME DEFAULT GETDATE(),
     FOREIGN KEY (idNguoiDung) REFERENCES NguoiDung(id),
     FOREIGN KEY (idSanPham) REFERENCES SanPham(id)
 );
 
 
 
-SELECT gh.id, gh.idNguoiDung, gh.idSanPham, sp.maSP, sp.tenSP, gh.tongTien, gh.soLuong, gh.ngayThem 
+SELECT gh.id, gh.idNguoiDung, gh.idSanPham, sp.maSP, sp.tenSP, gh.tongTien, gh.soLuong
 FROM GioHang gh  
 JOIN SanPham sp ON gh.idSanPham = sp.id 
 JOIN NguoiDung nd ON gh.idNguoiDung = nd.id 

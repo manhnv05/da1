@@ -9,8 +9,10 @@ import com.formdev.flatlaf.extras.FlatSVGIcon;
 import da.component.MyList;
 import da.model.KhoHang;
 import da.model.KhuVucKho;
+import da.model.NhapKho;
 import da.service.KhoHangService;
 import da.service.KhuVucKhoService;
+import da.service.NhapKhoService;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.GridBagConstraints;
@@ -39,6 +41,7 @@ import raven.toast.Notifications;
 public class FormKhoHang extends javax.swing.JPanel {
     KhuVucKhoService service = new KhuVucKhoService();
     KhoHangService service1 = new KhoHangService();
+    NhapKhoService service2 = new NhapKhoService();
 
     /**
      * Creates new form FormKhoHang
@@ -46,8 +49,9 @@ public class FormKhoHang extends javax.swing.JPanel {
     public FormKhoHang() {
         initComponents();
         applyTableStyle(tblKhuVuc);
-        applyTableStyle(jTable2);
+        applyTableStyle(tblNhapKho);
         loadKhuVucKhoData(service.searchKhuVucKhoByName(""));
+        loadNhapKho(service2.getListNhapKho());
     }
     
     private void applyTableStyle(JTable table) {
@@ -332,6 +336,25 @@ public class FormKhoHang extends javax.swing.JPanel {
             Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Xóa khu vực kho thất bại!");
         }
     }
+    
+    public void loadNhapKho(List<NhapKho> list) {
+        DefaultTableModel tblModel = (DefaultTableModel) tblNhapKho.getModel();
+        tblModel.setRowCount(0);
+        for (NhapKho nk : list) {
+            Object[] rowData = {
+                nk.getId(),
+                nk.getManhap(),
+                nk.getNhacungcap(),
+                nk.getNhanvien(),
+                nk.getSanPham(),
+                nk.getSoLuong(),
+                nk.getKhuvuckho(),
+                nk.getNgaynhap(),
+                nk.getTongtien()
+            };
+            tblModel.addRow(rowData);
+        }
+    }
 
 
     /**
@@ -384,7 +407,7 @@ public class FormKhoHang extends javax.swing.JPanel {
         cmdExcel1 = new javax.swing.JButton();
         cmdNew1 = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
-        jTable2 = new javax.swing.JTable();
+        tblNhapKho = new javax.swing.JTable();
 
         crazyPanel1.setFlatLafStyleComponent(new raven.crazypanel.FlatLafStyleComponent(
             "background:$Table.background;[light]border:0,0,0,0,shade(@background,5%),,20;[dark]border:0,0,0,0,tint(@background,5%),,20",
@@ -699,30 +722,23 @@ public class FormKhoHang extends javax.swing.JPanel {
 
         crazyPanel6.add(crazyPanel7);
 
-        jTable2.setModel(new javax.swing.table.DefaultTableModel(
+        tblNhapKho.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
             new String [] {
-                "", "ID", "Mã", "Tên", "Status"
+                "STT", "Ma Nhap Kho", "Nha Cung cấp", "Nhân viên nhập", "Tên sản phẩm", "Số lượng", "Khu vực kho", "Ngày nhập", "Tổng tiền"
             }
         ) {
-            Class[] types = new Class [] {
-                java.lang.Boolean.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class
-            };
             boolean[] canEdit = new boolean [] {
-                true, false, false, false, false
+                true, false, false, false, false, true, true, true, true
             };
-
-            public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
-            }
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
             }
         });
-        jScrollPane2.setViewportView(jTable2);
+        jScrollPane2.setViewportView(tblNhapKho);
 
         crazyPanel6.add(jScrollPane2);
 
@@ -732,8 +748,8 @@ public class FormKhoHang extends javax.swing.JPanel {
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addComponent(crazyPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, 235, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 92, Short.MAX_VALUE)
-                .addComponent(crazyPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, 763, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(crazyPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, 849, Short.MAX_VALUE))
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -825,7 +841,6 @@ public class FormKhoHang extends javax.swing.JPanel {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane4;
-    private javax.swing.JTable jTable2;
     private javax.swing.JTextField jTextField3;
     private javax.swing.JTextField jTextField4;
     private javax.swing.JLabel lblFilter1;
@@ -833,6 +848,7 @@ public class FormKhoHang extends javax.swing.JPanel {
     private da.component.MyList<String> myList1;
     private da.component.PanelTransparent panelTransparent2;
     private javax.swing.JTable tblKhuVuc;
+    private javax.swing.JTable tblNhapKho;
     private javax.swing.JTextField txtSearch;
     private javax.swing.JTextField txtSearch1;
     // End of variables declaration//GEN-END:variables

@@ -288,3 +288,45 @@ INSERT INTO KhoHang (idSanPham, idKhuVucKho, ngayNhap) VALUES
 
 -- Kiểm tra dữ liệu trong bảng KhoHang
 SELECT * FROM KhoHang;
+
+CREATE TABLE HoaDonTaiQuay (
+    id INT IDENTITY PRIMARY KEY,
+    mahoadon VARCHAR(50) NOT NULL,
+    ngaytao DATETIME DEFAULT GETDATE(),
+    trangthai INT NOT NULL, -- 0: Chưa thanh toán, 1: Đã thanh toán, 2: Hủy
+    ghichu NVARCHAR(255),
+    tenkhachhang NVARCHAR(100),
+    nhanvienID INT NOT NULL,
+    hinhthucthanhtoan NVARCHAR(50), -- Tiền mặt, Chuyển khoản, v.v.
+    FOREIGN KEY (nhanvienID) REFERENCES NhanVien(id)
+);
+
+CREATE TABLE NhapKho (
+    id INT PRIMARY KEY IDENTITY(1,1),
+    maNhap VARCHAR(50),
+    idNhaCungCap INT,
+    idNhanVien INT,
+    idSanPham INT,
+    idKhuVucKho INT,
+	soLuong INT,
+    ngayNhap DATETIME,
+    tongTien DECIMAL(18, 0),
+
+    FOREIGN KEY (idNhaCungCap) REFERENCES NhaCungCap(id),
+    FOREIGN KEY (idNhanVien) REFERENCES NhanVien(id),
+    FOREIGN KEY (idSanPham) REFERENCES SanPham(id),
+    FOREIGN KEY (idKhuVucKho) REFERENCES KhuVucKho(id)
+);
+
+INSERT INTO NhapKho (maNhap, idNhaCungCap, idNhanVien, idSanPham, idKhuVucKho, soLuong, ngayNhap, tongTien)
+VALUES 
+('NK001', 1, 1, 1, 1, 50, '2025-04-01 10:00:00', 7500000), -- Nhập 50 sản phẩm SP001 từ NCC A, NV Admin, khu vực A
+('NK002', 2, 2, 2, 1, 30, '2025-04-02 11:30:00', 7500000), -- Nhập 30 sản phẩm SP002 từ NCC B, NV F, khu vực A
+('NK003', 3, 3, 3, 2, 20, '2025-04-03 09:15:00', 7000000), -- Nhập 20 sản phẩm SP003 từ NCC C, NV G, khu vực B
+('NK004', 4, 4, 4, 2, 40, '2025-04-04 14:20:00', 16000000), -- Nhập 40 sản phẩm SP004 từ NCC D, NV H, khu vực B
+('NK005', 5, 5, 5, 3, 60, '2025-04-05 08:45:00', 12000000), -- Nhập 60 sản phẩm SP005 từ NCC E, NV I, khu vực C
+('NK006', 1, 1, 1, 3, 25, '2025-04-06 13:00:00', 3750000), -- Nhập 25 sản phẩm SP001 từ NCC A, NV Admin, khu vực C
+('NK007', 2, 2, 2, 4, 15, '2025-04-07 15:10:00', 3750000), -- Nhập 15 sản phẩm SP002 từ NCC B, NV F, khu vực D
+('NK008', 3, 3, 3, 4, 10, '2025-04-08 10:30:00', 3500000), -- Nhập 10 sản phẩm SP003 từ NCC C, NV G, khu vực D
+('NK009', 4, 4, 4, 5, 30, '2025-04-09 11:45:00', 12000000), -- Nhập 30 sản phẩm SP004 từ NCC D, NV H, khu vực E
+('NK010', 5, 5, 5, 5, 50, '2025-04-10 09:00:00', 10000000); -- Nhập 50 sản phẩm SP005 từ NCC E, NV I, khu vực E

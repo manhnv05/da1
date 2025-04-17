@@ -9,6 +9,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 /**
  *
@@ -350,4 +351,28 @@ public boolean restoreSoLuongTon(int idSanPham, int soLuongDaXoa) {
         return false;
     }
 }
+
+public List<SanPham> getSanPhamByKhuVucKho(int idKhuVucKho) {
+    List<SanPham> list = new ArrayList<>();
+    String SQL = "SELECT tensp, soluongton, hinhanh, idKhuVucKho FROM SanPham WHERE idKhuVucKho = ?";
+    try (PreparedStatement ps = conn.prepareStatement(SQL)) {
+        ps.setInt(1, idKhuVucKho);
+        try (ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                SanPham sp = new SanPham();
+                //sp.setId(rs.getInt("id"));
+                //sp.setMaSP(rs.getString("masp"));
+                sp.setTensp(rs.getString("tensp"));
+                sp.setSoluongton(rs.getInt("soluongton"));
+                sp.setHinhanh(rs.getString("hinhanh"));
+                sp.setIdKhuVucKho(rs.getInt("idKhuVucKho"));
+                list.add(sp);
+            }
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    return list;
+}
+
 }

@@ -7,13 +7,11 @@ package da.application.form.other;
 import com.formdev.flatlaf.FlatClientProperties;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import da.component.MyList;
-import da.model.KhoHang;
 import da.model.KhuVucKho;
 import da.model.NhaCC;
 import da.model.NhanVien;
 import da.model.NhapKho;
 import da.model.SanPham;
-import da.service.KhoHangService;
 import da.service.KhuVucKhoService;
 import da.service.NhaCCService;
 import da.service.NhanVienService;
@@ -56,8 +54,8 @@ import raven.toast.Notifications;
  */
 public class FormKhoHang extends javax.swing.JPanel {
     KhuVucKhoService service = new KhuVucKhoService();
-    KhoHangService service1 = new KhoHangService();
     NhapKhoService service2 = new NhapKhoService();
+    SanPhamService service1 = new SanPhamService();
 
     /**
      * Creates new form FormKhoHang
@@ -119,7 +117,7 @@ public class FormKhoHang extends javax.swing.JPanel {
     
     
     private void applyListStyle(int idKhuVucKho) {
-        List<KhoHang> khList = service1.getProductsByKhuVucKho(idKhuVucKho);
+        List<SanPham> khList = service1.getSanPhamByKhuVucKho(idKhuVucKho);
         myList1.removeAll();
         if (khList.isEmpty()) {
             JLabel emptyLabel = new JLabel("Không có sản phẩm nào trong khu vực kho này.");
@@ -127,9 +125,9 @@ public class FormKhoHang extends javax.swing.JPanel {
             myList1.setLayout(new BorderLayout());
             myList1.add(emptyLabel, BorderLayout.CENTER);
         } else {
-            MyList<KhoHang> list = new MyList<>();
-            for (KhoHang kh : khList) {
-                list.addItem(kh);
+            MyList<SanPham> list = new MyList<>();
+            for (SanPham sp : khList) {
+                list.addItem(sp);
             }
             JScrollPane scrollPane = new JScrollPane(list);
             scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);

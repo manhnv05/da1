@@ -1,6 +1,6 @@
 package da.component;
 
-import da.model.KhoHang;
+import da.model.SanPham;
 import java.awt.*;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -44,15 +44,15 @@ public class MyList<E> extends JList<E> {
 
         @Override
         public Component getListCellRendererComponent(JList<? extends E> list, E value, int index, boolean isSelected, boolean cellHasFocus) {
-            if (value instanceof KhoHang) {
-                KhoHang kh = (KhoHang) value;
+            if (value instanceof SanPham) {
+                SanPham sp = (SanPham) value;
 
                 // Đặt nội dung
-                lblTitle.setText("<html><b>" + kh.getTenSP() + "</b></html>");
-                lblQuantity.setText("Số lượng: " + kh.getSoLuongTon());
+                lblTitle.setText("<html><b>" + sp.getTensp() + "</b></html>");
+                lblQuantity.setText("Số lượng: " + sp.getSoluongton());
 
                 // Hiển thị hình ảnh (scale cho vừa)
-                ImageIcon icon = new ImageIcon(kh.getHinhAnh());
+                ImageIcon icon = new ImageIcon(sp.getHinhanh());
                 Image img = icon.getImage().getScaledInstance(50, 50, Image.SCALE_SMOOTH);
                 lblImage.setIcon(new ImageIcon(img));
 

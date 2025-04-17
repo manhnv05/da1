@@ -106,30 +106,113 @@ public class NhapKhoService {
         return false;
     } finally {
         try {
-            conn.setAutoCommit(true); // Khôi phục trạng thái AutoCommit
+            conn.setAutoCommit(true);
         } catch (SQLException e) {
             System.out.println("Failed to reset AutoCommit: " + e.getMessage());
         }
     }
 }
 
-    public boolean updateNhapKho(int id, int idNhaCungCap, int idNhanVien, int idSanPham, int idKhuVucKho, int soLuong) {
-        String update = "UPDATE NhapKho SET idNhaCungCap = ?, idNhanVien = ?, idSanPham = ?, idKhuVucKho = ?, soLuong = ? WHERE id = ?";
-        try {
-            PreparedStatement ps = conn.prepareStatement(update);
-            ps.setInt(1, idNhaCungCap);
-            ps.setInt(2, idNhanVien);
-            ps.setInt(3, idSanPham);
-            ps.setInt(4, idKhuVucKho);
-            ps.setInt(5, soLuong);
-            ps.setInt(6, id);
-            int rowsAffected = ps.executeUpdate();
-            return rowsAffected > 0;
-        } catch (SQLException e) {
-            System.out.println("Error updating NhapKho: " + e.getMessage());
+public boolean updateNhapKho(int id, int idNhaCungCap, int idNhanVien, int idSanPham, int soLuong) {
+    String getOldSoLuongQuery = "SELECT soLuong FROM NhapKho WHERE id = ?";
+    String getSanPhamGiaQuery = "SELECT gia, soluongton FROM SanPham WHERE id = ?";
+    String updateNhapKhoQuery = "UPDATE NhapKho SET idNhaCungCap = ?, idNhanVien = ?, idSanPham = ?, soLuong = ?, tongTien = ? WHERE id = ?";
+    String updateSanPhamQuery = "UPDATE SanPham SET soluongton = ? WHERE id = ?";
+
+    try {
+        // Start transaction
+        conn.setAutoCommit(false);
+
+        // Fetch old quantity from NhapKho
+        int oldSoLuong;
+        try (PreparedStatement psGetOldSoLuong = conn.prepareStatement(getOldSoLuongQuery)) {
+            psGetOldSoLuong.setInt(1, id);
+            try (ResultSet rsOldSoLuong = psGetOldSoLuong.executeQuery()) {
+                if (!rsOldSoLuong.next()) {
+                    System.out.println("Error: Phiếu Nhập không tồn tại.");
+                    conn.rollback();
+                    return false;
+                }
+                oldSoLuong = rsOldSoLuong.getInt("soLuong");
+            }
+        }
+
+        // Fetch product details (price and current stock)
+        double giaSanPham;
+        int currentSoLuongTon;
+        try (PreparedStatement psGetSanPham = conn.prepareStatement(getSanPhamGiaQuery)) {
+            psGetSanPham.setInt(1, idSanPham);
+            try (ResultSet rsSanPham = psGetSanPham.executeQuery()) {
+                if (!rsSanPham.next()) {
+                    System.out.println("Error: Sản phẩm không tồn tại.");
+                    conn.rollback();
+                    return false;
+                }
+                giaSanPham = rsSanPham.getDouble("gia");
+                currentSoLuongTon = rsSanPham.getInt("soluongton");
+            }
+        }
+
+        // Calculate new stock level
+        int newSoLuongTon = currentSoLuongTon - oldSoLuong + soLuong;
+        if (newSoLuongTon < 0) {
+            System.out.println("Error: Không đủ sản phẩm trong kho để cập nhật.");
+            conn.rollback();
             return false;
         }
+
+        // Calculate total price
+        double tongTien = giaSanPham * soLuong;
+
+        // Update NhapKho
+        try (PreparedStatement psUpdateNhapKho = conn.prepareStatement(updateNhapKhoQuery)) {
+            psUpdateNhapKho.setInt(1, idNhaCungCap);
+            psUpdateNhapKho.setInt(2, idNhanVien);
+            psUpdateNhapKho.setInt(3, idSanPham);
+            psUpdateNhapKho.setInt(4, soLuong);
+            psUpdateNhapKho.setDouble(5, tongTien);
+            psUpdateNhapKho.setInt(6, id);
+
+            int rowsUpdatedNhapKho = psUpdateNhapKho.executeUpdate();
+            if (rowsUpdatedNhapKho <= 0) {
+                System.out.println("Error updating NhapKho: No rows affected.");
+                conn.rollback();
+                return false;
+            }
+        }
+
+        try (PreparedStatement psUpdateSanPham = conn.prepareStatement(updateSanPhamQuery)) {
+            psUpdateSanPham.setInt(1, newSoLuongTon);
+            psUpdateSanPham.setInt(2, idSanPham);
+
+            int rowsUpdatedSanPham = psUpdateSanPham.executeUpdate();
+            if (rowsUpdatedSanPham <= 0) {
+                System.out.println("Error updating SanPham: No rows affected.");
+                conn.rollback();
+                return false;
+            }
+        }
+
+        // Commit transaction
+        conn.commit();
+        return true;
+
+    } catch (SQLException e) {
+        System.out.println("Error updating NhapKho: " + e.getMessage());
+        try {
+            conn.rollback();
+        } catch (SQLException rollbackEx) {
+            System.out.println("Rollback failed: " + rollbackEx.getMessage());
+        }
+        return false;
+    } finally {
+        try {
+            conn.setAutoCommit(true);
+        } catch (SQLException e) {
+            System.out.println("Failed to reset AutoCommit: " + e.getMessage());
+        }
     }
+}
 
     public boolean deleteNhapKho(int id) {
         String delete = "DELETE FROM NhapKho WHERE id = ?";

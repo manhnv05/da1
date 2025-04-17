@@ -81,7 +81,6 @@ public class FormKhoHang extends javax.swing.JPanel {
         cmdAdd1.setIcon(new FlatSVGIcon("da/icon/svg/delete.svg", 0.35f));
         cmdExcel1.setIcon(new FlatSVGIcon("da/icon/svg/print.svg", 0.35f));
         cmdNew1.setIcon(new FlatSVGIcon("da/icon/svg/reset.svg", 0.35f));
-        lblFilter1.setIcon(new FlatSVGIcon("da/icon/svg/filter.svg", 0.35f));
 
         txtSearch.putClientProperty(FlatClientProperties.TEXT_FIELD_TRAILING_ICON, new FlatSVGIcon("da/icon/svg/search.svg", 0.35f));
         //  Change scroll style
@@ -552,6 +551,213 @@ public void Nhap() {
     }
 }
 
+public void updateNhapKho() {
+    // Lấy dòng được chọn trong bảng
+    int selectedRow = tblNhapKho.getSelectedRow();
+    if (selectedRow == -1) {
+        Notifications.getInstance().show(
+            Notifications.Type.WARNING,
+            Notifications.Location.TOP_CENTER,
+            "Vui lòng chọn một phiếu nhập để cập nhật!"
+        );
+        return;
+    }
+
+    // Lấy thông tin hiện tại từ bảng
+    int id = (int) tblNhapKho.getValueAt(selectedRow, 0);
+    String currentMaNhap = (String) tblNhapKho.getValueAt(selectedRow, 1);
+    String currentNhaCungCap = (String) tblNhapKho.getValueAt(selectedRow, 2);
+    String currentNhanVien = (String) tblNhapKho.getValueAt(selectedRow, 3);
+    String currentSanPham = (String) tblNhapKho.getValueAt(selectedRow, 4);
+    int currentSoLuong = (int) tblNhapKho.getValueAt(selectedRow, 5);
+    Timestamp currentNgayNhap = (Timestamp) tblNhapKho.getValueAt(selectedRow, 6);
+
+    // Tạo các trường nhập liệu cho hộp thoại
+    JTextField txtMaNhap = new JTextField(currentMaNhap);
+    txtMaNhap.setEnabled(false);
+    JTextField txtNgayNhap = new JTextField(new SimpleDateFormat("dd/MM/yyyy").format(currentNgayNhap));
+    JTextField txtSoLuong = new JTextField(String.valueOf(currentSoLuong));
+    //txtSoLuong.setEnabled(false);
+    JComboBox<NhaCC> cbNhaCungCap = new JComboBox<>();
+    JComboBox<NhanVien> cbNhanVien = new JComboBox<>();
+    JComboBox<SanPham> cboSanPham = new JComboBox<>();
+
+    // Khởi tạo và thiết lập ComboBox
+    initializeComboBoxes(cbNhaCungCap, cbNhanVien, cboSanPham);
+    setupComboBoxRenderers(cbNhaCungCap, cbNhanVien, cboSanPham);
+
+    // Đặt giá trị hiện tại cho ComboBox
+    cbNhaCungCap.setSelectedItem(new NhaCCService().getAllNhaCungCap());
+    cbNhanVien.setSelectedItem(new NhanVienService().getAllNhanVien());
+    cboSanPham.setSelectedItem(new SanPhamService().getAll());
+
+    // Panel để sắp xếp các trường nhập liệu
+    JPanel panel = new JPanel(new GridBagLayout());
+    GridBagConstraints gbc = new GridBagConstraints();
+    gbc.insets = new Insets(10, 10, 10, 10);
+    gbc.fill = GridBagConstraints.HORIZONTAL;
+
+    gbc.gridx = 0;
+    gbc.gridy = 0;
+    panel.add(new JLabel("Mã Nhập Kho:"), gbc);
+    gbc.gridx = 1;
+    panel.add(txtMaNhap, gbc);
+
+    gbc.gridx = 0;
+    gbc.gridy = 1;
+    panel.add(new JLabel("Nhà Cung Cấp:"), gbc);
+    gbc.gridx = 1;
+    panel.add(cbNhaCungCap, gbc);
+
+    gbc.gridx = 0;
+    gbc.gridy = 2;
+    panel.add(new JLabel("Nhân Viên Nhập:"), gbc);
+    gbc.gridx = 1;
+    panel.add(cbNhanVien, gbc);
+
+    gbc.gridx = 0;
+    gbc.gridy = 3;
+    panel.add(new JLabel("Ngày Nhập (dd/MM/yyyy):"), gbc);
+    gbc.gridx = 1;
+    panel.add(txtNgayNhap, gbc);
+
+    gbc.gridx = 0;
+    gbc.gridy = 4;
+    panel.add(new JLabel("Sản Phẩm:"), gbc);
+    gbc.gridx = 1;
+    panel.add(cboSanPham, gbc);
+
+    gbc.gridx = 0;
+    gbc.gridy = 5;
+    panel.add(new JLabel("Số Lượng:"), gbc);
+    gbc.gridx = 1;
+    panel.add(txtSoLuong, gbc);
+
+    // Hiển thị hộp thoại với vòng lặp kiểm tra
+    while (true) {
+        int result = JOptionPane.showConfirmDialog(
+            null,
+            panel,
+            "Cập nhật Phiếu Nhập Kho",
+            JOptionPane.OK_CANCEL_OPTION,
+            JOptionPane.PLAIN_MESSAGE
+        );
+        if (result != JOptionPane.OK_OPTION) {
+            return; // Người dùng nhấn "Cancel"
+        }
+        String maNhap = txtMaNhap.getText().trim();
+        String ngayNhapStr = txtNgayNhap.getText().trim();
+        String soLuongStr = txtSoLuong.getText().trim();
+        NhaCC nhaCungCap = (NhaCC) cbNhaCungCap.getSelectedItem();
+        NhanVien nhanVien = (NhanVien) cbNhanVien.getSelectedItem();
+        SanPham sanPham = (SanPham) cboSanPham.getSelectedItem();
+
+        // Kiểm tra đầu vào
+        if (maNhap.isEmpty() || nhaCungCap == null || nhanVien == null || ngayNhapStr.isEmpty() ||
+            soLuongStr.isEmpty() || sanPham == null) {
+            Notifications.getInstance().show(
+                Notifications.Type.WARNING,
+                Notifications.Location.TOP_CENTER,
+                "Vui lòng điền đầy đủ thông tin!"
+            );
+            continue;
+        }
+
+        Timestamp ngayNhap;
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+            sdf.setLenient(false);
+            Date parsedDate = sdf.parse(ngayNhapStr);
+            ngayNhap = new Timestamp(parsedDate.getTime());
+        } catch (ParseException e) {
+            Notifications.getInstance().show(
+                Notifications.Type.WARNING,
+                Notifications.Location.TOP_CENTER,
+                "Ngày nhập không đúng định dạng (dd/MM/yyyy)!"
+            );
+            continue;
+        }
+
+        int soLuong;
+        try {
+            soLuong = Integer.parseInt(soLuongStr);
+            if (soLuong <= 0) {
+                Notifications.getInstance().show(
+                    Notifications.Type.WARNING,
+                    Notifications.Location.TOP_CENTER,
+                    "Số lượng phải lớn hơn 0!"
+                );
+                continue;
+            }
+        } catch (NumberFormatException e) {
+            Notifications.getInstance().show(
+                Notifications.Type.WARNING,
+                Notifications.Location.TOP_CENTER,
+                "Số lượng phải là số hợp lệ!"
+            );
+            continue;
+        }
+
+        // Cập nhật phiếu nhập kho
+        boolean isUpdated = service2.updateNhapKho(
+            id, nhaCungCap.getId(), nhanVien.getId(), sanPham.getId(), soLuong
+        );
+
+        if (isUpdated) {
+            Notifications.getInstance().show(
+                Notifications.Type.SUCCESS,
+                Notifications.Location.TOP_CENTER,
+                "Cập nhật phiếu nhập kho thành công!"
+            );
+            loadNhapKho(service2.getListNhapKho()); // Tải lại danh sách phiếu nhập kho
+            return;
+        } else {
+            Notifications.getInstance().show(
+                Notifications.Type.ERROR,
+                Notifications.Location.TOP_CENTER,
+                "Cập nhật phiếu nhập kho thất bại!"
+            );
+        }
+    }
+}
+
+
+public void deleteNhapKho() {
+        // Lấy dòng được chọn trong bảng
+        int selectedRow = tblNhapKho.getSelectedRow();
+        if (selectedRow == -1) {
+            Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng chọn một khu vực để xóa!");
+            return;
+        }
+
+        // Lấy thông tin khu vực từ bảng
+        int id = (int) tblNhapKho.getValueAt(selectedRow, 0);
+        String tensp = (String) tblNhapKho.getValueAt(selectedRow, 4);
+
+        // Hiển thị hộp thoại xác nhận
+        int confirm = JOptionPane.showConfirmDialog(
+            this,
+            "Bạn có chắc chắn muốn xóa phiếu nhập \"" + tensp + "\"?",
+            "Xác nhận xóa",
+            JOptionPane.YES_NO_OPTION,
+            JOptionPane.WARNING_MESSAGE
+        );
+
+        // Nếu người dùng chọn "No", thoát
+        if (confirm != JOptionPane.YES_OPTION) {
+            return;
+        }
+
+        // Gọi service để xóa khu vực kho
+        boolean isDeleted = service2.deleteNhapKho(id);
+        if (isDeleted) {
+            Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Xóa khu vực kho thành công!");
+            loadNhapKho(service2.getListNhapKho()); // Tải lại danh sách khu vực kho
+        } else {
+            Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Xóa khu vực kho thất bại!");
+        }
+    }
+
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -595,8 +801,6 @@ public void Nhap() {
         crazyPanel6 = new raven.crazypanel.CrazyPanel();
         crazyPanel7 = new raven.crazypanel.CrazyPanel();
         txtSearch1 = new javax.swing.JTextField();
-        lblFilter1 = new javax.swing.JLabel();
-        jComboBox1 = new javax.swing.JComboBox<>();
         cmdAdd1 = new javax.swing.JButton();
         cmdUpdate1 = new javax.swing.JButton();
         cmdDetails1 = new javax.swing.JButton();
@@ -896,15 +1100,11 @@ public void Nhap() {
             }
         ));
         crazyPanel7.add(txtSearch1);
-        crazyPanel7.add(lblFilter1);
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        crazyPanel7.add(jComboBox1);
-
-        cmdAdd1.setText("Add new");
+        cmdAdd1.setText("Search");
         crazyPanel7.add(cmdAdd1);
 
-        cmdUpdate1.setText("Update");
+        cmdUpdate1.setText("Add new");
         cmdUpdate1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cmdUpdate1ActionPerformed(evt);
@@ -912,13 +1112,23 @@ public void Nhap() {
         });
         crazyPanel7.add(cmdUpdate1);
 
-        cmdDetails1.setText("Chi Tiết");
+        cmdDetails1.setText("Update");
+        cmdDetails1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cmdDetails1ActionPerformed(evt);
+            }
+        });
         crazyPanel7.add(cmdDetails1);
 
-        cmdExcel1.setText("Excel");
+        cmdExcel1.setText("Delete");
+        cmdExcel1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cmdExcel1ActionPerformed(evt);
+            }
+        });
         crazyPanel7.add(cmdExcel1);
 
-        cmdNew1.setText("Làm Mới");
+        cmdNew1.setText("Excel");
         crazyPanel7.add(cmdNew1);
 
         crazyPanel6.add(crazyPanel7);
@@ -1012,6 +1222,14 @@ public void Nhap() {
         Nhap();
     }//GEN-LAST:event_cmdUpdate1ActionPerformed
 
+    private void cmdDetails1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdDetails1ActionPerformed
+        updateNhapKho();
+    }//GEN-LAST:event_cmdDetails1ActionPerformed
+
+    private void cmdExcel1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdExcel1ActionPerformed
+        deleteNhapKho();
+    }//GEN-LAST:event_cmdExcel1ActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton cmdAdd;
@@ -1033,7 +1251,6 @@ public void Nhap() {
     private raven.crazypanel.CrazyPanel crazyPanel5;
     private raven.crazypanel.CrazyPanel crazyPanel6;
     private raven.crazypanel.CrazyPanel crazyPanel7;
-    private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JComboBox<String> jComboBox4;
     private javax.swing.JComboBox<String> jComboBox5;
     private javax.swing.JLabel jLabel1;
@@ -1048,7 +1265,6 @@ public void Nhap() {
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JTextField jTextField3;
     private javax.swing.JTextField jTextField4;
-    private javax.swing.JLabel lblFilter1;
     private da.component.MaterialTabbed materialTabbed2;
     private da.component.MyList<String> myList1;
     private da.component.PanelTransparent panelTransparent2;

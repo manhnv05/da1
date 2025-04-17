@@ -102,7 +102,8 @@ public class FormQLSanPham extends javax.swing.JPanel {
                 sanPham.getTensp(),
                 sanPham.getSoluongton(),
                 sanPham.getGia(),
-                sanPham.getTrangThai()
+                sanPham.getTrangThai(),
+                sanPham.getTenKhuVucKho()
             };
             tblModel.addRow(thongTinSanPham);
         }
@@ -211,7 +212,7 @@ public class FormQLSanPham extends javax.swing.JPanel {
                     FileOutputStream out = new FileOutputStream(saveFile)) {
                 Sheet sheet = wb.createSheet("Danh Sách Sản Phẩm");
                 String[] headers = {"STT", "ID", "Mã SP", "Tên SP", "Mô Tả", "Giá", "SL Tồn", 
-                                    "Chất Liệu", "Xuất Xứ", "Kích Thước", "Màu Sắc", "Nhà Cung Cấp", "Hình Ảnh"};
+                                    "Chất Liệu", "Xuất Xứ", "Kích Thước", "Màu Sắc", "Nhà Cung Cấp", "Khu vực kho", "Hình Ảnh"};
                 Row headerRow = sheet.createRow(0);
                 for (int i = 0; i < headers.length; i++) {
                     headerRow.createCell(i).setCellValue(headers[i]);
@@ -231,7 +232,8 @@ public class FormQLSanPham extends javax.swing.JPanel {
                     row.createCell(9).setCellValue(sp.getTenKichThuoc());
                     row.createCell(10).setCellValue(sp.getTenMauSac());
                     row.createCell(11).setCellValue(sp.getTenNhaCungCap());
-                    row.createCell(12).setCellValue(sp.getHinhanh());
+                    row.createCell(12).setCellValue(sp.getTenKhuVucKho());
+                    row.createCell(13).setCellValue(sp.getHinhanh());
                     rowIndex++;
                 }
                 wb.write(out);
@@ -368,11 +370,11 @@ public class FormQLSanPham extends javax.swing.JPanel {
 
             },
             new String [] {
-                "STT", "ID", "Mã", "Tên Sản Phẩm", "Số Lượng", "Giá", "Trạng thái"
+                "STT", "ID", "Mã", "Tên Sản Phẩm", "Số Lượng", "Giá", "Trạng thái", "Khu Vực kho"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false
+                false, false, false, false, false, false, false, true
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {

@@ -7,14 +7,13 @@ import da.model.SanPham;
 import da.model.other.ModelProfile;
 import da.service.SanPhamService;
 import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.math.BigDecimal;
 import java.util.HashSet;
+import javax.imageio.ImageIO;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
-import java.awt.Image;
-import java.awt.image.BufferedImage;
-import javax.imageio.ImageIO;
 import javax.swing.SwingUtilities;
 import jnafilechooser.api.JnaFileChooser;
 import raven.toast.Notifications;
@@ -39,6 +38,7 @@ public class ChiTietSanPham extends javax.swing.JPanel {
         initKT();
         initMS();
         initNCC();
+        initKhuVucKho();
         populateFormData();
     }
     
@@ -47,7 +47,7 @@ public class ChiTietSanPham extends javax.swing.JPanel {
         txtTen.setText(sanpham.getTensp());
         txaMoTa.setText(sanpham.getMota());
         txtGia.setText(sanpham.getGia().toString());
-        txtSoLuong.setText(String.valueOf(sanpham.getSoluongton()));
+        cboKhuVucKho.setSelectedIndex(sanpham.getIdKhuVucKho());
         cboChatLieu.setSelectedIndex(sanpham.getIdChatLieu());
         cboXuatXu.setSelectedIndex(sanpham.getIdXuatXu());
         cboKichThuoc.setSelectedIndex(sanpham.getIdKichThuoc());
@@ -118,6 +118,18 @@ public class ChiTietSanPham extends javax.swing.JPanel {
         }
         cboNhaCC.setModel(boxModel);
     }
+    
+        public void initKhuVucKho() {
+        DefaultComboBoxModel<String> boxModel = new DefaultComboBoxModel<>();
+        boxModel.addElement("-- Chọn khu vực kho --");
+        HashSet<String> KVKhoSet = service.getAllKhuVucKho();
+        for (String kvucKho : KVKhoSet) {
+            if (kvucKho != null) {
+                boxModel.addElement(kvucKho);
+            }
+        }
+        cboKhuVucKho.setModel(boxModel); 
+    }
 
     public boolean checkMa() {
         String maSP = txtMa.getText().trim();
@@ -138,7 +150,7 @@ public class ChiTietSanPham extends javax.swing.JPanel {
         sanPham.setTensp(txtTen.getText());
         sanPham.setMota(txaMoTa.getText());
         sanPham.setGia(new BigDecimal(txtGia.getText()));
-        sanPham.setSoluongton(Integer.parseInt(txtSoLuong.getText()));
+        sanPham.setIdKhuVucKho(cboKhuVucKho.getSelectedIndex());
         sanPham.setHinhanh((profile != null) ? profile.getPath() : null);
         sanPham.setIdChatLieu(cboChatLieu.getSelectedIndex());
         sanPham.setIdXuatXu(cboXuatXu.getSelectedIndex());
@@ -163,6 +175,8 @@ public class ChiTietSanPham extends javax.swing.JPanel {
             e.printStackTrace();
         }
     }
+    
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -182,25 +196,25 @@ public class ChiTietSanPham extends javax.swing.JPanel {
         txtTen = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
         txtGia = new javax.swing.JTextField();
-        jLabel6 = new javax.swing.JLabel();
-        txtSoLuong = new javax.swing.JTextField();
-        jSeparator1 = new javax.swing.JSeparator();
-        jLabel7 = new javax.swing.JLabel();
-        jLabel8 = new javax.swing.JLabel();
-        jLabel9 = new javax.swing.JLabel();
-        jScrollPane1 = new javax.swing.JScrollPane();
+        jLabel10 = new javax.swing.JLabel();
+        jScrollPane3 = new javax.swing.JScrollPane();
         txaMoTa = new javax.swing.JTextArea();
-        jLabel12 = new javax.swing.JLabel();
+        jSeparator2 = new javax.swing.JSeparator();
+        jLabel11 = new javax.swing.JLabel();
+        jLabel16 = new javax.swing.JLabel();
+        jLabel17 = new javax.swing.JLabel();
+        cboKhuVucKho = new javax.swing.JComboBox<>();
+        jLabel18 = new javax.swing.JLabel();
         cboChatLieu = new javax.swing.JComboBox<>();
-        jLabel13 = new javax.swing.JLabel();
+        jLabel19 = new javax.swing.JLabel();
         cboXuatXu = new javax.swing.JComboBox<>();
-        jLabel14 = new javax.swing.JLabel();
+        jLabel22 = new javax.swing.JLabel();
         cboKichThuoc = new javax.swing.JComboBox<>();
-        jLabel15 = new javax.swing.JLabel();
+        jLabel23 = new javax.swing.JLabel();
         cboMauSac = new javax.swing.JComboBox<>();
-        jLabel20 = new javax.swing.JLabel();
+        jLabel24 = new javax.swing.JLabel();
         cboNhaCC = new javax.swing.JComboBox<>();
-        jLabel21 = new javax.swing.JLabel();
+        jLabel25 = new javax.swing.JLabel();
         pic = new javaswingdev.picturebox.PictureBox();
         jToolBar1 = new javax.swing.JToolBar();
         cmdBrowse = new javax.swing.JButton();
@@ -281,7 +295,7 @@ public class ChiTietSanPham extends javax.swing.JPanel {
         ));
 
         jLabel1.setForeground(new java.awt.Color(255, 0, 0));
-        jLabel1.setText("Sửa Sản Phẩm");
+        jLabel1.setText("Chi Tiết Sản Phẩm");
         crazyPanel1.add(jLabel1);
 
         jLabel2.setText("Thông tin chung sản phẩm");
@@ -305,66 +319,67 @@ public class ChiTietSanPham extends javax.swing.JPanel {
         txtGia.setEnabled(false);
         crazyPanel1.add(txtGia);
 
-        jLabel6.setText("Số Lượng");
-        crazyPanel1.add(jLabel6);
-
-        txtSoLuong.setEnabled(false);
-        crazyPanel1.add(txtSoLuong);
-        crazyPanel1.add(jSeparator1);
-
-        jLabel7.setText("Thông tin kỹ thuật");
-        crazyPanel1.add(jLabel7);
-
-        jLabel8.setText("Được sử dụng để phân biệt sản phẩm");
-        crazyPanel1.add(jLabel8);
-
-        jLabel9.setText("Mô tả");
-        crazyPanel1.add(jLabel9);
+        jLabel10.setText("Mô tả");
+        crazyPanel1.add(jLabel10);
 
         txaMoTa.setColumns(20);
         txaMoTa.setRows(5);
         txaMoTa.setEnabled(false);
-        jScrollPane1.setViewportView(txaMoTa);
+        jScrollPane3.setViewportView(txaMoTa);
 
-        crazyPanel1.add(jScrollPane1);
+        crazyPanel1.add(jScrollPane3);
+        crazyPanel1.add(jSeparator2);
 
-        jLabel12.setText("Chất liệu");
-        crazyPanel1.add(jLabel12);
+        jLabel11.setText("Thông tin kĩ thuật");
+        crazyPanel1.add(jLabel11);
+
+        jLabel16.setText("Được sử dụng để phân biệt sản phẩm");
+        crazyPanel1.add(jLabel16);
+
+        jLabel17.setText("Khu vực kho");
+        crazyPanel1.add(jLabel17);
+
+        cboKhuVucKho.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cboKhuVucKho.setEnabled(false);
+        crazyPanel1.add(cboKhuVucKho);
+
+        jLabel18.setText("Chất liệu");
+        crazyPanel1.add(jLabel18);
 
         cboChatLieu.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         cboChatLieu.setEnabled(false);
         crazyPanel1.add(cboChatLieu);
 
-        jLabel13.setText("Xuất Xứ");
-        crazyPanel1.add(jLabel13);
+        jLabel19.setText("Xuất xứ");
+        crazyPanel1.add(jLabel19);
 
         cboXuatXu.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         cboXuatXu.setEnabled(false);
         crazyPanel1.add(cboXuatXu);
 
-        jLabel14.setText("Kích thước");
-        crazyPanel1.add(jLabel14);
+        jLabel22.setText("Kích thước");
+        crazyPanel1.add(jLabel22);
 
         cboKichThuoc.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         cboKichThuoc.setEnabled(false);
         crazyPanel1.add(cboKichThuoc);
 
-        jLabel15.setText("Màu Sắc");
-        crazyPanel1.add(jLabel15);
+        jLabel23.setText("Màu sắc");
+        crazyPanel1.add(jLabel23);
 
         cboMauSac.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         cboMauSac.setEnabled(false);
         crazyPanel1.add(cboMauSac);
 
-        jLabel20.setText("Nhà Cung cấp");
-        crazyPanel1.add(jLabel20);
+        jLabel24.setText("Nhà CC");
+        crazyPanel1.add(jLabel24);
 
         cboNhaCC.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         cboNhaCC.setEnabled(false);
         crazyPanel1.add(cboNhaCC);
 
-        jLabel21.setText("Hình ảnh");
-        crazyPanel1.add(jLabel21);
+        jLabel25.setText("Hình ảnh");
+        crazyPanel1.add(jLabel25);
 
         jToolBar1.setRollover(true);
         jToolBar1.setOpaque(false);
@@ -432,6 +447,7 @@ public class ChiTietSanPham extends javax.swing.JPanel {
     private ModelProfile profile;
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox<String> cboChatLieu;
+    private javax.swing.JComboBox<String> cboKhuVucKho;
     private javax.swing.JComboBox<String> cboKichThuoc;
     private javax.swing.JComboBox<String> cboMauSac;
     private javax.swing.JComboBox<String> cboNhaCC;
@@ -441,29 +457,28 @@ public class ChiTietSanPham extends javax.swing.JPanel {
     private javax.swing.JButton cmdSave;
     private raven.crazypanel.CrazyPanel crazyPanel1;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel12;
-    private javax.swing.JLabel jLabel13;
-    private javax.swing.JLabel jLabel14;
-    private javax.swing.JLabel jLabel15;
+    private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel16;
+    private javax.swing.JLabel jLabel17;
+    private javax.swing.JLabel jLabel18;
+    private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel20;
-    private javax.swing.JLabel jLabel21;
+    private javax.swing.JLabel jLabel22;
+    private javax.swing.JLabel jLabel23;
+    private javax.swing.JLabel jLabel24;
+    private javax.swing.JLabel jLabel25;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
-    private javax.swing.JLabel jLabel7;
-    private javax.swing.JLabel jLabel8;
-    private javax.swing.JLabel jLabel9;
-    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JSeparator jSeparator2;
     private javax.swing.JToolBar jToolBar1;
     private javaswingdev.picturebox.PictureBox pic;
     private javax.swing.JTextArea txaMoTa;
     private javax.swing.JTextField txtGia;
     private javax.swing.JTextField txtMa;
-    private javax.swing.JTextField txtSoLuong;
     private javax.swing.JTextField txtTen;
     // End of variables declaration//GEN-END:variables
 

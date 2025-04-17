@@ -30,13 +30,15 @@ public class SanPhamService {
             xx.tenXuatXu AS tenXuatXu,
             kt.tenKT AS tenKT,
             ms.tenMau AS tenMau,
-            ncc.tenNCC AS tenNCC
+            ncc.tenNCC AS tenNCC,
+            kvk.tenKhuVuc AS tenKhuVuc
         FROM SanPham sp
         LEFT JOIN ChatLieu cl ON sp.idChatLieu = cl.id
         LEFT JOIN XuatXu xx ON sp.idXuatXu = xx.id
         LEFT JOIN KichThuoc kt ON sp.idKichThuoc = kt.id
         LEFT JOIN MauSac ms ON sp.idMauSac = ms.id
         LEFT JOIN NhaCungCap ncc ON sp.idNhaCungCap = ncc.id
+        LEFT JOIN KhuVucKho kvk ON sp.idKhuVucKho = kvk.id
     """;
 
     if (keyword != null && !keyword.trim().isEmpty()) {
@@ -69,6 +71,7 @@ public class SanPhamService {
             sp.setTenKichThuoc(rs.getString("tenKT"));
             sp.setTenMauSac(rs.getString("tenMau"));
             sp.setTenNhaCungCap(rs.getString("tenNCC"));
+            sp.setTenKhuVucKho(rs.getString("tenKhuVuc"));
             ds.add(sp);
         }
     } catch (SQLException e) {
@@ -87,13 +90,15 @@ public class SanPhamService {
                 xx.tenXuatXu AS tenXuatXu,
                 kt.tenKT AS tenKT,
                 ms.tenMau AS tenMau,
-                ncc.tenNCC AS tenNCC
+                ncc.tenNCC AS tenNCC,
+                kvk.tenKhuVuc AS tenKhuVuc
             FROM SanPham sp
             LEFT JOIN ChatLieu cl ON sp.idChatLieu = cl.id
             LEFT JOIN XuatXu xx ON sp.idXuatXu = xx.id
             LEFT JOIN KichThuoc kt ON sp.idKichThuoc = kt.id
             LEFT JOIN MauSac ms ON sp.idMauSac = ms.id
             LEFT JOIN NhaCungCap ncc ON sp.idNhaCungCap = ncc.id
+            LEFT JOIN KhuVucKho kvk ON sp.idKhuVucKho = kvk.id
         """;
         ArrayList<SanPham> ds = new ArrayList<>();
         try (PreparedStatement ps = conn.prepareStatement(SQL);
@@ -112,6 +117,7 @@ public class SanPhamService {
                 sp.setTenKichThuoc(rs.getString("tenKT"));
                 sp.setTenMauSac(rs.getString("tenMau"));
                 sp.setTenNhaCungCap(rs.getString("tenNCC"));
+                sp.setTenKhuVucKho(rs.getString("tenKhuVuc"));
                 ds.add(sp);
             }
         } catch (SQLException e) {
@@ -194,6 +200,20 @@ public class SanPhamService {
         }
         return nhaCungCapSet;
     }
+    
+    public HashSet<String> getAllKhuVucKho() {
+        String SQL = "SELECT DISTINCT kvk.tenKhuVuc FROM SanPham sp LEFT JOIN KhuVucKho kvk ON sp.idKhuVucKho = kvk.id";
+        HashSet<String> khuVucKhoSet = new HashSet<>();
+        try (PreparedStatement ps = conn.prepareStatement(SQL);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                khuVucKhoSet.add(rs.getString("tenKhuVuc"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return khuVucKhoSet;
+    }
 
     public boolean checkMaSPTonTai(String maSP) {
         String sql = "SELECT COUNT(*) FROM SanPham WHERE masp = ?";
@@ -211,8 +231,8 @@ public class SanPhamService {
     }
 
     public boolean addSanPham(SanPham sanPham) {
-        String SQL = "INSERT INTO SanPham (masp, tensp, mota, gia, soluongton, idChatLieu, idXuatXu, idKichThuoc, idMauSac, idNhaCungCap, hinhanh) "
-                   + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String SQL = "INSERT INTO SanPham (masp, tensp, mota, gia, soluongton, idChatLieu, idXuatXu, idKichThuoc, idMauSac, idNhaCungCap, idKhuVucKho, hinhanh) "
+                   + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement ps = conn.prepareStatement(SQL)) {
             ps.setString(1, sanPham.getMasp());
             ps.setString(2, sanPham.getTensp());
@@ -224,7 +244,8 @@ public class SanPhamService {
             ps.setInt(8, sanPham.getIdKichThuoc());
             ps.setInt(9, sanPham.getIdMauSac());
             ps.setInt(10, sanPham.getIdNhaCungCap());
-            ps.setString(11, sanPham.getHinhanh());
+            ps.setInt(11, sanPham.getIdKhuVucKho());
+            ps.setString(12, sanPham.getHinhanh());
             int rowsAffected = ps.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
@@ -235,18 +256,19 @@ public class SanPhamService {
 
 
     public boolean updateSanPham(SanPham sanPham) {
-        String SQL = "UPDATE SanPham SET tensp = ?, mota = ?, gia = ?, soluongton = ?, idChatLieu = ?, idXuatXu = ?, idKichThuoc = ?, idMauSac = ?, idNhaCungCap = ?, hinhanh = ? "
+        String SQL = "UPDATE SanPham SET tensp = ?, mota = ?, gia = ?, idChatLieu = ?, idXuatXu = ?, idKichThuoc = ?, idMauSac = ?, idNhaCungCap = ?, idKhuVucKho = ?, hinhanh = ? "
                    + "WHERE id = ?";
         try (PreparedStatement ps = conn.prepareStatement(SQL)) {
             ps.setString(1, sanPham.getTensp());
             ps.setString(2, sanPham.getMota());
             ps.setBigDecimal(3, sanPham.getGia());
-            ps.setInt(4, sanPham.getSoluongton());
-            ps.setInt(5, sanPham.getIdChatLieu());
-            ps.setInt(6, sanPham.getIdXuatXu());
-            ps.setInt(7, sanPham.getIdKichThuoc());
-            ps.setInt(8, sanPham.getIdMauSac());
-            ps.setInt(9, sanPham.getIdNhaCungCap());
+            //ps.setInt(4, sanPham.getSoluongton());
+            ps.setInt(4, sanPham.getIdChatLieu());
+            ps.setInt(5, sanPham.getIdXuatXu());
+            ps.setInt(6, sanPham.getIdKichThuoc());
+            ps.setInt(7, sanPham.getIdMauSac());
+            ps.setInt(8, sanPham.getIdNhaCungCap());
+            ps.setInt(9, sanPham.getIdKhuVucKho());
             ps.setString(10, sanPham.getHinhanh());
             ps.setInt(11, sanPham.getId());
             int rowsAffected = ps.executeUpdate();
@@ -278,6 +300,7 @@ public class SanPhamService {
                     sanPham.setIdKichThuoc(rs.getInt("idKichThuoc"));
                     sanPham.setIdMauSac(rs.getInt("idMauSac"));
                     sanPham.setIdNhaCungCap(rs.getInt("idNhaCungCap"));
+                    sanPham.setIdKhuVucKho(rs.getInt("idKhuVucKho"));
                 }
             }
         } catch (SQLException e) {

@@ -36,6 +36,7 @@ public class AddSanPham extends javax.swing.JPanel {
         initKT();
         initMS();
         initNCC();
+        initKhuVucKho();
     }
     
     public void initChatLieu() {
@@ -96,6 +97,19 @@ public class AddSanPham extends javax.swing.JPanel {
             }
         }
         cboNhaCC.setModel(boxModel); 
+    }
+    
+    
+     public void initKhuVucKho() {
+        DefaultComboBoxModel<String> boxModel = new DefaultComboBoxModel<>();
+        boxModel.addElement("-- Chọn khu vực kho --");
+        HashSet<String> KVKhoSet = service.getAllKhuVucKho();
+        for (String kvucKho : KVKhoSet) {
+            if (kvucKho != null) {
+                boxModel.addElement(kvucKho);
+            }
+        }
+        cboKhuVucKho.setModel(boxModel); 
     }
     
     public boolean checkMa() {     
@@ -163,28 +177,28 @@ public class AddSanPham extends javax.swing.JPanel {
             txtGia.requestFocus();
             return false;
         }
-        if (txtSoLuong.getText().trim().isEmpty()) {
-            Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Bạn chưa nhập số lượng tồn!");
-            txtSoLuong.requestFocus();
-            return false;
-        }
-        try {
-            int slt = Integer.parseInt(txtSoLuong.getText().trim());
-            if (slt < 0) {
-                Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Số lượng tồn không được âm!");
-                txtSoLuong.requestFocus();
-                return false;
-            }
-            if (slt > 1000) {
-                Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Số lượng tồn không được vượt quá 1000!");
-                txtSoLuong.requestFocus();
-                return false;
-            }
-        } catch (NumberFormatException e) {
-            Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Số lượng tồn phải là số nguyên!");
-            txtSoLuong.requestFocus();
-            return false;
-        }
+//        if (txtSoLuong.getText().trim().isEmpty()) {
+//            Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Bạn chưa nhập số lượng tồn!");
+//            txtSoLuong.requestFocus();
+//            return false;
+//        }
+//        try {
+//            int slt = Integer.parseInt(txtSoLuong.getText().trim());
+//            if (slt < 0) {
+//                Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Số lượng tồn không được âm!");
+//                txtSoLuong.requestFocus();
+//                return false;
+//            }
+//            if (slt > 1000) {
+//                Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Số lượng tồn không được vượt quá 1000!");
+//                txtSoLuong.requestFocus();
+//                return false;
+//            }
+//        } catch (NumberFormatException e) {
+//            Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Số lượng tồn phải là số nguyên!");
+//            txtSoLuong.requestFocus();
+//            return false;
+//        }
         if (txaMoTa.getText().trim().isEmpty()) {
             Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Bạn chưa nhập mô tả sản phẩm!");
             txaMoTa.requestFocus();
@@ -231,14 +245,15 @@ public class AddSanPham extends javax.swing.JPanel {
                 String ten = txtTen.getText().trim();
                 String mota = txaMoTa.getText().trim();
                 BigDecimal gia = new BigDecimal(txtGia.getText().trim());
-                int soluongTon = Integer.parseInt(txtSoLuong.getText().trim());
+                int soluongTon = 0;
                 int idChatLieu = cboChatLieu.getSelectedIndex() + 1;
                 int idXuatXu = cboXuatXu.getSelectedIndex() + 1;
                 int idKichThuoc = cboKichThuoc.getSelectedIndex() + 1;
                 int idMauSac = cboMauSac.getSelectedIndex() + 1;
                 int idNhaCungCap = cboNhaCC.getSelectedIndex() + 1;
+                int idKhuVucKho = cboKhuVucKho.getSelectedIndex() + 1;
                 String hinhanh = (profile != null) ? profile.getPath() : null;
-                SanPham sp = new SanPham(0, ma, ten, mota, gia, soluongTon, idChatLieu, idXuatXu, idKichThuoc, idMauSac, idNhaCungCap, hinhanh);
+                SanPham sp = new SanPham(0, ma, ten, mota, gia, soluongTon, idChatLieu, idXuatXu, idKichThuoc, idMauSac, idNhaCungCap,idKhuVucKho, hinhanh);
                 boolean result = service.addSanPham(sp);
                 if (result) {
                     Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Thêm sản phẩm thành công!");
@@ -289,25 +304,25 @@ public class AddSanPham extends javax.swing.JPanel {
         txtTen = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
         txtGia = new javax.swing.JTextField();
-        jLabel6 = new javax.swing.JLabel();
-        txtSoLuong = new javax.swing.JTextField();
-        jSeparator1 = new javax.swing.JSeparator();
-        jLabel7 = new javax.swing.JLabel();
-        jLabel8 = new javax.swing.JLabel();
-        jLabel9 = new javax.swing.JLabel();
-        jScrollPane1 = new javax.swing.JScrollPane();
+        jLabel10 = new javax.swing.JLabel();
+        jScrollPane3 = new javax.swing.JScrollPane();
         txaMoTa = new javax.swing.JTextArea();
-        jLabel12 = new javax.swing.JLabel();
+        jSeparator2 = new javax.swing.JSeparator();
+        jLabel11 = new javax.swing.JLabel();
+        jLabel16 = new javax.swing.JLabel();
+        jLabel17 = new javax.swing.JLabel();
+        cboKhuVucKho = new javax.swing.JComboBox<>();
+        jLabel18 = new javax.swing.JLabel();
         cboChatLieu = new javax.swing.JComboBox<>();
-        jLabel13 = new javax.swing.JLabel();
+        jLabel19 = new javax.swing.JLabel();
         cboXuatXu = new javax.swing.JComboBox<>();
-        jLabel14 = new javax.swing.JLabel();
+        jLabel22 = new javax.swing.JLabel();
         cboKichThuoc = new javax.swing.JComboBox<>();
-        jLabel15 = new javax.swing.JLabel();
+        jLabel23 = new javax.swing.JLabel();
         cboMauSac = new javax.swing.JComboBox<>();
-        jLabel20 = new javax.swing.JLabel();
+        jLabel24 = new javax.swing.JLabel();
         cboNhaCC = new javax.swing.JComboBox<>();
-        jLabel21 = new javax.swing.JLabel();
+        jLabel25 = new javax.swing.JLabel();
         pic = new javaswingdev.picturebox.PictureBox();
         jToolBar1 = new javax.swing.JToolBar();
         cmdBrowse = new javax.swing.JButton();
@@ -406,58 +421,60 @@ public class AddSanPham extends javax.swing.JPanel {
         crazyPanel1.add(jLabel5);
         crazyPanel1.add(txtGia);
 
-        jLabel6.setText("Số Lượng");
-        crazyPanel1.add(jLabel6);
-        crazyPanel1.add(txtSoLuong);
-        crazyPanel1.add(jSeparator1);
-
-        jLabel7.setText("Thông tin kỹ thuật");
-        crazyPanel1.add(jLabel7);
-
-        jLabel8.setText("Được sử dụng để phân biệt sản phẩm");
-        crazyPanel1.add(jLabel8);
-
-        jLabel9.setText("Mô tả");
-        crazyPanel1.add(jLabel9);
+        jLabel10.setText("Mô tả");
+        crazyPanel1.add(jLabel10);
 
         txaMoTa.setColumns(20);
         txaMoTa.setRows(5);
-        jScrollPane1.setViewportView(txaMoTa);
+        jScrollPane3.setViewportView(txaMoTa);
 
-        crazyPanel1.add(jScrollPane1);
+        crazyPanel1.add(jScrollPane3);
+        crazyPanel1.add(jSeparator2);
 
-        jLabel12.setText("Chất liệu");
-        crazyPanel1.add(jLabel12);
+        jLabel11.setText("Thông tin kĩ thuật");
+        crazyPanel1.add(jLabel11);
+
+        jLabel16.setText("Được sử dụng để phân biệt sản phẩm");
+        crazyPanel1.add(jLabel16);
+
+        jLabel17.setText("Khu vực kho");
+        crazyPanel1.add(jLabel17);
+
+        cboKhuVucKho.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        crazyPanel1.add(cboKhuVucKho);
+
+        jLabel18.setText("Chất liệu");
+        crazyPanel1.add(jLabel18);
 
         cboChatLieu.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         crazyPanel1.add(cboChatLieu);
 
-        jLabel13.setText("Xuất Xứ");
-        crazyPanel1.add(jLabel13);
+        jLabel19.setText("Xuất xứ");
+        crazyPanel1.add(jLabel19);
 
         cboXuatXu.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         crazyPanel1.add(cboXuatXu);
 
-        jLabel14.setText("Kích thước");
-        crazyPanel1.add(jLabel14);
+        jLabel22.setText("Kích thước");
+        crazyPanel1.add(jLabel22);
 
         cboKichThuoc.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         crazyPanel1.add(cboKichThuoc);
 
-        jLabel15.setText("Màu Sắc");
-        crazyPanel1.add(jLabel15);
+        jLabel23.setText("Màu sắc");
+        crazyPanel1.add(jLabel23);
 
         cboMauSac.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         crazyPanel1.add(cboMauSac);
 
-        jLabel20.setText("Nhà Cung cấp");
-        crazyPanel1.add(jLabel20);
+        jLabel24.setText("Nhà CC");
+        crazyPanel1.add(jLabel24);
 
         cboNhaCC.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         crazyPanel1.add(cboNhaCC);
 
-        jLabel21.setText("Hình ảnh");
-        crazyPanel1.add(jLabel21);
+        jLabel25.setText("Hình ảnh");
+        crazyPanel1.add(jLabel25);
 
         jToolBar1.setRollover(true);
         jToolBar1.setOpaque(false);
@@ -548,6 +565,7 @@ public class AddSanPham extends javax.swing.JPanel {
     private ModelProfile profile;
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox<String> cboChatLieu;
+    private javax.swing.JComboBox<String> cboKhuVucKho;
     private javax.swing.JComboBox<String> cboKichThuoc;
     private javax.swing.JComboBox<String> cboMauSac;
     private javax.swing.JComboBox<String> cboNhaCC;
@@ -557,29 +575,28 @@ public class AddSanPham extends javax.swing.JPanel {
     private javax.swing.JButton cmdSave;
     private raven.crazypanel.CrazyPanel crazyPanel1;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel12;
-    private javax.swing.JLabel jLabel13;
-    private javax.swing.JLabel jLabel14;
-    private javax.swing.JLabel jLabel15;
+    private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel16;
+    private javax.swing.JLabel jLabel17;
+    private javax.swing.JLabel jLabel18;
+    private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel20;
-    private javax.swing.JLabel jLabel21;
+    private javax.swing.JLabel jLabel22;
+    private javax.swing.JLabel jLabel23;
+    private javax.swing.JLabel jLabel24;
+    private javax.swing.JLabel jLabel25;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
-    private javax.swing.JLabel jLabel7;
-    private javax.swing.JLabel jLabel8;
-    private javax.swing.JLabel jLabel9;
-    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JSeparator jSeparator2;
     private javax.swing.JToolBar jToolBar1;
     private javaswingdev.picturebox.PictureBox pic;
     private javax.swing.JTextArea txaMoTa;
     private javax.swing.JTextField txtGia;
     private javax.swing.JTextField txtMa;
-    private javax.swing.JTextField txtSoLuong;
     private javax.swing.JTextField txtTen;
     // End of variables declaration//GEN-END:variables
 

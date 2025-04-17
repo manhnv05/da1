@@ -22,6 +22,7 @@ public class SanPham {
     private int idKichThuoc;
     private int idMauSac;
     private int idNhaCungCap;
+    private int idKhuVucKho;
     private String hinhanh;
     
     private String tenChatLieu;
@@ -29,13 +30,14 @@ private String tenXuatXu;
 private String tenKichThuoc;
 private String tenMauSac;
 private String tenNhaCungCap;
+private String tenKhuVucKho;
 
 
 
     public SanPham() {
     }
 
-    public SanPham(int id, String masp, String tensp, String mota, BigDecimal gia, int soluongton, int idChatLieu, int idXuatXu, int idKichThuoc, int idMauSac, int idNhaCungCap, String hinhanh) {
+    public SanPham(int id, String masp, String tensp, String mota, BigDecimal gia, int soluongton, int idChatLieu, int idXuatXu, int idKichThuoc, int idMauSac, int idNhaCungCap, int idKhuVucKho, String hinhanh) {
         this.id = id;
         this.masp = masp;
         this.tensp = tensp;
@@ -47,8 +49,11 @@ private String tenNhaCungCap;
         this.idKichThuoc = idKichThuoc;
         this.idMauSac = idMauSac;
         this.idNhaCungCap = idNhaCungCap;
+        this.idKhuVucKho = idKhuVucKho;
         this.hinhanh = hinhanh;
     }
+
+    
 
     public SanPham(int id, String masp, String tensp, BigDecimal gia, String tenNhaCungCap, String hinhanh) {
         this.id = id;
@@ -59,10 +64,8 @@ private String tenNhaCungCap;
         this.hinhanh = hinhanh;
         
     }
-    
-    
 
-    public SanPham(int id, String masp, String tensp, String mota, BigDecimal gia, int soluongton, int idChatLieu, int idXuatXu, int idKichThuoc, int idMauSac, int idNhaCungCap, String hinhanh, String tenChatLieu, String tenXuatXu, String tenKichThuoc, String tenMauSac, String tenNhaCungCap) {
+    public SanPham(int id, String masp, String tensp, String mota, BigDecimal gia, int soluongton, int idChatLieu, int idXuatXu, int idKichThuoc, int idMauSac, int idNhaCungCap, int idKhuVucKho, String hinhanh, String tenChatLieu, String tenXuatXu, String tenKichThuoc, String tenMauSac, String tenNhaCungCap, String tenKhuVucKho) {
         this.id = id;
         this.masp = masp;
         this.tensp = tensp;
@@ -74,13 +77,19 @@ private String tenNhaCungCap;
         this.idKichThuoc = idKichThuoc;
         this.idMauSac = idMauSac;
         this.idNhaCungCap = idNhaCungCap;
+        this.idKhuVucKho = idKhuVucKho;
         this.hinhanh = hinhanh;
         this.tenChatLieu = tenChatLieu;
         this.tenXuatXu = tenXuatXu;
         this.tenKichThuoc = tenKichThuoc;
         this.tenMauSac = tenMauSac;
         this.tenNhaCungCap = tenNhaCungCap;
+        this.tenKhuVucKho = tenKhuVucKho;
     }
+    
+    
+
+    
 
     public int getId() {
         return id;
@@ -217,6 +226,24 @@ private String tenNhaCungCap;
     public void setTenNhaCungCap(String tenNhaCungCap) {
         this.tenNhaCungCap = tenNhaCungCap;
     }
+
+    public int getIdKhuVucKho() {
+        return idKhuVucKho;
+    }
+
+    public void setIdKhuVucKho(int idKhuVucKho) {
+        this.idKhuVucKho = idKhuVucKho;
+    }
+
+    public String getTenKhuVucKho() {
+        return tenKhuVucKho;
+    }
+
+    public void setTenKhuVucKho(String tenKhuVucKho) {
+        this.tenKhuVucKho = tenKhuVucKho;
+    }
+    
+    
     
     
 
@@ -231,8 +258,10 @@ private String tenNhaCungCap;
 
     @Override
     public String toString() {
-        return "SanPham{" + "id=" + id + ", masp=" + masp + ", tensp=" + tensp + ", mota=" + mota + ", gia=" + gia + ", soluongton=" + soluongton + ", idChatLieu=" + idChatLieu + ", idXuatXu=" + idXuatXu + ", idKichThuoc=" + idKichThuoc + ", idMauSac=" + idMauSac + ", idNhaCungCap=" + idNhaCungCap + ", hinhanh=" + hinhanh + ", tenChatLieu=" + tenChatLieu + ", tenXuatXu=" + tenXuatXu + ", tenKichThuoc=" + tenKichThuoc + ", tenMauSac=" + tenMauSac + ", tenNhaCungCap=" + tenNhaCungCap + '}';
+        return "SanPham{" + "id=" + id + ", masp=" + masp + ", tensp=" + tensp + ", mota=" + mota + ", gia=" + gia + ", soluongton=" + soluongton + ", idChatLieu=" + idChatLieu + ", idXuatXu=" + idXuatXu + ", idKichThuoc=" + idKichThuoc + ", idMauSac=" + idMauSac + ", idNhaCungCap=" + idNhaCungCap + ", idKhuVucKho=" + idKhuVucKho + ", hinhanh=" + hinhanh + ", tenChatLieu=" + tenChatLieu + ", tenXuatXu=" + tenXuatXu + ", tenKichThuoc=" + tenKichThuoc + ", tenMauSac=" + tenMauSac + ", tenNhaCungCap=" + tenNhaCungCap + ", tenKhuVucKho=" + tenKhuVucKho + '}';
     }
+
+   
     
     
 }

@@ -9,19 +9,35 @@ import com.formdev.flatlaf.extras.FlatSVGIcon;
 import da.component.MyList;
 import da.model.KhoHang;
 import da.model.KhuVucKho;
+import da.model.NhaCC;
+import da.model.NhanVien;
 import da.model.NhapKho;
+import da.model.SanPham;
 import da.service.KhoHangService;
 import da.service.KhuVucKhoService;
+import da.service.NhaCCService;
+import da.service.NhanVienService;
 import da.service.NhapKhoService;
+import da.service.SanPhamService;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import javax.swing.BorderFactory;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.DefaultListCellRenderer;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -355,6 +371,222 @@ public class FormKhoHang extends javax.swing.JPanel {
             tblModel.addRow(rowData);
         }
     }
+    
+    public void Nhap() {
+    NhanVienService nhanVienService = new NhanVienService();
+    NhaCCService nhaCCRepository = new NhaCCService();
+        SanPhamService sanPhamService = new SanPhamService();
+    KhuVucKhoService khuVucKhoService = new KhuVucKhoService();
+
+    List<NhanVien> nhanVienList = nhanVienService.getAllNhanVien();
+    List<NhaCC> nhaCCList = nhaCCRepository.getAllNhaCungCap();
+    List<SanPham> sanPhamList = sanPhamService.getAll();
+    List<KhuVucKho> khuVucKhoList = khuVucKhoService.getAllKhuVucKho();
+
+    JTextField txtMaNhap = new JTextField();
+    JComboBox<NhaCC> cbNhaCungCap = new JComboBox<>(new DefaultComboBoxModel<>(nhaCCList.toArray(new NhaCC[0])));
+    JComboBox<NhanVien> cbNhanVien = new JComboBox<>(new DefaultComboBoxModel<>(nhanVienList.toArray(new NhanVien[0])));
+    JTextField txtNgayNhap = new JTextField();
+    JTextField txtTongTien = new JTextField();
+    JTextField txtSoLuong = new JTextField();
+    JComboBox<SanPham> cboSanPham = new JComboBox<>(new DefaultComboBoxModel<>(sanPhamList.toArray(new SanPham[0])));
+    JComboBox<KhuVucKho> cboKhuVucKho = new JComboBox<>(new DefaultComboBoxModel<>(khuVucKhoList.toArray(new KhuVucKho[0])));
+
+    LocalDate today = LocalDate.now();
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+    txtNgayNhap.setText(today.format(formatter));
+
+    cbNhaCungCap.setRenderer(new DefaultListCellRenderer() {
+        @Override
+        public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+            super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+            if (value instanceof NhaCC nhaCC) {
+                setText(nhaCC.getTen());
+            }
+            return this;
+        }
+    });
+
+    cbNhanVien.setRenderer(new DefaultListCellRenderer() {
+        @Override
+        public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+            super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+            if (value instanceof NhanVien nhanVien) {
+                setText(nhanVien.getHo() + " " + nhanVien.getTen());
+            }
+            return this;
+        }
+    });
+
+    cboSanPham.setRenderer(new DefaultListCellRenderer() {
+        @Override
+        public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+            super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+            if (value instanceof SanPham sanPham) {
+                setText(sanPham.getTensp());
+            }
+            return this;
+        }
+    });
+
+    cboKhuVucKho.setRenderer(new DefaultListCellRenderer() {
+        @Override
+        public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+            super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+            if (value instanceof KhuVucKho khuVucKho) {
+                setText(khuVucKho.getTenKhuVuc());
+            }
+            return this;
+        }
+    });
+
+    JPanel panel = new JPanel(new GridBagLayout());
+    GridBagConstraints gbc = new GridBagConstraints();
+    gbc.insets = new Insets(10, 10, 10, 10);
+    gbc.fill = GridBagConstraints.HORIZONTAL;
+
+    gbc.gridx = 0;
+    gbc.gridy = 0;
+    panel.add(new JLabel("Mã Nhập Kho:"), gbc);
+    gbc.gridx = 1;
+    panel.add(txtMaNhap, gbc);
+
+    gbc.gridx = 0;
+    gbc.gridy = 1;
+    panel.add(new JLabel("Nhà Cung Cấp:"), gbc);
+    gbc.gridx = 1;
+    panel.add(cbNhaCungCap, gbc);
+
+    gbc.gridx = 0;
+    gbc.gridy = 2;
+    panel.add(new JLabel("Nhân Viên Nhập:"), gbc);
+    gbc.gridx = 1;
+    panel.add(cbNhanVien, gbc);
+
+    gbc.gridx = 0;
+    gbc.gridy = 3;
+    panel.add(new JLabel("Ngày Nhập (dd/MM/yyyy):"), gbc);
+    gbc.gridx = 1;
+    panel.add(txtNgayNhap, gbc);
+
+    gbc.gridx = 0;
+    gbc.gridy = 4;
+    panel.add(new JLabel("Tổng Tiền:"), gbc);
+    gbc.gridx = 1;
+    panel.add(txtTongTien, gbc);
+
+    gbc.gridx = 0;
+    gbc.gridy = 5;
+    panel.add(new JLabel("Sản Phẩm:"), gbc);
+    gbc.gridx = 1;
+    panel.add(cboSanPham, gbc);
+
+    gbc.gridx = 0;
+    gbc.gridy = 6;
+    panel.add(new JLabel("Số Lượng:"), gbc);
+    gbc.gridx = 1;
+    panel.add(txtSoLuong, gbc);
+
+    gbc.gridx = 0;
+    gbc.gridy = 7;
+    panel.add(new JLabel("Khu Vực Kho:"), gbc);
+    gbc.gridx = 1;
+    panel.add(cboKhuVucKho, gbc);
+
+    while (true) {
+        int result = JOptionPane.showConfirmDialog(
+            null,
+            panel,
+            "Thêm Phiếu Nhập Kho",
+            JOptionPane.OK_CANCEL_OPTION,
+            JOptionPane.PLAIN_MESSAGE
+        );
+
+        if (result != JOptionPane.OK_OPTION) {
+            return;
+        }
+
+        String maNhap = txtMaNhap.getText().trim();
+        NhaCC nhaCungCap = (NhaCC) cbNhaCungCap.getSelectedItem();
+        NhanVien nhanVien = (NhanVien) cbNhanVien.getSelectedItem();
+        String ngayNhapStr = txtNgayNhap.getText().trim();
+        String tongTienStr = txtTongTien.getText().trim();
+        SanPham sanPham = (SanPham) cboSanPham.getSelectedItem();
+        String soLuongStr = txtSoLuong.getText().trim();
+        KhuVucKho khuVucKho = (KhuVucKho) cboKhuVucKho.getSelectedItem();
+
+        if (maNhap.isEmpty() || nhaCungCap == null || nhanVien == null || ngayNhapStr.isEmpty() ||
+            tongTienStr.isEmpty() || sanPham == null || soLuongStr.isEmpty() || khuVucKho == null) {
+            Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng điền đầy đủ thông tin!");
+            continue;
+        }
+
+        Timestamp ngayNhap;
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+            sdf.setLenient(false);
+            Date parsedDate = sdf.parse(ngayNhapStr);
+            ngayNhap = new Timestamp(parsedDate.getTime());
+        } catch (ParseException e) {
+            Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Ngày nhập không đúng định dạng (dd/MM/yyyy)!");
+            txtNgayNhap.requestFocus();
+            continue;
+        }
+
+        int soLuong;
+        try {
+            soLuong = Integer.parseInt(soLuongStr);
+            if (soLuong <= 0) {
+                Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Số lượng phải lớn hơn 0!");
+                txtSoLuong.requestFocus();
+                continue;
+            }
+        } catch (NumberFormatException e) {
+            Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Số lượng phải là số hợp lệ!");
+            txtSoLuong.requestFocus();
+            continue;
+        }
+
+        double tongTien;
+        try {
+            tongTien = Double.parseDouble(tongTienStr);
+            if (tongTien < 0) {
+                Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Tổng tiền không được âm!");
+                txtTongTien.requestFocus();
+                continue;
+            }
+        } catch (NumberFormatException e) {
+            Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Tổng tiền phải là số hợp lệ!");
+            txtTongTien.requestFocus();
+            continue;
+        }
+
+        NhapKho nhapKho = new NhapKho();
+        nhapKho.setManhap(maNhap);
+        nhapKho.setNhacungcap(nhaCungCap.getTen());
+        nhapKho.setNhanvien(nhanVien.getHo() + " " + nhanVien.getTen());
+        nhapKho.setSanPham(sanPham.getTensp());
+        nhapKho.setSoLuong(soLuong);
+        nhapKho.setKhuvuckho(khuVucKho.getTenKhuVuc());
+        nhapKho.setNgaynhap(ngayNhap);
+        nhapKho.setTongtien(tongTien);
+
+        boolean isAdded = service2.addNhapKho(
+    nhapKho,                          // Đối tượng NhapKho
+    nhaCungCap.getId(),               // ID nhà cung cấp
+    nhanVien.getId(),                 // ID nhân viên nhập
+    sanPham.getId(),                  // ID sản phẩm
+    khuVucKho.getId()                 // ID khu vực kho
+);
+        if (isAdded) {
+            Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Thêm phiếu nhập kho thành công!");
+            loadNhapKho(service2.getListNhapKho());
+        } else {
+            Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Thêm phiếu nhập kho thất bại!");
+        }
+        return;
+    }
+}
 
 
     /**
@@ -709,6 +941,11 @@ public class FormKhoHang extends javax.swing.JPanel {
         crazyPanel7.add(cmdAdd1);
 
         cmdUpdate1.setText("Update");
+        cmdUpdate1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cmdUpdate1ActionPerformed(evt);
+            }
+        });
         crazyPanel7.add(cmdUpdate1);
 
         cmdDetails1.setText("Chi Tiết");
@@ -806,6 +1043,10 @@ public class FormKhoHang extends javax.swing.JPanel {
                 applyListStyle(idKhuVucKho);
             }
     }//GEN-LAST:event_tblKhuVucMouseClicked
+
+    private void cmdUpdate1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdUpdate1ActionPerformed
+        Nhap();
+    }//GEN-LAST:event_cmdUpdate1ActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

@@ -203,23 +203,25 @@ CREATE TABLE SanPham (
     idXuatXu INT,             -- Country of origin (Foreign Key)
     idKichThuoc INT,          -- Size (Foreign Key)
     idMauSac INT,             -- Color (Foreign Key)
-    idNhaCungCap INT,         -- Supplier (Foreign Key)
+    idNhaCungCap INT,        -- Supplier (Foreign Key)
+	idKhuVucKho INT,
     hinhanh NVARCHAR(255),    -- Path to the image
     FOREIGN KEY (idChatLieu) REFERENCES ChatLieu(id),
     FOREIGN KEY (idXuatXu) REFERENCES XuatXu(id),
     FOREIGN KEY (idKichThuoc) REFERENCES KichThuoc(id),
     FOREIGN KEY (idMauSac) REFERENCES MauSac(id),
-    FOREIGN KEY (idNhaCungCap) REFERENCES NhaCungCap(id)
+    FOREIGN KEY (idNhaCungCap) REFERENCES NhaCungCap(id),
+	FOREIGN KEY (idKhuVucKho) REFERENCES KhuVucKho(id)
 );
  
 -- Inserting data into SanPham table
-INSERT INTO SanPham (masp, tensp, mota, gia, soluongton, idChatLieu, idXuatXu, idKichThuoc, idMauSac, idNhaCungCap, hinhanh)
+INSERT INTO SanPham (masp, tensp, mota, gia, soluongton, idChatLieu, idXuatXu, idKichThuoc, idMauSac, idNhaCungCap, idKhuVucKho, hinhanh)
 VALUES 
-('SP001', N'Áo Thun Nam', N'Áo thun nam chất liệu cotton, thoáng mát, dễ chịu.', 150000.00, 100, 1, 1, 1, 1, 1, N'path_to_image/SP001.jpg'),  -- Available product
-('SP002', N'Quần Jean Nữ', N'Quần jean nữ phong cách trẻ trung, dễ phối đồ.', 250000.00, 50, 2, 2, 2, 2, 2, N'path_to_image/SP002.jpg'),  -- Available product
-('SP003', N'Giày Thể Thao Nam', N'Giày thể thao nam, thoải mái, phù hợp với nhiều hoạt động.', 350000.00, 0, 1, 3, 3, 3, 3, N'path_to_image/SP003.jpg'),  -- Not available product
-('SP004', N'Váy Đầm Nữ', N'Váy đầm nữ thanh lịch, phù hợp cho các dịp đặc biệt.', 400000.00, 70, 3, 4, 4, 4, 4, N'path_to_image/SP004.jpg'),  -- Available product
-('SP005', N'Kính Mắt Nam', N'Kính mắt nam thời trang, bảo vệ mắt khỏi tia UV.', 200000.00, 120, 4, 5, 5, 5, 5, N'path_to_image/SP005.jpg');  -- Available product
+('SP001', N'Áo Thun Nam', N'Áo thun nam chất liệu cotton, thoáng mát, dễ chịu.', 150000.00, 100, 1, 1, 1, 1, 1, 1, N'path_to_image/SP001.jpg'),  -- Available product
+('SP002', N'Quần Jean Nữ', N'Quần jean nữ phong cách trẻ trung, dễ phối đồ.', 250000.00, 50, 2, 2, 2, 2, 2, 2, N'path_to_image/SP002.jpg'),  -- Available product
+('SP003', N'Giày Thể Thao Nam', N'Giày thể thao nam, thoải mái, phù hợp với nhiều hoạt động.', 350000.00, 0, 1, 3, 3, 3, 3, 3, N'path_to_image/SP003.jpg'),  -- Not available product
+('SP004', N'Váy Đầm Nữ', N'Váy đầm nữ thanh lịch, phù hợp cho các dịp đặc biệt.', 400000.00, 70, 3, 4, 4, 4, 4, 4, N'path_to_image/SP004.jpg'),  -- Available product
+('SP005', N'Kính Mắt Nam', N'Kính mắt nam thời trang, bảo vệ mắt khỏi tia UV.', 200000.00, 120, 4, 5, 5, 5, 5, 5, N'path_to_image/SP005.jpg');  -- Available product
 
 select * from GioHang
 drop table GioHang
@@ -237,12 +239,7 @@ CREATE TABLE GioHang (
 );
 
 
-
-SELECT gh.id, gh.idNguoiDung, gh.idSanPham, sp.maSP, sp.tenSP, gh.tongTien, gh.soLuong
-FROM GioHang gh  
-JOIN SanPham sp ON gh.idSanPham = sp.id 
-JOIN NguoiDung nd ON gh.idNguoiDung = nd.id 
-WHERE nd.email = 'admin@email.com';
+drop table KhuVucKho
 
 CREATE TABLE KhuVucKho (
     id INT IDENTITY(1,1) PRIMARY KEY,
@@ -258,36 +255,11 @@ INSERT INTO KhuVucKho (tenKhuVuc, moTa) VALUES
 (N'Khu vực E', N'Khu vực lưu trữ tổng hợp');
 
 
-drop table KhoHang
-CREATE TABLE KhoHang (
-    id INT IDENTITY(1,1) PRIMARY KEY,
-    idSanPham INT NOT NULL,
-    idKhuVucKho INT NOT NULL,
-    ngayNhap DATETIME DEFAULT GETDATE(),
-
-    FOREIGN KEY (idSanPham) REFERENCES SanPham(id),
-    FOREIGN KEY (idKhuVucKho) REFERENCES KhuVucKho(id),
-);
-
 
 select *from SanPham
 
 
--- Thêm dữ liệu vào bảng KhoHang
-INSERT INTO KhoHang (idSanPham, idKhuVucKho, ngayNhap) VALUES
-(1, 1, '2025-04-01'), -- Sản phẩm SP001 lưu trữ tại khu vực A
-(2, 1, '2025-04-02'), -- Sản phẩm SP002 lưu trữ tại khu vực A
-(3, 2, '2025-04-03'), -- Sản phẩm SP003 lưu trữ tại khu vực B
-(4, 2, '2025-04-04'), -- Sản phẩm SP004 lưu trữ tại khu vực B
-(5, 3, '2025-04-05'), -- Sản phẩm SP005 lưu trữ tại khu vực C
-(1, 3, '2025-04-06'), -- Sản phẩm SP001 lưu trữ tại khu vực C
-(2, 4, '2025-04-07'), -- Sản phẩm SP002 lưu trữ tại khu vực D
-(3, 4, '2025-04-08'), -- Sản phẩm SP003 lưu trữ tại khu vực D
-(4, 5, '2025-04-09'), -- Sản phẩm SP004 lưu trữ tại khu vực E
-(5, 5, '2025-04-10'); -- Sản phẩm SP005 lưu trữ tại khu vực E
-
 -- Kiểm tra dữ liệu trong bảng KhoHang
-SELECT * FROM KhoHang;
 
 CREATE TABLE HoaDonTaiQuay (
     id INT IDENTITY PRIMARY KEY,
@@ -301,32 +273,42 @@ CREATE TABLE HoaDonTaiQuay (
     FOREIGN KEY (nhanvienID) REFERENCES NhanVien(id)
 );
 
+CREATE TABLE ChiTietHoaDonTaiQuay (
+    id INT IDENTITY PRIMARY KEY,
+    hoadonID INT NOT NULL,
+    sanphamID INT NOT NULL,
+    soluong INT NOT NULL,
+    dongia DECIMAL(18, 2) NOT NULL,
+    FOREIGN KEY (hoadonID) REFERENCES HoaDonTaiQuay(id),
+    FOREIGN KEY (sanphamID) REFERENCES SanPham(id)
+);
+drop table NhapKho
+
+select *from NhapKho
 CREATE TABLE NhapKho (
     id INT PRIMARY KEY IDENTITY(1,1),
     maNhap VARCHAR(50),
     idNhaCungCap INT,
     idNhanVien INT,
     idSanPham INT,
-    idKhuVucKho INT,
 	soLuong INT,
     ngayNhap DATETIME,
     tongTien DECIMAL(18, 0),
 
     FOREIGN KEY (idNhaCungCap) REFERENCES NhaCungCap(id),
     FOREIGN KEY (idNhanVien) REFERENCES NhanVien(id),
-    FOREIGN KEY (idSanPham) REFERENCES SanPham(id),
-    FOREIGN KEY (idKhuVucKho) REFERENCES KhuVucKho(id)
+    FOREIGN KEY (idSanPham) REFERENCES SanPham(id)
 );
 
-INSERT INTO NhapKho (maNhap, idNhaCungCap, idNhanVien, idSanPham, idKhuVucKho, soLuong, ngayNhap, tongTien)
+INSERT INTO NhapKho (maNhap, idNhaCungCap, idNhanVien, idSanPham, soLuong, ngayNhap, tongTien)
 VALUES 
-('NK001', 1, 1, 1, 1, 50, '2025-04-01 10:00:00', 7500000), -- Nhập 50 sản phẩm SP001 từ NCC A, NV Admin, khu vực A
-('NK002', 2, 2, 2, 1, 30, '2025-04-02 11:30:00', 7500000), -- Nhập 30 sản phẩm SP002 từ NCC B, NV F, khu vực A
-('NK003', 3, 3, 3, 2, 20, '2025-04-03 09:15:00', 7000000), -- Nhập 20 sản phẩm SP003 từ NCC C, NV G, khu vực B
-('NK004', 4, 4, 4, 2, 40, '2025-04-04 14:20:00', 16000000), -- Nhập 40 sản phẩm SP004 từ NCC D, NV H, khu vực B
-('NK005', 5, 5, 5, 3, 60, '2025-04-05 08:45:00', 12000000), -- Nhập 60 sản phẩm SP005 từ NCC E, NV I, khu vực C
-('NK006', 1, 1, 1, 3, 25, '2025-04-06 13:00:00', 3750000), -- Nhập 25 sản phẩm SP001 từ NCC A, NV Admin, khu vực C
-('NK007', 2, 2, 2, 4, 15, '2025-04-07 15:10:00', 3750000), -- Nhập 15 sản phẩm SP002 từ NCC B, NV F, khu vực D
-('NK008', 3, 3, 3, 4, 10, '2025-04-08 10:30:00', 3500000), -- Nhập 10 sản phẩm SP003 từ NCC C, NV G, khu vực D
-('NK009', 4, 4, 4, 5, 30, '2025-04-09 11:45:00', 12000000), -- Nhập 30 sản phẩm SP004 từ NCC D, NV H, khu vực E
-('NK010', 5, 5, 5, 5, 50, '2025-04-10 09:00:00', 10000000); -- Nhập 50 sản phẩm SP005 từ NCC E, NV I, khu vực E
+('NK001', 1, 1, 1,  50, '2025-04-01 10:00:00', 7500000), -- Nhập 50 sản phẩm SP001 từ NCC A, NV Admin, khu vực A
+('NK002', 2, 2, 2,  30, '2025-04-02 11:30:00', 7500000), -- Nhập 30 sản phẩm SP002 từ NCC B, NV F, khu vực A
+('NK003', 3, 3, 3,  20, '2025-04-03 09:15:00', 7000000), -- Nhập 20 sản phẩm SP003 từ NCC C, NV G, khu vực B
+('NK004', 4, 4, 4,  40, '2025-04-04 14:20:00', 16000000), -- Nhập 40 sản phẩm SP004 từ NCC D, NV H, khu vực B
+('NK005', 5, 5, 5,  60, '2025-04-05 08:45:00', 12000000), -- Nhập 60 sản phẩm SP005 từ NCC E, NV I, khu vực C
+('NK006', 1, 1, 1,  25, '2025-04-06 13:00:00', 3750000), -- Nhập 25 sản phẩm SP001 từ NCC A, NV Admin, khu vực C
+('NK007', 2, 2, 2,  15, '2025-04-07 15:10:00', 3750000), -- Nhập 15 sản phẩm SP002 từ NCC B, NV F, khu vực D
+('NK008', 3, 3, 3,  10, '2025-04-08 10:30:00', 3500000), -- Nhập 10 sản phẩm SP003 từ NCC C, NV G, khu vực D
+('NK009', 4, 4, 4,  30, '2025-04-09 11:45:00', 12000000), -- Nhập 30 sản phẩm SP004 từ NCC D, NV H, khu vực E
+('NK010', 5, 5, 5,  50, '2025-04-10 09:00:00', 10000000); -- Nhập 50 sản phẩm SP005 từ NCC E, NV I, khu vực E

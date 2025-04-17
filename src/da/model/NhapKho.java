@@ -15,16 +15,16 @@ public class NhapKho {
     private Timestamp ngaynhap;
     private String sanPham;
     private int soLuong;
-    private String khuvuckho;
     private double tongtien;
     private int idNhaCungCap;
     private int idNhanVien;
     private int idsanpham;
-    private int idkhuvuc;
+    
+    
     public NhapKho() {
     }
 
-    public NhapKho(int id, String manhap, String nhacungcap, String nhanvien, Timestamp ngaynhap, String sanPham, int soLuong, String khuvuckho, double tongtien, int idNhaCungCap, int idNhanVien, int idsanpham, int idkhuvuc) {
+    public NhapKho(int id, String manhap, String nhacungcap, String nhanvien, Timestamp ngaynhap, String sanPham, int soLuong, double tongtien, int idNhaCungCap, int idNhanVien, int idsanpham) {
         this.id = id;
         this.manhap = manhap;
         this.nhacungcap = nhacungcap;
@@ -32,12 +32,10 @@ public class NhapKho {
         this.ngaynhap = ngaynhap;
         this.sanPham = sanPham;
         this.soLuong = soLuong;
-        this.khuvuckho = khuvuckho;
         this.tongtien = tongtien;
         this.idNhaCungCap = idNhaCungCap;
         this.idNhanVien = idNhanVien;
         this.idsanpham = idsanpham;
-        this.idkhuvuc = idkhuvuc;
     }
 
     public int getId() {
@@ -96,14 +94,6 @@ public class NhapKho {
         this.soLuong = soLuong;
     }
 
-    public String getKhuvuckho() {
-        return khuvuckho;
-    }
-
-    public void setKhuvuckho(String khuvuckho) {
-        this.khuvuckho = khuvuckho;
-    }
-
     public double getTongtien() {
         return tongtien;
     }
@@ -136,11 +126,5 @@ public class NhapKho {
         this.idsanpham = idsanpham;
     }
 
-    public int getIdkhuvuc() {
-        return idkhuvuc;
-    }
-
-    public void setIdkhuvuc(int idkhuvuc) {
-        this.idkhuvuc = idkhuvuc;
-    }
+    
 }

@@ -368,7 +368,7 @@ public class UpdateSanPham extends javax.swing.JPanel {
                 "",
                 "showClearButton:true;JTextField.placeholderText=Giá",
                 "",
-                "showClearButton:true;JTextField.placeholderText=Số lượng",
+                "",
                 "",
                 "font:bold +1",
                 "",

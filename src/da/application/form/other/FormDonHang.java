@@ -5,10 +5,11 @@ import com.formdev.flatlaf.FlatClientProperties;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import da.application.Application;
 import da.component.MyList1;
-import da.component.ProductItem;
 import da.model.GioHang;
+import da.model.HoaDonChiTiet;
 import da.model.SanPham;
 import da.service.GioHangService;
+import da.service.HoaDonService;
 import da.service.SanPhamService;
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -43,7 +44,10 @@ import raven.toast.Notifications;
 public class FormDonHang extends javax.swing.JPanel {
     SanPhamService service = new SanPhamService();
     GioHangService service1 = new GioHangService();
+    HoaDonService service2 = new HoaDonService();
         private String Email;
+        private List<Integer> selectedProductIds = new ArrayList<>();
+
     
     /**
      * Creates new form FormDonHang
@@ -55,7 +59,9 @@ public class FormDonHang extends javax.swing.JPanel {
         initKT();
         applyTableStyle(tblSanPham);
         applyTableStyle(tblGioHang);
+        applyTableStyle(tblHoaDon);
         loadSanPhamData(service.searchSanPham(""));
+        loadHoaDonData((ArrayList<HoaDonChiTiet>) service2.getAll());
         refreshGioHangData();
         //updateTotalOnLabel(jLabel9);
         
@@ -476,6 +482,30 @@ public class FormDonHang extends javax.swing.JPanel {
         return total;
     }
     
+    public void loadHoaDonData(ArrayList<HoaDonChiTiet> list) {
+        DefaultTableModel tblModel = (DefaultTableModel) tblHoaDon.getModel();
+        tblModel.setRowCount(0); // Xóa tất cả các hàng trong bảng trước khi tải dữ liệu mới
+        int index = 1;
+        for (HoaDonChiTiet hoaDon : list) {
+            Object[] rowData = {
+                index++,
+                hoaDon.getMaHD(),
+                hoaDon.getTenSP(),
+                hoaDon.getSoLuong(),
+                hoaDon.getTongTien(),
+                hoaDon.getTenKH(),
+                hoaDon.getTrangThai().equals("0") ? "Chưa Thanh Toán" : "Đã Thanh Toán",
+                hoaDon.getNgay(),
+            };
+            tblModel.addRow(rowData);
+        }
+    }
+    
+    public void refeshHD(){
+        ArrayList<HoaDonChiTiet> hoaDonList = (ArrayList<HoaDonChiTiet>) service2.getAll(); // Lấy danh sách hóa đơn từ service
+        loadHoaDonData(hoaDonList);
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -532,6 +562,16 @@ public class FormDonHang extends javax.swing.JPanel {
         jLabel9 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jButton1 = new javax.swing.JButton();
+        jPanel3 = new javax.swing.JPanel();
+        crazyPanel7 = new raven.crazypanel.CrazyPanel();
+        crazyPanel8 = new raven.crazypanel.CrazyPanel();
+        txtSearch3 = new javax.swing.JTextField();
+        cmdSearch3 = new javax.swing.JButton();
+        cmdExcel3 = new javax.swing.JButton();
+        jButton4 = new javax.swing.JButton();
+        jButton5 = new javax.swing.JButton();
+        jScrollPane4 = new javax.swing.JScrollPane();
+        tblHoaDon = new javax.swing.JTable();
 
         setPreferredSize(new java.awt.Dimension(1107, 504));
 
@@ -988,6 +1028,101 @@ public class FormDonHang extends javax.swing.JPanel {
 
         materialTabbed1.addTab("Bán online", jPanel2);
 
+        crazyPanel7.setFlatLafStyleComponent(new raven.crazypanel.FlatLafStyleComponent(
+            "background:$Table.background;[light]border:0,0,0,0,shade(@background,5%),,20;[dark]border:0,0,0,0,tint(@background,5%),,20",
+            null
+        ));
+        crazyPanel7.setMigLayoutConstraints(new raven.crazypanel.MigLayoutConstraints(
+            "wrap,fill,insets 15",
+            "[fill]",
+            "[grow 0][fill]",
+            null
+        ));
+
+        crazyPanel8.setFlatLafStyleComponent(new raven.crazypanel.FlatLafStyleComponent(
+            "background:$Table.background",
+            new String[]{
+                "JTextField.placeholderText=Search;background:@background",
+                "background:lighten(@background,8%);borderWidth:1",
+                "background:lighten(@background,8%);borderWidth:1",
+                "background:lighten(@background,8%);borderWidth:1",
+                "background:lighten(@background,8%);borderWidth:1",
+                "background:lighten(@background,8%);borderWidth:1",
+                "background:lighten(@background,8%);borderWidth:1",
+                "background:lighten(@background,8%);borderWidth:1"
+            }
+        ));
+        crazyPanel8.setMigLayoutConstraints(new raven.crazypanel.MigLayoutConstraints(
+            "",
+            "[]push[][]",
+            "",
+            new String[]{
+                "width 200"
+            }
+        ));
+        crazyPanel8.add(txtSearch3);
+
+        cmdSearch3.setText("Search");
+        crazyPanel8.add(cmdSearch3);
+
+        cmdExcel3.setText("Excel");
+        crazyPanel8.add(cmdExcel3);
+
+        jButton4.setText("In Hóa Đơn");
+        crazyPanel8.add(jButton4);
+
+        jButton5.setText("Refesh");
+        jButton5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton5ActionPerformed(evt);
+            }
+        });
+        crazyPanel8.add(jButton5);
+
+        crazyPanel7.add(crazyPanel8);
+
+        tblHoaDon.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "STT", "Mã", "Tên SP", "SL", "Tổng tiền", "Tên Khách Hàng", "Trạng Thái", "Ngày"
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false, false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jScrollPane4.setViewportView(tblHoaDon);
+
+        crazyPanel7.add(jScrollPane4);
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 1102, Short.MAX_VALUE)
+            .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel3Layout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(crazyPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, 1096, Short.MAX_VALUE)))
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 536, Short.MAX_VALUE)
+            .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel3Layout.createSequentialGroup()
+                    .addGap(2, 2, 2)
+                    .addComponent(crazyPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGap(3, 3, 3)))
+        );
+
+        materialTabbed1.addTab("Hóa Đơn", jPanel3);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -1035,21 +1170,30 @@ public class FormDonHang extends javax.swing.JPanel {
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void tblGioHangMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblGioHangMouseClicked
-        List<Integer> ids = new ArrayList<>();
+       selectedProductIds.clear();
     for (int row = 0; row < tblGioHang.getRowCount(); row++) {
         Boolean isChecked = (Boolean) tblGioHang.getValueAt(row, tblGioHang.getColumnCount() - 1); // Cột checkbox
         if (isChecked != null && isChecked) {
             int id = (int) tblGioHang.getValueAt(row, 0);
-            ids.add(id);
-            capNhatTongTien(jLabel9);
+            selectedProductIds.add(id);
         }
     }
-    applyListStyle(ids); // Gọi phương thức hiển thị danh sách sản phẩm
+    capNhatTongTien(jLabel9);
+    applyListStyle(selectedProductIds);
+    System.out.println("Selected Product IDs: " + selectedProductIds);
     }//GEN-LAST:event_tblGioHangMouseClicked
 
     private void cmdUpdate5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdUpdate5ActionPerformed
-        Application.showForm(new HoaDonForm());
+        if (selectedProductIds.isEmpty()) {
+        JOptionPane.showMessageDialog(this, "Vui lòng chọn ít nhất một sản phẩm để thanh toán!");
+        return;
+    }
+    Application.showForm(new PaymentForm(selectedProductIds));
     }//GEN-LAST:event_cmdUpdate5ActionPerformed
+
+    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+        refeshHD();
+    }//GEN-LAST:event_jButton5ActionPerformed
 
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -1058,6 +1202,8 @@ public class FormDonHang extends javax.swing.JPanel {
     private javax.swing.JButton cmdAdd;
     private javax.swing.JButton cmdDelete;
     private javax.swing.JButton cmdExcel;
+    private javax.swing.JButton cmdExcel3;
+    private javax.swing.JButton cmdSearch3;
     private javax.swing.JButton cmdUpdate5;
     private raven.crazypanel.CrazyPanel crazyPanel13;
     private raven.crazypanel.CrazyPanel crazyPanel15;
@@ -1070,10 +1216,14 @@ public class FormDonHang extends javax.swing.JPanel {
     private raven.crazypanel.CrazyPanel crazyPanel22;
     private raven.crazypanel.CrazyPanel crazyPanel23;
     private raven.crazypanel.CrazyPanel crazyPanel24;
+    private raven.crazypanel.CrazyPanel crazyPanel7;
+    private raven.crazypanel.CrazyPanel crazyPanel8;
     private raven.crazypanel.CrazyPanel crazyPanel9;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
+    private javax.swing.JButton jButton4;
+    private javax.swing.JButton jButton5;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -1085,7 +1235,9 @@ public class FormDonHang extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JScrollPane jScrollPane7;
     private javax.swing.JScrollPane jScrollPane8;
     private da.component.MaterialTabbed materialTabbed1;
@@ -1093,10 +1245,12 @@ public class FormDonHang extends javax.swing.JPanel {
     private da.component.PanelTransparent panelTransparent1;
     private da.component.PanelTransparent panelTransparent2;
     private javax.swing.JTable tblGioHang;
+    private javax.swing.JTable tblHoaDon;
     private javax.swing.JTable tblSanPham;
     private javax.swing.JTextField txtGia;
     private javax.swing.JTextField txtMa;
     private javax.swing.JTextField txtSearch;
+    private javax.swing.JTextField txtSearch3;
     private javax.swing.JTextField txtSoLuong;
     private javax.swing.JTextField txtSoLuongTon;
     private javax.swing.JTextField txtTen;

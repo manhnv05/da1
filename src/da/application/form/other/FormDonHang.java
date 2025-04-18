@@ -506,6 +506,11 @@ public class FormDonHang extends javax.swing.JPanel {
         loadHoaDonData(hoaDonList);
     }
     
+    public void searchHD() {
+        String keyword = txtSearch3.getText().trim();
+        loadHoaDonData((ArrayList<HoaDonChiTiet>) service2.searchHoaDonChiTiet(keyword));
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -1063,6 +1068,11 @@ public class FormDonHang extends javax.swing.JPanel {
         crazyPanel8.add(txtSearch3);
 
         cmdSearch3.setText("Search");
+        cmdSearch3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cmdSearch3ActionPerformed(evt);
+            }
+        });
         crazyPanel8.add(cmdSearch3);
 
         cmdExcel3.setText("Excel");
@@ -1194,6 +1204,10 @@ public class FormDonHang extends javax.swing.JPanel {
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
         refeshHD();
     }//GEN-LAST:event_jButton5ActionPerformed
+
+    private void cmdSearch3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdSearch3ActionPerformed
+        searchHD();
+    }//GEN-LAST:event_cmdSearch3ActionPerformed
 
     
     // Variables declaration - do not modify//GEN-BEGIN:variables

@@ -190,6 +190,72 @@ public List<HoaDonChiTiet> getAll() {
     }
     return tenSP;
 }
+    
+    public ArrayList<HoaDonChiTiet> searchHoaDonChiTiet(String keyword) {
+    String SQL = """
+        SELECT 
+            hd.mahoadon AS MaHoaDon, 
+            hd.trangthai AS TrangThai, 
+            hd.ngaytao AS NgayTao, 
+            nv.ho + ' ' + nv.ten AS TenNhanVien, 
+            hd.tenkhachhang AS TenKhachHang, 
+            ctht.id AS ChiTietID, 
+            sp.tensp AS TenSanPham, 
+            gh.soLuong AS SoLuong, 
+            sp.gia AS GiaBan, 
+            (gh.soLuong * sp.gia) AS TongTien, 
+            gh.tenMauSac AS MauSac, 
+            gh.kichThuoc AS KichThuoc 
+        FROM ChiTietHoaDonTaiQuay ctht
+        JOIN HoaDonTaiQuay hd ON ctht.hoadonID = hd.id
+        JOIN NhanVien nv ON hd.nhanvienID = nv.id
+        JOIN GioHang gh ON ctht.gioHangid = gh.id
+        JOIN SanPham sp ON gh.idSanPham = sp.id
+    """;
+
+    if (keyword != null && !keyword.trim().isEmpty()) {
+        SQL += """
+            WHERE hd.mahoadon LIKE ? 
+            OR hd.tenkhachhang LIKE ? 
+            OR sp.tensp LIKE ? 
+            OR CAST(hd.ngaytao AS NVARCHAR) LIKE ?
+        """;
+    }
+
+    ArrayList<HoaDonChiTiet> list = new ArrayList<>();
+    try {
+        PreparedStatement ps = conn.prepareStatement(SQL);
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            String searchPattern = "%" + keyword.trim() + "%";
+            ps.setString(1, searchPattern); // Mã hóa đơn
+            ps.setString(2, searchPattern); // Tên khách hàng
+            ps.setString(3, searchPattern); // Tên sản phẩm
+            ps.setString(4, searchPattern); // Ngày tạo
+        }
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            HoaDonChiTiet ct = new HoaDonChiTiet();
+            ct.setMaHD(rs.getString("MaHoaDon")); // Mã hóa đơn
+            ct.setTrangThai(rs.getString("TrangThai")); // Trạng thái hóa đơn
+            ct.setNgay(rs.getTimestamp("NgayTao")); // Ngày tạo hóa đơn
+            ct.setTenNV(rs.getString("TenNhanVien")); // Tên nhân viên
+            ct.setTenKH(rs.getString("TenKhachHang")); // Tên khách hàng
+            ct.setId(rs.getInt("ChiTietID")); // ID chi tiết hóa đơn
+            ct.setTenSP(rs.getString("TenSanPham")); // Tên sản phẩm
+            ct.setSoLuong(rs.getInt("SoLuong")); // Số lượng sản phẩm
+            ct.setDonGia(rs.getBigDecimal("GiaBan")); // Giá bán
+            ct.setTongTien(rs.getBigDecimal("TongTien")); // Tổng tiền
+            ct.setMauSac(rs.getString("MauSac")); // Màu sắc
+            ct.setKichThuoc(rs.getString("KichThuoc")); // Kích thước
+
+            list.add(ct);
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+
+    return list;
+}
 
 
 }

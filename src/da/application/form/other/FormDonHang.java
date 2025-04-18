@@ -511,6 +511,63 @@ public class FormDonHang extends javax.swing.JPanel {
         loadHoaDonData((ArrayList<HoaDonChiTiet>) service2.searchHoaDonChiTiet(keyword));
     }
     
+    private void exportHoaDonChiTietToExcelFromDB() {
+    JFileChooser jFileChooser = new JFileChooser();
+    if (jFileChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
+        File saveFile = new File(jFileChooser.getSelectedFile().getAbsolutePath() + ".xlsx");
+        ArrayList<HoaDonChiTiet> hoaDonChiTietList = (ArrayList<HoaDonChiTiet>) service2.getAll(); // Lấy toàn bộ dữ liệu hóa đơn chi tiết từ DB
+        try (Workbook wb = new XSSFWorkbook();
+             FileOutputStream out = new FileOutputStream(saveFile)) {
+            Sheet sheet = wb.createSheet("Danh Sách Chi Tiết Hóa Đơn");
+            String[] headers = {
+                "STT", "Mã Hóa Đơn", "Trạng Thái", "Ngày Tạo", 
+                "Tên Nhân Viên", "Tên Khách Hàng", "Tên Sản Phẩm", 
+                "Số Lượng", "Giá Bán", "Tổng Tiền", "Màu Sắc", "Kích Thước"
+            };
+
+            // Tạo hàng tiêu đề
+            Row headerRow = sheet.createRow(0);
+            for (int i = 0; i < headers.length; i++) {
+                headerRow.createCell(i).setCellValue(headers[i]);
+            }
+
+            // Điền dữ liệu vào sheet
+            int rowIndex = 1;
+            for (HoaDonChiTiet ct : hoaDonChiTietList) {
+                Row row = sheet.createRow(rowIndex);
+                row.createCell(0).setCellValue(rowIndex); // STT
+                row.createCell(1).setCellValue(ct.getMaHD()); // Mã hóa đơn
+                row.createCell(2).setCellValue(ct.getTrangThai()); // Trạng thái hóa đơn
+                row.createCell(3).setCellValue(ct.getNgay().toString()); // Ngày tạo hóa đơn
+                row.createCell(4).setCellValue(ct.getTenNV()); // Tên nhân viên
+                row.createCell(5).setCellValue(ct.getTenKH()); // Tên khách hàng
+                row.createCell(6).setCellValue(ct.getTenSP()); // Tên sản phẩm
+                row.createCell(7).setCellValue(ct.getSoLuong()); // Số lượng
+                row.createCell(8).setCellValue(ct.getDonGia().doubleValue()); // Giá bán
+                row.createCell(9).setCellValue(ct.getTongTien().doubleValue()); // Tổng tiền
+                row.createCell(10).setCellValue(ct.getMauSac()); // Màu sắc
+                row.createCell(11).setCellValue(ct.getKichThuoc()); // Kích thước
+                rowIndex++;
+            }
+
+            // Ghi dữ liệu ra file
+            wb.write(out);
+            Notifications.getInstance().show(
+                Notifications.Type.SUCCESS,
+                Notifications.Location.TOP_CENTER,
+                "Xuất file chi tiết hóa đơn thành công!"
+            );
+        } catch (IOException e) {
+            e.printStackTrace();
+            Notifications.getInstance().show(
+                Notifications.Type.ERROR,
+                Notifications.Location.TOP_CENTER,
+                "Lỗi khi xuất file chi tiết hóa đơn!"
+            );
+        }
+    }
+}
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -566,7 +623,15 @@ public class FormDonHang extends javax.swing.JPanel {
         myList11 = new da.component.MyList1<>();
         jLabel9 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
-        jButton1 = new javax.swing.JButton();
+        crazyPanel10 = new raven.crazypanel.CrazyPanel();
+        crazyPanel11 = new raven.crazypanel.CrazyPanel();
+        txtSearch4 = new javax.swing.JTextField();
+        cmdSearch4 = new javax.swing.JButton();
+        cmdExcel4 = new javax.swing.JButton();
+        jButton6 = new javax.swing.JButton();
+        jButton7 = new javax.swing.JButton();
+        jScrollPane5 = new javax.swing.JScrollPane();
+        tblHoaDon1 = new javax.swing.JTable();
         jPanel3 = new javax.swing.JPanel();
         crazyPanel7 = new raven.crazypanel.CrazyPanel();
         crazyPanel8 = new raven.crazypanel.CrazyPanel();
@@ -1012,23 +1077,107 @@ public class FormDonHang extends javax.swing.JPanel {
 
         materialTabbed1.addTab("Bán tại quầy", jPanel1);
 
-        jButton1.setText("jButton1");
+        crazyPanel10.setFlatLafStyleComponent(new raven.crazypanel.FlatLafStyleComponent(
+            "background:$Table.background;[light]border:0,0,0,0,shade(@background,5%),,20;[dark]border:0,0,0,0,tint(@background,5%),,20",
+            null
+        ));
+        crazyPanel10.setMigLayoutConstraints(new raven.crazypanel.MigLayoutConstraints(
+            "wrap,fill,insets 15",
+            "[fill]",
+            "[grow 0][fill]",
+            null
+        ));
+
+        crazyPanel11.setFlatLafStyleComponent(new raven.crazypanel.FlatLafStyleComponent(
+            "background:$Table.background",
+            new String[]{
+                "JTextField.placeholderText=Search;background:@background",
+                "background:lighten(@background,8%);borderWidth:1",
+                "background:lighten(@background,8%);borderWidth:1",
+                "background:lighten(@background,8%);borderWidth:1",
+                "background:lighten(@background,8%);borderWidth:1",
+                "background:lighten(@background,8%);borderWidth:1",
+                "background:lighten(@background,8%);borderWidth:1",
+                "background:lighten(@background,8%);borderWidth:1"
+            }
+        ));
+        crazyPanel11.setMigLayoutConstraints(new raven.crazypanel.MigLayoutConstraints(
+            "",
+            "[]push[][]",
+            "",
+            new String[]{
+                "width 200"
+            }
+        ));
+        crazyPanel11.add(txtSearch4);
+
+        cmdSearch4.setText("Search");
+        cmdSearch4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cmdSearch4ActionPerformed(evt);
+            }
+        });
+        crazyPanel11.add(cmdSearch4);
+
+        cmdExcel4.setText("Excel");
+        cmdExcel4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cmdExcel4ActionPerformed(evt);
+            }
+        });
+        crazyPanel11.add(cmdExcel4);
+
+        jButton6.setText("In Hóa Đơn");
+        crazyPanel11.add(jButton6);
+
+        jButton7.setText("Refesh");
+        jButton7.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton7ActionPerformed(evt);
+            }
+        });
+        crazyPanel11.add(jButton7);
+
+        crazyPanel10.add(crazyPanel11);
+
+        tblHoaDon1.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "STT", "Mã", "Tên SP", "SL", "Tổng tiền", "Tên Khách Hàng", "Trạng Thái", "Ngày"
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false, false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jScrollPane5.setViewportView(tblHoaDon1);
+
+        crazyPanel10.add(jScrollPane5);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(373, 373, 373)
-                .addComponent(jButton1)
-                .addContainerGap(654, Short.MAX_VALUE))
+            .addGap(0, 1102, Short.MAX_VALUE)
+            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel2Layout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(crazyPanel10, javax.swing.GroupLayout.DEFAULT_SIZE, 1096, Short.MAX_VALUE)))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(161, 161, 161)
-                .addComponent(jButton1)
-                .addContainerGap(352, Short.MAX_VALUE))
+            .addGap(0, 536, Short.MAX_VALUE)
+            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel2Layout.createSequentialGroup()
+                    .addGap(2, 2, 2)
+                    .addComponent(crazyPanel10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGap(3, 3, 3)))
         );
 
         materialTabbed1.addTab("Bán online", jPanel2);
@@ -1076,6 +1225,11 @@ public class FormDonHang extends javax.swing.JPanel {
         crazyPanel8.add(cmdSearch3);
 
         cmdExcel3.setText("Excel");
+        cmdExcel3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cmdExcel3ActionPerformed(evt);
+            }
+        });
         crazyPanel8.add(cmdExcel3);
 
         jButton4.setText("In Hóa Đơn");
@@ -1209,6 +1363,22 @@ public class FormDonHang extends javax.swing.JPanel {
         searchHD();
     }//GEN-LAST:event_cmdSearch3ActionPerformed
 
+    private void cmdExcel3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdExcel3ActionPerformed
+        exportHoaDonChiTietToExcelFromDB();
+    }//GEN-LAST:event_cmdExcel3ActionPerformed
+
+    private void cmdSearch4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdSearch4ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cmdSearch4ActionPerformed
+
+    private void cmdExcel4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdExcel4ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cmdExcel4ActionPerformed
+
+    private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton7ActionPerformed
+
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox<String> cboKichThuoc;
@@ -1217,8 +1387,12 @@ public class FormDonHang extends javax.swing.JPanel {
     private javax.swing.JButton cmdDelete;
     private javax.swing.JButton cmdExcel;
     private javax.swing.JButton cmdExcel3;
+    private javax.swing.JButton cmdExcel4;
     private javax.swing.JButton cmdSearch3;
+    private javax.swing.JButton cmdSearch4;
     private javax.swing.JButton cmdUpdate5;
+    private raven.crazypanel.CrazyPanel crazyPanel10;
+    private raven.crazypanel.CrazyPanel crazyPanel11;
     private raven.crazypanel.CrazyPanel crazyPanel13;
     private raven.crazypanel.CrazyPanel crazyPanel15;
     private raven.crazypanel.CrazyPanel crazyPanel16;
@@ -1233,11 +1407,12 @@ public class FormDonHang extends javax.swing.JPanel {
     private raven.crazypanel.CrazyPanel crazyPanel7;
     private raven.crazypanel.CrazyPanel crazyPanel8;
     private raven.crazypanel.CrazyPanel crazyPanel9;
-    private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
+    private javax.swing.JButton jButton6;
+    private javax.swing.JButton jButton7;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -1252,6 +1427,7 @@ public class FormDonHang extends javax.swing.JPanel {
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane4;
+    private javax.swing.JScrollPane jScrollPane5;
     private javax.swing.JScrollPane jScrollPane7;
     private javax.swing.JScrollPane jScrollPane8;
     private da.component.MaterialTabbed materialTabbed1;
@@ -1260,11 +1436,13 @@ public class FormDonHang extends javax.swing.JPanel {
     private da.component.PanelTransparent panelTransparent2;
     private javax.swing.JTable tblGioHang;
     private javax.swing.JTable tblHoaDon;
+    private javax.swing.JTable tblHoaDon1;
     private javax.swing.JTable tblSanPham;
     private javax.swing.JTextField txtGia;
     private javax.swing.JTextField txtMa;
     private javax.swing.JTextField txtSearch;
     private javax.swing.JTextField txtSearch3;
+    private javax.swing.JTextField txtSearch4;
     private javax.swing.JTextField txtSoLuong;
     private javax.swing.JTextField txtSoLuongTon;
     private javax.swing.JTextField txtTen;

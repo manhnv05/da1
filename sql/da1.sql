@@ -334,3 +334,21 @@ JOIN NhanVien nv ON hd.nhanvienID = nv.id        -- Kết nối với bảng nh�
 JOIN GioHang gh ON ctht.gioHangid = gh.id        -- Kết nối với bảng giỏ hàng
 JOIN SanPham sp ON gh.idSanPham = sp.id          -- Kết nối với bảng sản phẩm
 WHERE ctht.hoadonID = 9;                -- Thay <hoaDonID> bằng ID của hóa đơn cần truy vấn -- Thay <hoaDonID> bằng ID của hóa đơn cần truy vấn
+
+drop table HoaDonOnLine
+CREATE TABLE HoaDonOnLine (
+    id INT IDENTITY PRIMARY KEY,
+    mahoadon VARCHAR(50) NOT NULL,
+    ngaytao DATETIME DEFAULT GETDATE(),
+    trangthai INT NOT NULL, -- 0: Chờ xác nhận, 1: Đang giao, 2: Hoàn tất, 3: Hủy
+    ghichu NVARCHAR(255),
+	diaChiGiaoHang NVARCHAR(255),
+    hinhthucthanhtoan NVARCHAR(50),
+    nguoidungID INT,       -- Khách hàng mua
+    nhanvienID INT,        -- Nhân viên xử lý
+    giohangID INT,         -- Liên kết với giỏ hàng (nếu có)
+
+    FOREIGN KEY (nguoidungID) REFERENCES NguoiDung(id),
+    FOREIGN KEY (nhanvienID) REFERENCES NhanVien(id),
+    FOREIGN KEY (giohangID) REFERENCES GioHang(id)
+);

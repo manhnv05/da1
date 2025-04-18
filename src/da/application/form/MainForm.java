@@ -69,7 +69,7 @@ public class MainForm extends JLayeredPane {
         formMap.put(2, new FormQLSanPham());
         formMap.put(3, new FormThuocTinh());
         formMap.put(4, new FormDonHang(currentUserEmail));
-        formMap.put(5, new FormVoucher());
+        //formMap.put(5, new FormVoucher());
         formMap.put(6, new FormKhoHang());
         formMap.put(7, new FormNhanVien());
         formMap.put(8, new DashboardForm());
@@ -120,7 +120,7 @@ public class MainForm extends JLayeredPane {
                         Application.showForm(new FormDonHang(currentUserEmail));
                         break;
                     case 5:
-                        Application.showForm(new FormVoucher());
+                        JOptionPane.showMessageDialog(null, "Chức năng 'Voucher' sẽ sớm được phát triển!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
                         break;
                     case 6:
                         Application.showForm(new FormKhoHang());

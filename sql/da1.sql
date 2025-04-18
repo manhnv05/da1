@@ -260,6 +260,8 @@ select *from SanPham
 
 
 -- Kiểm tra dữ liệu trong bảng KhoHang
+select *from HoaDonTaiQuay
+select *from ChiTietHoaDonTaiQuay
 
 CREATE TABLE HoaDonTaiQuay (
     id INT IDENTITY PRIMARY KEY,
@@ -272,15 +274,14 @@ CREATE TABLE HoaDonTaiQuay (
     hinhthucthanhtoan NVARCHAR(50), -- Tiền mặt, Chuyển khoản, v.v.
     FOREIGN KEY (nhanvienID) REFERENCES NhanVien(id)
 );
+drop table ChiTietHoaDonTaiQuay
 
 CREATE TABLE ChiTietHoaDonTaiQuay (
     id INT IDENTITY PRIMARY KEY,
     hoadonID INT NOT NULL,
-    sanphamID INT NOT NULL,
-    soluong INT NOT NULL,
-    dongia DECIMAL(18, 2) NOT NULL,
+    gioHangid INT NOT NULL,
     FOREIGN KEY (hoadonID) REFERENCES HoaDonTaiQuay(id),
-    FOREIGN KEY (sanphamID) REFERENCES SanPham(id)
+    FOREIGN KEY (gioHangid) REFERENCES GioHang(id)
 );
 drop table NhapKho
 
@@ -312,3 +313,24 @@ VALUES
 ('NK008', 3, 3, 3,  10, '2025-04-08 10:30:00', 3500000), -- Nhập 10 sản phẩm SP003 từ NCC C, NV G, khu vực D
 ('NK009', 4, 4, 4,  30, '2025-04-09 11:45:00', 12000000), -- Nhập 30 sản phẩm SP004 từ NCC D, NV H, khu vực E
 ('NK010', 5, 5, 5,  50, '2025-04-10 09:00:00', 10000000); -- Nhập 50 sản phẩm SP005 từ NCC E, NV I, khu vực E
+
+
+SELECT 
+    hd.mahoadon AS MaHoaDon,              -- Mã hóa đơn
+    hd.trangthai AS TrangThai,            -- Trạng thái hóa đơn
+    hd.ngaytao AS NgayTao,                -- Ngày tạo hóa đơn
+    nv.ho + ' ' + nv.ten AS TenNhanVien,  -- Tên nhân viên
+    hd.tenkhachhang AS TenKhachHang,      -- Tên khách hàng
+    ctht.id AS ChiTietID,                 -- ID chi tiết hóa đơn
+    sp.tensp AS TenSanPham,               -- Tên sản phẩm
+    gh.soLuong AS SoLuong,                -- Số lượng sản phẩm
+    sp.gia AS GiaBan,                     -- Giá bán của sản phẩm
+    (gh.soLuong * sp.gia) AS TongTien,    -- Tổng tiền (số lượng * giá bán)
+    gh.tenMauSac AS MauSac,               -- Màu sắc của sản phẩm
+    gh.kichThuoc AS KichThuoc             -- Kích thước của sản phẩm
+FROM ChiTietHoaDonTaiQuay ctht
+JOIN HoaDonTaiQuay hd ON ctht.hoadonID = hd.id   -- Kết nối với bảng hóa đơn
+JOIN NhanVien nv ON hd.nhanvienID = nv.id        -- Kết nối với bảng nhân viên
+JOIN GioHang gh ON ctht.gioHangid = gh.id        -- Kết nối với bảng giỏ hàng
+JOIN SanPham sp ON gh.idSanPham = sp.id          -- Kết nối với bảng sản phẩm
+WHERE ctht.hoadonID = 9;                -- Thay <hoaDonID> bằng ID của hóa đơn cần truy vấn -- Thay <hoaDonID> bằng ID của hóa đơn cần truy vấn

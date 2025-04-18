@@ -75,7 +75,7 @@ public class MainForm extends JLayeredPane {
         formMap.put(8, new DashboardForm());
         formMap.put(9, new ThongTinCaNhaForm(currentUserEmail));
         formMap.put(10, new FprmSanPham());
-        formMap.put(11, new FormNhanVien());
+        formMap.put(11, new FormGioHang(currentUserEmail));
     }
 
     private void loadMenuItems() {
@@ -138,7 +138,7 @@ public class MainForm extends JLayeredPane {
                         Application.showForm(new FormKhoHang());
                         break;
                     case 11:
-                        Application.showForm(new FormNhanVien());
+                        Application.showForm(new FormGioHang(currentUserEmail));
                         break;
                     case 12: // Assuming 12 is the id for logout
                         Application.logout();

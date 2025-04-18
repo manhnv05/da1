@@ -313,53 +313,5 @@ public class NhapKhoService {
 
     return list;
 }
+}
     
-public List<NhapKho> getNhapKhoByFilters(Integer idNhaCungCap, Integer idNhanVien) {
-    List<NhapKho> list = new ArrayList<>();
-    StringBuilder sql = new StringBuilder(
-        "SELECT nk.*, " +
-        "       ncc.tenNCC AS nhaCungCapName, " +
-        "       nv.ho + ' ' + nv.ten AS nhanVienName, " +
-        "       sp.tensp AS tenSanPham " +
-        "FROM NhapKho nk " +
-        "JOIN NhaCungCap ncc ON nk.idNhaCungCap = ncc.id " +
-        "JOIN NhanVien nv ON nk.idNhanVien = nv.id " +
-        "JOIN SanPham sp ON nk.idSanPham = sp.id " +
-        "WHERE 1=1"
-    );
-
-    if (idNhaCungCap != null) {
-        sql.append(" AND nk.idNhaCungCap = ?");
-    }
-    if (idNhanVien != null) {
-        sql.append(" AND nk.idNhanVien = ?");
-    }
-
-    try (PreparedStatement stmt = conn.prepareStatement(sql.toString())) {
-        int paramIndex = 1;
-        if (idNhaCungCap != null) {
-            stmt.setInt(paramIndex++, idNhaCungCap);
-        }
-        if (idNhanVien != null) {
-            stmt.setInt(paramIndex, idNhanVien);
-        }
-
-        ResultSet rs = stmt.executeQuery();
-        while (rs.next()) {
-            NhapKho nk = new NhapKho();
-            nk.setId(rs.getInt("id"));
-            nk.setManhap(rs.getString("maNhap"));
-            nk.setSoLuong(rs.getInt("soLuong"));
-            nk.setNgaynhap(rs.getTimestamp("ngayNhap"));
-            nk.setTongtien(rs.getDouble("tongTien"));
-            nk.setNhacungcap(rs.getString("nhaCungCapName")); // Sửa alias
-            nk.setNhanvien(rs.getString("nhanVienName"));     // Sửa alias
-            nk.setSanPham(rs.getString("tenSanPham"));        // Sửa alias
-            list.add(nk);
-        }
-    } catch (SQLException e) {
-        e.printStackTrace();
-    }
-    return list;
-}
-}

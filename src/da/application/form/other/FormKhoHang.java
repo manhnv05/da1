@@ -82,7 +82,6 @@ public class FormKhoHang extends javax.swing.JPanel {
         initNV();
         loadKhuVucKhoData(service.searchKhuVucKhoByName(""));
         loadNhapKho(service2.getListNhapKho());
-        filterNhapKhoTable();
     }
     
     
@@ -893,55 +892,11 @@ public class FormKhoHang extends javax.swing.JPanel {
     }
     
     public void searchNK(){
-        filterNhapKhoTable();
         String keyword = txtSearch1.getText().trim();
         loadNhapKho(service2.searchNhapKho(keyword));
     }
     
-private void filterNhapKhoTable() {
-    String selectedNhaCCName = (String) cboNCC.getSelectedItem();
-    String selectedNhanVienName = (String) cboNhanVien.getSelectedItem();
 
-    Integer idNhaCungCap = null;
-    Integer idNhanVien = null;
-
-    System.out.println("Selected Nhà Cung Cấp: " + selectedNhaCCName);
-    System.out.println("Selected Nhân Viên: " + selectedNhanVienName);
-
-    // Map NhaCC name to ID
-    if (selectedNhaCCName != null && !selectedNhaCCName.equals("Tất cả Nhà Cung Cấp")) {
-        List<NhaCC> nhaCCList = service4.getAllNhaCungCap();
-        for (NhaCC nhaCC : nhaCCList) {
-            if (nhaCC.getTen().equals(selectedNhaCCName)) {
-                idNhaCungCap = nhaCC.getId();
-                break;
-            }
-        }
-    }
-
-    // Map NhanVien name to ID
-    if (selectedNhanVienName != null && !selectedNhanVienName.equals("Tất cả Nhân Viên")) {
-        List<NhanVien> nhanVienList = service3.getAllNhanVien();
-        for (NhanVien nhanVien : nhanVienList) {
-            if ((nhanVien.getHo() + " " + nhanVien.getTen()).equals(selectedNhanVienName)) {
-                idNhanVien = nhanVien.getId();
-                break;
-            }
-        }
-    }
-
-    System.out.println("Mapped Nhà Cung Cấp ID: " + idNhaCungCap);
-    System.out.println("Mapped Nhân Viên ID: " + idNhanVien);
-
-    // Fetch filtered list
-    List<NhapKho> filteredList = service2.getNhapKhoByFilters(idNhaCungCap, idNhanVien);
-
-    if (filteredList.isEmpty()) {
-        Notifications.getInstance().show(Notifications.Type.INFO, Notifications.Location.TOP_CENTER, "Không tìm thấy phiếu nhập kho phù hợp!");
-    } else {
-        loadNhapKho(filteredList);
-    }
-}
 
 
 

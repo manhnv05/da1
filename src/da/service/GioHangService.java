@@ -2,6 +2,7 @@ package da.service;
 
 import da.model.GioHang;
 import da.util.connectDB;
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -88,7 +89,7 @@ public class GioHangService {
     // Lấy giỏ hàng theo email người dùng
     public ArrayList<GioHang> getGioHangByEmail(String email) {
         ArrayList<GioHang> list = new ArrayList<>();
-        String SQL = "SELECT gh.id, gh.idNguoiDung, gh.idSanPham, sp.maSP, sp.tenSP, " +
+        String SQL = "SELECT gh.id, gh.idNguoiDung, gh.idSanPham, sp.maSP, sp.tenSP, sp.hinhanh, " +
                      "gh.tenMauSac, gh.kichThuoc, gh.tongTien, gh.soLuong " +
                      "FROM GioHang gh " +
                      "JOIN SanPham sp ON gh.idSanPham = sp.id " +
@@ -108,7 +109,8 @@ public class GioHangService {
                         rs.getString("tenMauSac"),
                         rs.getString("kichThuoc"),
                         rs.getBigDecimal("tongTien"),
-                        rs.getInt("soLuong")
+                        rs.getInt("soLuong"),
+                            rs.getString("hinhanh")
                     );
                     list.add(gh);
                 }
@@ -175,6 +177,39 @@ public class GioHangService {
         e.printStackTrace();
     }
     return list;
+}
+    
+    // Cập nhật sản phẩm trong giỏ hàng
+public boolean updateGioHang(int id, int soLuong, String tenMauSac, String kichThuoc) {
+    String getGiaSQL = "SELECT gia FROM SanPham sp JOIN GioHang gh ON sp.id = gh.idSanPham WHERE gh.id = ?";
+    String updateSQL = "UPDATE GioHang SET soLuong = ?, tenMauSac = ?, kichThuoc = ?, tongTien = ? WHERE id = ?";
+
+    try (PreparedStatement psGetGia = conn.prepareStatement(getGiaSQL);
+         PreparedStatement psUpdate = conn.prepareStatement(updateSQL)) {
+
+        // Lấy giá sản phẩm từ bảng SanPham
+        psGetGia.setInt(1, id);
+        try (ResultSet rs = psGetGia.executeQuery()) {
+            if (rs.next()) {
+                BigDecimal giaSanPham = rs.getBigDecimal("gia");
+
+                // Tính tổng tiền
+                BigDecimal tongTien = giaSanPham.multiply(BigDecimal.valueOf(soLuong));
+
+                // Cập nhật giỏ hàng
+                psUpdate.setInt(1, soLuong);
+                psUpdate.setString(2, tenMauSac);
+                psUpdate.setString(3, kichThuoc);
+                psUpdate.setBigDecimal(4, tongTien);
+                psUpdate.setInt(5, id);
+
+                return psUpdate.executeUpdate() > 0; // Trả về true nếu cập nhật thành công
+            }
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return false; // Trả về false nếu có lỗi xảy ra
 }
 
 

@@ -41,6 +41,7 @@ public class FormGioHang extends javax.swing.JPanel {
         this.Email = Email;
         initComponents();
         applyListStyle();
+        capNhatTongTien();
     }
     
     
@@ -93,14 +94,12 @@ public class FormGioHang extends javax.swing.JPanel {
 }
     
     private void showProductDetails(GioHang gioHang) {
-    // Tạo các trường nhập liệu cho hộp thoại
     JTextField txtTenSP = new JTextField(gioHang.getTenSP());
     txtTenSP.setEnabled(false); // Không cho phép chỉnh sửa tên sản phẩm
     JTextField txtSoLuong = new JTextField(String.valueOf(gioHang.getSoLuong()));
     JTextField txtTongTien = new JTextField(gioHang.getTongTien().toString());
     txtTongTien.setEnabled(false); // Không cho phép chỉnh sửa tổng tiền
 
-    // Tạo các ComboBox
     JComboBox<String> cboKichThuoc = new JComboBox<>();
         DefaultComboBoxModel<String> boxModel = new DefaultComboBoxModel<>();
         boxModel.addElement("-- Chọn kích thước --");
@@ -125,11 +124,9 @@ public class FormGioHang extends javax.swing.JPanel {
         }
         cboMauSac.setModel(boxModel2);
 
-    // Đặt giá trị hiện tại cho các ComboBox
     cboKichThuoc.setSelectedItem(gioHang.getKichThuoc());
     cboMauSac.setSelectedItem(gioHang.getTenMauSac());
 
-    // Panel để sắp xếp các trường nhập liệu
     JPanel panel = new JPanel(new GridBagLayout());
     GridBagConstraints gbc = new GridBagConstraints();
     gbc.insets = new Insets(10, 10, 10, 10);
@@ -182,10 +179,8 @@ public class FormGioHang extends javax.swing.JPanel {
         );
 
         if (result == 2 || result == JOptionPane.CLOSED_OPTION) {
-            // Người dùng nhấn Cancel hoặc đóng hộp thoại
             return;
         } else if (result == 1) {
-            // Người dùng nhấn Delete
             int confirm = JOptionPane.showConfirmDialog(
                 null,
                 "Bạn có chắc chắn muốn xóa sản phẩm này khỏi giỏ hàng?",
@@ -197,6 +192,7 @@ public class FormGioHang extends javax.swing.JPanel {
                 if (isDeleted) {
                     JOptionPane.showMessageDialog(null, "Xóa sản phẩm thành công!", "Thành Công", JOptionPane.INFORMATION_MESSAGE);
                     refreshGioHangData(); // Làm mới danh sách giỏ hàng
+                    capNhatTongTien();
                     return;
                 } else {
                     JOptionPane.showMessageDialog(null, "Xóa sản phẩm thất bại!", "Lỗi", JOptionPane.ERROR_MESSAGE);
@@ -216,18 +212,15 @@ public class FormGioHang extends javax.swing.JPanel {
                 JOptionPane.showMessageDialog(null, "Số lượng phải là số hợp lệ!", "Cảnh Báo", JOptionPane.WARNING_MESSAGE);
                 continue;
             }
-
-            // Lấy giá trị từ ComboBox
             String kichThuoc = (String) cboKichThuoc.getSelectedItem();
             String mauSac = (String) cboMauSac.getSelectedItem();
-
-            // Cập nhật sản phẩm
             boolean isUpdated = new GioHangService().updateGioHang(
                 gioHang.getId(), soLuong, kichThuoc, mauSac
             );
             if (isUpdated) {
                 JOptionPane.showMessageDialog(null, "Cập nhật sản phẩm thành công!", "Thành Công", JOptionPane.INFORMATION_MESSAGE);
                 refreshGioHangData(); // Làm mới danh sách giỏ hàng
+                capNhatTongTien();
                 return;
             } else {
                 JOptionPane.showMessageDialog(null, "Cập nhật sản phẩm thất bại!", "Lỗi", JOptionPane.ERROR_MESSAGE);
@@ -238,6 +231,20 @@ public class FormGioHang extends javax.swing.JPanel {
     
     public void refreshGioHangData() {
         applyListStyle();
+        capNhatTongTien();
+    }
+    
+    private void capNhatTongTien() {
+        // Lấy danh sách giỏ hàng theo email
+        List<GioHang> gioHangList = service1.getGioHangByEmail(Email);
+
+        // Tính tổng tiền
+        BigDecimal total = BigDecimal.ZERO; // Khởi tạo tổng tiền
+        for (GioHang product : gioHangList) {
+            BigDecimal giaSanPham = product.getTongTien(); // Lấy giá trị tổng tiền của sản phẩm
+            total = total.add(giaSanPham); // Cộng dồn vào tổng tiền
+        }
+        jLabel2.setText(total.toString() + " VND");
     }
 
 
@@ -252,6 +259,7 @@ public class FormGioHang extends javax.swing.JPanel {
         jButton1 = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         jButton3 = new javax.swing.JButton();
+        jLabel2 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
 
         myListGioHang1.setModel(new javax.swing.AbstractListModel<String>() {
@@ -261,7 +269,7 @@ public class FormGioHang extends javax.swing.JPanel {
         });
         jScrollPane1.setViewportView(myListGioHang1);
 
-        jButton1.setText("Thanh Toán");
+        jButton1.setText("Đặt Hàng");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
@@ -279,6 +287,9 @@ public class FormGioHang extends javax.swing.JPanel {
             }
         });
 
+        jLabel2.setForeground(new java.awt.Color(255, 0, 0));
+        jLabel2.setText("0VNĐ");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -289,9 +300,11 @@ public class FormGioHang extends javax.swing.JPanel {
                     .addComponent(jScrollPane1)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addComponent(jButton3)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 506, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 522, Short.MAX_VALUE)
                         .addComponent(jLabel1)
-                        .addGap(110, 110, 110)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel2)
+                        .addGap(55, 55, 55)
                         .addComponent(jButton1)))
                 .addContainerGap())
         );
@@ -303,7 +316,8 @@ public class FormGioHang extends javax.swing.JPanel {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton1)
                     .addComponent(jLabel1)
-                    .addComponent(jButton3))
+                    .addComponent(jButton3)
+                    .addComponent(jLabel2))
                 .addContainerGap(32, Short.MAX_VALUE))
         );
 
@@ -347,6 +361,7 @@ public class FormGioHang extends javax.swing.JPanel {
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton3;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;

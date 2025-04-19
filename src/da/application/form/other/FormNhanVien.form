@@ -108,6 +108,9 @@
               <Properties>
                 <Property name="text" type="java.lang.String" value="Th&#xea;m T&#xe0;i Kho&#x1ea3;n Nh&#xe2;n Vi&#xea;n"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cmdAddAcountActionPerformed"/>
+              </Events>
             </Component>
           </SubComponents>
         </Container>

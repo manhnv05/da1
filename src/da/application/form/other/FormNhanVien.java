@@ -4,19 +4,35 @@ package da.application.form.other;
 import com.formdev.flatlaf.FlatClientProperties;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import da.application.Application;
+import da.model.NguoiDung;
 import da.model.NhanVien;
+import da.model.VaiTro;
+import da.service.NguoiDungService;
 import da.service.NhanVienService;
+import da.service.VaiTroService;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import javax.swing.BorderFactory;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.DefaultListCellRenderer;
+import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
@@ -26,6 +42,8 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import raven.toast.Notifications;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 
 public class FormNhanVien extends javax.swing.JPanel {
@@ -282,6 +300,151 @@ public class FormNhanVien extends javax.swing.JPanel {
     }
     
 
+ private String hashPassword(String password) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            byte[] hashedBytes = md.digest(password.getBytes());
+            StringBuilder sb = new StringBuilder();
+            for (byte b : hashedBytes) {
+                sb.append(String.format("%02x", b));
+            }
+            return sb.toString();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    private void initializeVaiTroComboBox(JComboBox<VaiTro> cbVaiTro, VaiTroService vaiTroService) {
+        List<VaiTro> list = vaiTroService.getAllVaiTro();
+        if (list == null || list.isEmpty()) {
+            Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Không có vai trò nào!");
+            return;
+        }
+
+        cbVaiTro.setModel(new DefaultComboBoxModel<>(list.toArray(new VaiTro[0])));
+        cbVaiTro.setRenderer(new DefaultListCellRenderer() {
+            @Override
+            public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+                super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                if (value instanceof VaiTro vt) {
+                    setText(vt.getTenVaiTro());
+                }
+                return this;
+            }
+        });
+    }
+
+    private JPanel createAddAccountPanel(JTextField txtHo, JTextField txtTen, JTextField txtEmail, JPasswordField txtMatKhau,
+                                         JComboBox<VaiTro> cbVaiTro) {
+        JPanel panel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10, 10, 10, 10);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+
+        // Add fields to the panel
+        gbc.gridx = 0; gbc.gridy = 0; panel.add(new JLabel("Họ:"), gbc);
+        gbc.gridx = 1; panel.add(txtHo, gbc);
+
+        gbc.gridx = 0; gbc.gridy = 1; panel.add(new JLabel("Tên:"), gbc);
+        gbc.gridx = 1; panel.add(txtTen, gbc);
+
+        gbc.gridx = 0; gbc.gridy = 2; panel.add(new JLabel("Email:"), gbc);
+        gbc.gridx = 1; panel.add(txtEmail, gbc);
+
+        gbc.gridx = 0; gbc.gridy = 3; panel.add(new JLabel("Mật khẩu:"), gbc);
+        gbc.gridx = 1; panel.add(txtMatKhau, gbc);
+
+        gbc.gridx = 0; gbc.gridy = 4; panel.add(new JLabel("Vai trò:"), gbc);
+        gbc.gridx = 1; panel.add(cbVaiTro, gbc);
+
+        return panel;
+    }
+
+    private boolean validateInputs(String ho, String ten, String email, String matKhau, VaiTro vaiTro) {
+        if (ho.isBlank() || ten.isBlank() || email.isBlank() || matKhau.isBlank() || vaiTro == null) {
+            Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng điền đầy đủ thông tin!");
+            return false;
+        }
+
+        if (!email.matches("^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$")) {
+            Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Email không hợp lệ!");
+            return false;
+        }
+
+        if (matKhau.length() < 6) {
+            Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Mật khẩu phải có ít nhất 6 ký tự!");
+            return false;
+        }
+
+        return true;
+    }
+
+    private boolean processAddAccount(String ho, String ten, String email, String matKhau, VaiTro vaiTro, NguoiDungService nguoiDungService) {
+        if (!validateInputs(ho, ten, email, matKhau, vaiTro)) {
+            return false;
+        }
+
+        // Check if email already exists
+        if (nguoiDungService.isEmailExists(email)) {
+            Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Email đã tồn tại!");
+            return false;
+        }
+
+        // Encrypt the password
+        String encryptedPassword = hashPassword(matKhau);
+        if (encryptedPassword == null) {
+            Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Lỗi khi mã hóa mật khẩu!");
+            return false;
+        }
+
+        // Create a new NguoiDung object
+        NguoiDung nguoiDung = new NguoiDung();
+        nguoiDung.setHo(ho);
+        nguoiDung.setTen(ten);
+        nguoiDung.setEmail(email);
+        nguoiDung.setMatKhau(encryptedPassword);
+        nguoiDung.setIdVaiTro(vaiTro.getId());
+
+        // Add the new account
+        boolean isAdded = nguoiDungService.AddTKNV(nguoiDung);
+        if (!isAdded) {
+            Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Thêm tài khoản thất bại!");
+        }
+        return isAdded;
+    }
+
+    public void themTaiKhoan() {
+        NguoiDungService nguoiDungService = new NguoiDungService();
+        VaiTroService vaiTroService = new VaiTroService();
+
+        JTextField txtHo = new JTextField();
+        JTextField txtTen = new JTextField();
+        JTextField txtEmail = new JTextField();
+        JPasswordField txtMatKhau = new JPasswordField();
+        JComboBox<VaiTro> cbVaiTro = new JComboBox<>();
+
+        initializeVaiTroComboBox(cbVaiTro, vaiTroService);
+        JPanel panel = createAddAccountPanel(txtHo, txtTen, txtEmail, txtMatKhau, cbVaiTro);
+
+        while (true) {
+            int result = JOptionPane.showConfirmDialog(null, panel, "Thêm Tài Khoản Mới", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+            if (result != JOptionPane.OK_OPTION) {
+                return; // User canceled
+            }
+
+            String ho = txtHo.getText().trim();
+            String ten = txtTen.getText().trim();
+            String email = txtEmail.getText().trim();
+            String matKhau = new String(txtMatKhau.getPassword()).trim();
+            VaiTro vaiTro = (VaiTro) cbVaiTro.getSelectedItem();
+
+            if (processAddAccount(ho, ten, email, matKhau, vaiTro, nguoiDungService)) {
+                Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Thêm tài khoản thành công!");
+                break;
+            }
+        }
+    }
 
 
     
@@ -385,6 +548,11 @@ public class FormNhanVien extends javax.swing.JPanel {
         crazyPanel2.add(cmdExcel);
 
         cmdAddAcount.setText("Thêm Tài Khoản Nhân Viên");
+        cmdAddAcount.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cmdAddAcountActionPerformed(evt);
+            }
+        });
         crazyPanel2.add(cmdAddAcount);
 
         crazyPanel1.add(crazyPanel2);
@@ -450,6 +618,10 @@ public class FormNhanVien extends javax.swing.JPanel {
     private void cmdExcelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdExcelActionPerformed
         exportNhanVienToExcelFromDB();
     }//GEN-LAST:event_cmdExcelActionPerformed
+
+    private void cmdAddAcountActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdAddAcountActionPerformed
+        themTaiKhoan();
+    }//GEN-LAST:event_cmdAddAcountActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

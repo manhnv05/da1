@@ -213,6 +213,9 @@ CREATE TABLE SanPham (
     FOREIGN KEY (idNhaCungCap) REFERENCES NhaCungCap(id),
 	FOREIGN KEY (idKhuVucKho) REFERENCES KhuVucKho(id)
 );
+ALTER TABLE SanPham
+ADD trangThai BIT DEFAULT 1; -- 1: Hiển thị (hoạt động), 0: Đã ẩn/xóa
+
  
 -- Inserting data into SanPham table
 INSERT INTO SanPham (masp, tensp, mota, gia, soluongton, idChatLieu, idXuatXu, idKichThuoc, idMauSac, idNhaCungCap, idKhuVucKho, hinhanh)

@@ -24,7 +24,7 @@ public class SanPhamService {
     
     
     public ArrayList<SanPham> searchSanPham(String keyword) {
-    String SQL = """
+    StringBuilder SQL = new StringBuilder("""
         SELECT 
             sp.id, sp.masp, sp.tensp, sp.mota, sp.gia, sp.soluongton, sp.hinhanh,
             cl.tenChatLieu AS tenChatLieu,
@@ -40,18 +40,22 @@ public class SanPhamService {
         LEFT JOIN MauSac ms ON sp.idMauSac = ms.id
         LEFT JOIN NhaCungCap ncc ON sp.idNhaCungCap = ncc.id
         LEFT JOIN KhuVucKho kvk ON sp.idKhuVucKho = kvk.id
-    """;
+    """);
 
-    if (keyword != null && !keyword.trim().isEmpty()) {
-        SQL += """
-            WHERE sp.tensp LIKE ? OR sp.masp LIKE ? OR CAST(sp.gia AS NVARCHAR) LIKE ?
-        """;
+    boolean hasKeyword = keyword != null && !keyword.trim().isEmpty();
+    if (hasKeyword) {
+        SQL.append("""
+            WHERE (sp.tensp LIKE ? OR sp.masp LIKE ? OR CAST(sp.gia AS NVARCHAR) LIKE ?)
+              AND sp.trangThai = 1
+        """);
+    } else {
+        SQL.append("WHERE sp.trangThai = 1");
     }
 
     ArrayList<SanPham> ds = new ArrayList<>();
     try {
-        PreparedStatement ps = conn.prepareStatement(SQL);
-        if (keyword != null && !keyword.trim().isEmpty()) {
+        PreparedStatement ps = conn.prepareStatement(SQL.toString());
+        if (hasKeyword) {
             String searchPattern = "%" + keyword.trim() + "%";
             ps.setString(1, searchPattern);
             ps.setString(2, searchPattern);
@@ -83,49 +87,52 @@ public class SanPhamService {
 }
 
 
+
     public ArrayList<SanPham> getAll() {
-        String SQL = """
-            SELECT 
-                sp.id, sp.masp, sp.tensp, sp.mota, sp.gia, sp.soluongton, sp.hinhanh,
-                cl.tenChatLieu AS tenChatLieu,
-                xx.tenXuatXu AS tenXuatXu,
-                kt.tenKT AS tenKT,
-                ms.tenMau AS tenMau,
-                ncc.tenNCC AS tenNCC,
-                kvk.tenKhuVuc AS tenKhuVuc
-            FROM SanPham sp
-            LEFT JOIN ChatLieu cl ON sp.idChatLieu = cl.id
-            LEFT JOIN XuatXu xx ON sp.idXuatXu = xx.id
-            LEFT JOIN KichThuoc kt ON sp.idKichThuoc = kt.id
-            LEFT JOIN MauSac ms ON sp.idMauSac = ms.id
-            LEFT JOIN NhaCungCap ncc ON sp.idNhaCungCap = ncc.id
-            LEFT JOIN KhuVucKho kvk ON sp.idKhuVucKho = kvk.id
-        """;
-        ArrayList<SanPham> ds = new ArrayList<>();
-        try (PreparedStatement ps = conn.prepareStatement(SQL);
-             ResultSet rs = ps.executeQuery()) {
-            while (rs.next()) {
-                SanPham sp = new SanPham();
-                sp.setId(rs.getInt("id"));
-                sp.setMasp(rs.getString("masp"));
-                sp.setTensp(rs.getString("tensp"));
-                sp.setMota(rs.getString("mota"));
-                sp.setGia(rs.getBigDecimal("gia"));
-                sp.setSoluongton(rs.getInt("soluongton"));
-                sp.setHinhanh(rs.getString("hinhanh"));
-                sp.setTenChatLieu(rs.getString("tenChatLieu"));
-                sp.setTenXuatXu(rs.getString("tenXuatXu"));
-                sp.setTenKichThuoc(rs.getString("tenKT"));
-                sp.setTenMauSac(rs.getString("tenMau"));
-                sp.setTenNhaCungCap(rs.getString("tenNCC"));
-                sp.setTenKhuVucKho(rs.getString("tenKhuVuc"));
-                ds.add(sp);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+    String SQL = """
+        SELECT 
+            sp.id, sp.masp, sp.tensp, sp.mota, sp.gia, sp.soluongton, sp.hinhanh,
+            cl.tenChatLieu AS tenChatLieu,
+            xx.tenXuatXu AS tenXuatXu,
+            kt.tenKT AS tenKT,
+            ms.tenMau AS tenMau,
+            ncc.tenNCC AS tenNCC,
+            kvk.tenKhuVuc AS tenKhuVuc
+        FROM SanPham sp
+        LEFT JOIN ChatLieu cl ON sp.idChatLieu = cl.id
+        LEFT JOIN XuatXu xx ON sp.idXuatXu = xx.id
+        LEFT JOIN KichThuoc kt ON sp.idKichThuoc = kt.id
+        LEFT JOIN MauSac ms ON sp.idMauSac = ms.id
+        LEFT JOIN NhaCungCap ncc ON sp.idNhaCungCap = ncc.id
+        LEFT JOIN KhuVucKho kvk ON sp.idKhuVucKho = kvk.id
+        WHERE sp.trangThai = 1
+    """;
+    ArrayList<SanPham> ds = new ArrayList<>();
+    try (PreparedStatement ps = conn.prepareStatement(SQL);
+         ResultSet rs = ps.executeQuery()) {
+        while (rs.next()) {
+            SanPham sp = new SanPham();
+            sp.setId(rs.getInt("id"));
+            sp.setMasp(rs.getString("masp"));
+            sp.setTensp(rs.getString("tensp"));
+            sp.setMota(rs.getString("mota"));
+            sp.setGia(rs.getBigDecimal("gia"));
+            sp.setSoluongton(rs.getInt("soluongton"));
+            sp.setHinhanh(rs.getString("hinhanh"));
+            sp.setTenChatLieu(rs.getString("tenChatLieu"));
+            sp.setTenXuatXu(rs.getString("tenXuatXu"));
+            sp.setTenKichThuoc(rs.getString("tenKT"));
+            sp.setTenMauSac(rs.getString("tenMau"));
+            sp.setTenNhaCungCap(rs.getString("tenNCC"));
+            sp.setTenKhuVucKho(rs.getString("tenKhuVuc"));
+            ds.add(sp);
         }
-        return ds;
+    } catch (SQLException e) {
+        e.printStackTrace();
     }
+    return ds;
+}
+
 
 
 
@@ -312,16 +319,17 @@ public class SanPhamService {
 
 
     public boolean deleteSanPham(int id) {
-        String SQL = "DELETE FROM SanPham WHERE id = ?";
-        try (PreparedStatement ps = conn.prepareStatement(SQL)) {
-            ps.setInt(1, id);
-            int rowsAffected = ps.executeUpdate();
-            return rowsAffected > 0;
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return false;
+    String SQL = "UPDATE SanPham SET trangThai = 0 WHERE id = ?";
+    try (PreparedStatement ps = conn.prepareStatement(SQL)) {
+        ps.setInt(1, id);
+        int rowsAffected = ps.executeUpdate();
+        return rowsAffected > 0;
+    } catch (SQLException e) {
+        e.printStackTrace();
     }
+    return false;
+}
+
     
 public boolean updateSoLuongTon(int idSanPham, int soLuongDaBan) {
     String SQL = "UPDATE SanPham SET soluongton = soluongton - ? WHERE id = ? AND soluongton >= ?";

@@ -42,6 +42,7 @@ public class FormQLSanPham extends javax.swing.JPanel {
         initComponents();
         applyTableStyle(tblSanPham);
         loadSanPhamData(service.searchSanPham(""));
+        loadSanPhamData(service.getAll());
     }
     
     private void applyTableStyle(JTable table) {
@@ -264,6 +265,7 @@ public class FormQLSanPham extends javax.swing.JPanel {
         cmdDetails = new javax.swing.JButton();
         cmdExcel = new javax.swing.JButton();
         cmdNew = new javax.swing.JButton();
+        jButton2 = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         tblSanPham = new javax.swing.JTable();
 
@@ -363,6 +365,14 @@ public class FormQLSanPham extends javax.swing.JPanel {
         });
         crazyPanel2.add(cmdNew);
 
+        jButton2.setText("Lưu Trữ");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
+        crazyPanel2.add(jButton2);
+
         crazyPanel1.add(crazyPanel2);
 
         tblSanPham.setModel(new javax.swing.table.DefaultTableModel(
@@ -431,6 +441,11 @@ public class FormQLSanPham extends javax.swing.JPanel {
         exportSanPhamToExcelFromDB();
     }//GEN-LAST:event_cmdExcelActionPerformed
 
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        Application.showForm(new FormLuuTru());
+
+    }//GEN-LAST:event_jButton2ActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton cmdAdd;
@@ -443,6 +458,7 @@ public class FormQLSanPham extends javax.swing.JPanel {
     private raven.crazypanel.CrazyPanel crazyPanel1;
     private raven.crazypanel.CrazyPanel crazyPanel2;
     private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable tblSanPham;
     private javax.swing.JTextField txtSearch;

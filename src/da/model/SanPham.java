@@ -26,11 +26,12 @@ public class SanPham {
     private String hinhanh;
     
     private String tenChatLieu;
-private String tenXuatXu;
-private String tenKichThuoc;
-private String tenMauSac;
-private String tenNhaCungCap;
-private String tenKhuVucKho;
+    private String tenXuatXu;
+    private String tenKichThuoc;
+    private String tenMauSac;
+    private String tenNhaCungCap;
+    private String tenKhuVucKho;
+    private Boolean starus;
 
 
 
@@ -86,6 +87,15 @@ private String tenKhuVucKho;
         this.tenNhaCungCap = tenNhaCungCap;
         this.tenKhuVucKho = tenKhuVucKho;
     }
+
+    public SanPham(int id, String masp, String tensp, Boolean starus) {
+        this.id = id;
+        this.masp = masp;
+        this.tensp = tensp;
+        this.starus = starus;
+    }
+    
+    
     
     
 
@@ -242,6 +252,15 @@ private String tenKhuVucKho;
     public void setTenKhuVucKho(String tenKhuVucKho) {
         this.tenKhuVucKho = tenKhuVucKho;
     }
+
+    public Boolean getStarus() {
+        return starus;
+    }
+
+    public void setStarus(Boolean starus) {
+        this.starus = starus;
+    }
+    
     
     
     

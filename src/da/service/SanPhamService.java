@@ -85,6 +85,61 @@ public class SanPhamService {
 
     return ds;
 }
+    
+    
+    public ArrayList<SanPham> searchSanPhamDX(String keyword) {
+    StringBuilder SQL = new StringBuilder("""
+        SELECT 
+            sp.id, sp.masp, sp.tensp, sp.mota, sp.gia, sp.soluongton, sp.hinhanh, sp.trangThai,
+            cl.tenChatLieu AS tenChatLieu,
+            xx.tenXuatXu AS tenXuatXu,
+            kt.tenKT AS tenKT,
+            ms.tenMau AS tenMau,
+            ncc.tenNCC AS tenNCC,
+            kvk.tenKhuVuc AS tenKhuVuc
+        FROM SanPham sp
+        LEFT JOIN ChatLieu cl ON sp.idChatLieu = cl.id
+        LEFT JOIN XuatXu xx ON sp.idXuatXu = xx.id
+        LEFT JOIN KichThuoc kt ON sp.idKichThuoc = kt.id
+        LEFT JOIN MauSac ms ON sp.idMauSac = ms.id
+        LEFT JOIN NhaCungCap ncc ON sp.idNhaCungCap = ncc.id
+        LEFT JOIN KhuVucKho kvk ON sp.idKhuVucKho = kvk.id
+    """);
+
+    boolean hasKeyword = keyword != null && !keyword.trim().isEmpty();
+    if (hasKeyword) {
+        SQL.append("""
+            WHERE (sp.tensp LIKE ? OR sp.masp LIKE ? OR CAST(sp.gia AS NVARCHAR) LIKE ?)
+              AND sp.trangThai = 0
+        """);
+    } else {
+        SQL.append("WHERE sp.trangThai = 0");
+    }
+
+    ArrayList<SanPham> ds = new ArrayList<>();
+    try {
+        PreparedStatement ps = conn.prepareStatement(SQL.toString());
+        if (hasKeyword) {
+            String searchPattern = "%" + keyword.trim() + "%";
+            ps.setString(1, searchPattern);
+            ps.setString(2, searchPattern);
+            ps.setString(3, searchPattern);
+        }
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            SanPham sp = new SanPham();
+            sp.setId(rs.getInt("id"));
+            sp.setMasp(rs.getString("masp"));
+            sp.setTensp(rs.getString("tensp"));
+            sp.setStarus(rs.getBoolean("trangThai"));
+            ds.add(sp);
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+
+    return ds;
+}
 
 
 
@@ -329,6 +384,19 @@ public class SanPhamService {
     }
     return false;
 }
+    
+    public boolean phucHoiSPXoa(int id) {
+    String SQL = "UPDATE SanPham SET trangThai = 1 WHERE id = ?";
+    try (PreparedStatement ps = conn.prepareStatement(SQL)) {
+        ps.setInt(1, id);
+        int rowsAffected = ps.executeUpdate();
+        return rowsAffected > 0;
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return false;
+}
+
 
     
 public boolean updateSoLuongTon(int idSanPham, int soLuongDaBan) {

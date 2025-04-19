@@ -506,6 +506,11 @@ public class FormDonHang extends javax.swing.JPanel {
         loadHoaDonData(hoaDonList);
     }
     
+    public void refeshGH(){
+        ArrayList<GioHang> gioHang =  service1.getGioHangByEmail(Email); // Lấy danh sách hóa đơn từ service
+        loadGioHangData(gioHang);
+    }
+    
     public void searchHD() {
         String keyword = txtSearch3.getText().trim();
         loadHoaDonData((ArrayList<HoaDonChiTiet>) service2.searchHoaDonChiTiet(keyword));
@@ -1315,6 +1320,7 @@ public class FormDonHang extends javax.swing.JPanel {
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         refreshSanPham();
+        refeshGH();
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void tblSanPhamMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblSanPhamMouseClicked

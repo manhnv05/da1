@@ -3,6 +3,7 @@ package da.application.form.other;
 import com.formdev.flatlaf.FlatClientProperties;
 import da.model.HoaDonChiTiet;
 import da.model.NhanVien;
+import da.service.GioHangService;
 import da.service.HoaDonService;
 import da.service.NhanVienService;
 import java.time.LocalDate;
@@ -17,6 +18,7 @@ import raven.modal.component.SimpleModalBorder;
 public class PaymentForm extends JPanel {
     private NhanVienService service = new NhanVienService();
     private HoaDonService service1 = new HoaDonService();
+    private GioHangService service2 = new GioHangService();
     private List<Integer> productIds;
 
     public PaymentForm(List<Integer> productIds) {
@@ -63,6 +65,7 @@ public class PaymentForm extends JPanel {
         txtEmail.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Tên khách hàng");
         add(txtName);
         add(txtEmail);
+        txtName.setEnabled(false);
 
         JLabel lbRequestDetail = new JLabel("Yêu cầu chi tiết");
         lbRequestDetail.putClientProperty(FlatClientProperties.STYLE, "font:bold +2;");
@@ -111,6 +114,10 @@ public class PaymentForm extends JPanel {
             String hinhThucThanhToan = (String) comboPaymentType.getSelectedItem(); // Hình thức thanh toán
             int trangThai = comboAccount.getSelectedIndex(); // 0: Chưa thanh toán, 1: Đã thanh toán
 
+            if (tenKhachHang.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Tên khách hàng không được để trống!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
             // Lấy nhân viên ID từ combo box
             int nhanVienID = cboNhanVien.getSelectedIndex() > 0 ? cboNhanVien.getSelectedIndex() : -1;
             if (nhanVienID == -1) {
@@ -135,11 +142,16 @@ public class PaymentForm extends JPanel {
 
             boolean detailsSuccess = service1.addChiTietHoaDon(chiTietList);
             if (detailsSuccess) {
-                JOptionPane.showMessageDialog(this, "Thêm hóa đơn và chi tiết hóa đơn thành công!", "Thành Công", JOptionPane.INFORMATION_MESSAGE);
-                ModalBorderAction.getModalBorderAction(this).doAction(SimpleModalBorder.OK_OPTION);
-            } else {
-                JOptionPane.showMessageDialog(this, "Thêm hóa đơn thành công nhưng thêm chi tiết thất bại!", "Lỗi", JOptionPane.WARNING_MESSAGE);
-            }
+            boolean deleted = service2.deleteGioHangByIds(productIds); // Gọi phương thức xóa ẩn
+                if (deleted) {
+            JOptionPane.showMessageDialog(this, "Thêm hóa đơn và chi tiết hóa đơn thành công! Giỏ hàng đã được cập nhật.", "Thành Công", JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(this, "Thêm hóa đơn thành công nhưng không thể cập nhật trạng thái giỏ hàng!", "Lỗi", JOptionPane.WARNING_MESSAGE);
+        }
+        ModalBorderAction.getModalBorderAction(this).doAction(SimpleModalBorder.OK_OPTION);
+    } else {
+        JOptionPane.showMessageDialog(this, "Thêm hóa đơn thành công nhưng thêm chi tiết thất bại!", "Lỗi", JOptionPane.WARNING_MESSAGE);
+    }
                     });
 
                     add(cmdCancel, "grow 0");
@@ -147,4 +159,5 @@ public class PaymentForm extends JPanel {
                 }
 
                 private JComboBox<String> cboNhanVien;
+                private JTextField txtEmail;
             }

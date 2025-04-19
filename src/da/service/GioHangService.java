@@ -24,7 +24,8 @@ public class GioHangService {
         String SQL = "SELECT gh.id, gh.idNguoiDung, gh.idSanPham, sp.maSP, sp.tenSP, " +
                      "gh.tenMauSac, gh.kichThuoc, gh.tongTien, gh.soLuong " +
                      "FROM GioHang gh " +
-                     "JOIN SanPham sp ON gh.idSanPham = sp.id";
+                     "JOIN SanPham sp ON gh.idSanPham = sp.id"
+                    + "WHERE gh.trangThai = 1";
 
         try (PreparedStatement ps = conn.prepareStatement(SQL);
              ResultSet rs = ps.executeQuery()) {
@@ -90,11 +91,11 @@ public class GioHangService {
     public ArrayList<GioHang> getGioHangByEmail(String email) {
         ArrayList<GioHang> list = new ArrayList<>();
         String SQL = "SELECT gh.id, gh.idNguoiDung, gh.idSanPham, sp.maSP, sp.tenSP, sp.hinhanh, " +
-                     "gh.tenMauSac, gh.kichThuoc, gh.tongTien, gh.soLuong " +
+                     "gh.tenMauSac, gh.kichThuoc, gh.tongTien, gh.soLuong, gh.trangThai " +
                      "FROM GioHang gh " +
                      "JOIN SanPham sp ON gh.idSanPham = sp.id " +
                      "JOIN NguoiDung nd ON gh.idNguoiDung = nd.id " +
-                     "WHERE nd.email = ?";
+                     "WHERE nd.email = ? AND gh.trangThai = 1";
 
         try (PreparedStatement ps = conn.prepareStatement(SQL)) {
             ps.setString(1, email);
@@ -124,15 +125,46 @@ public class GioHangService {
 
     // Xóa sản phẩm khỏi giỏ hàng theo id
     public boolean deleteGioHangById(int id) {
-        String SQL = "DELETE FROM GioHang WHERE id = ?";
-        try (PreparedStatement ps = conn.prepareStatement(SQL)) {
-            ps.setInt(1, id);
-            return ps.executeUpdate() > 0;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
+        String SQL = "UPDATE GioHang SET trangThai = 0 WHERE id = ?";
+    try (PreparedStatement ps = conn.prepareStatement(SQL)) {
+        ps.setInt(1, id);
+        int rowsAffected = ps.executeUpdate();
+        return rowsAffected > 0;
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return false;
+    }
+    
+    public boolean deleteGioHangByIds(List<Integer> ids) {
+    if (ids == null || ids.isEmpty()) {
+        return false; // Không có ID nào để xóa
+    }
+
+    // Tạo câu SQL động với danh sách các ID
+    StringBuilder sqlBuilder = new StringBuilder("UPDATE GioHang SET trangThai = 0 WHERE id IN (");
+    for (int i = 0; i < ids.size(); i++) {
+        sqlBuilder.append("?"); // Thêm dấu ? làm placeholder
+        if (i < ids.size() - 1) {
+            sqlBuilder.append(", "); // Thêm dấu phẩy giữa các dấu ?
         }
     }
+    sqlBuilder.append(")");
+
+    try (PreparedStatement ps = conn.prepareStatement(sqlBuilder.toString())) {
+        // Gán giá trị cho các placeholder ?
+        for (int i = 0; i < ids.size(); i++) {
+            ps.setInt(i + 1, ids.get(i)); // Chỉ số PreparedStatement bắt đầu từ 1
+        }
+
+        // Thực thi câu lệnh
+        int rowsAffected = ps.executeUpdate();
+        return rowsAffected > 0; // Trả về true nếu có ít nhất một dòng bị ảnh hưởng
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return false; // Trả về false nếu có lỗi
+}
     
     public List<GioHang> getProductsByGioHang(List<Integer> ids) {
     List<GioHang> list = new ArrayList<>();

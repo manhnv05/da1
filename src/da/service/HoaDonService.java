@@ -23,6 +23,7 @@ public List<HoaDonChiTiet> getAll() {
     List<HoaDonChiTiet> list = new ArrayList<>();
     String sql = """
             SELECT 
+                hd.id AS hoadonID,
                 hd.mahoadon AS MaHoaDon, 
                 hd.trangthai AS TrangThai, 
                 hd.ngaytao AS NgayTao, 
@@ -41,25 +42,23 @@ public List<HoaDonChiTiet> getAll() {
             JOIN GioHang gh ON ctht.gioHangid = gh.id
             JOIN SanPham sp ON gh.idSanPham = sp.id;
         """;
-    try (
-        PreparedStatement ps = conn.prepareStatement(sql);
-        ResultSet rs = ps.executeQuery()
-    ) {
+
+    try (PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
         while (rs.next()) {
             HoaDonChiTiet ct = new HoaDonChiTiet();
-            ct.setMaHD(rs.getString("MaHoaDon")); // Mã hóa đơn
-            ct.setTrangThai(rs.getString("TrangThai")); // Trạng thái hóa đơn
-            ct.setNgay(rs.getTimestamp("NgayTao")); // Ngày tạo hóa đơn
-            ct.setTenNV(rs.getString("TenNhanVien")); // Tên nhân viên
-            ct.setTenKH(rs.getString("TenKhachHang")); // Tên khách hàng
-            ct.setId(rs.getInt("ChiTietID")); // ID chi tiết hóa đơn
-            ct.setTenSP(rs.getString("TenSanPham")); // Tên sản phẩm
-            ct.setSoLuong(rs.getInt("SoLuong")); // Số lượng sản phẩm
-            ct.setDonGia(rs.getBigDecimal("GiaBan")); // Giá bán
-            ct.setTongTien(rs.getBigDecimal("TongTien")); // Tổng tiền
-            ct.setMauSac(rs.getString("MauSac")); // Màu sắc
-            ct.setKichThuoc(rs.getString("KichThuoc")); // Kích thước
-
+            ct.setHoaDonID(rs.getInt("hoadonID"));
+            ct.setMaHD(rs.getString("MaHoaDon"));
+            ct.setTrangThai(rs.getString("TrangThai"));
+            ct.setNgay(rs.getTimestamp("NgayTao"));
+            ct.setTenNV(rs.getString("TenNhanVien"));
+            ct.setTenKH(rs.getString("TenKhachHang"));
+            ct.setId(rs.getInt("ChiTietID"));
+            ct.setTenSP(rs.getString("TenSanPham"));
+            ct.setSoLuong(rs.getInt("SoLuong"));
+            ct.setDonGia(rs.getBigDecimal("GiaBan"));
+            ct.setTongTien(rs.getBigDecimal("TongTien"));
+            ct.setMauSac(rs.getString("MauSac"));
+            ct.setKichThuoc(rs.getString("KichThuoc"));
             list.add(ct);
         }
     } catch (SQLException e) {
@@ -68,6 +67,61 @@ public List<HoaDonChiTiet> getAll() {
 
     return list;
 }
+
+
+public List<HoaDonChiTiet> getAllID(int id) {
+    List<HoaDonChiTiet> list = new ArrayList<>();
+    String sql = """
+            SELECT 
+                hd.id AS hoadonID,
+                hd.mahoadon AS MaHoaDon, 
+                hd.trangthai AS TrangThai, 
+                hd.ngaytao AS NgayTao, 
+                nv.ho + ' ' + nv.ten AS TenNhanVien, 
+                hd.tenkhachhang AS TenKhachHang, 
+                ctht.id AS ChiTietID, 
+                sp.tensp AS TenSanPham, 
+                gh.soLuong AS SoLuong, 
+                sp.gia AS GiaBan, 
+                (gh.soLuong * sp.gia) AS TongTien, 
+                gh.tenMauSac AS MauSac, 
+                gh.kichThuoc AS KichThuoc 
+            FROM ChiTietHoaDonTaiQuay ctht
+            JOIN HoaDonTaiQuay hd ON ctht.hoadonID = hd.id
+            JOIN NhanVien nv ON hd.nhanvienID = nv.id
+            JOIN GioHang gh ON ctht.gioHangid = gh.id
+            JOIN SanPham sp ON gh.idSanPham = sp.id
+            WHERE hd.id = ?
+        """;
+
+    try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        ps.setInt(1, id);
+        try (ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                HoaDonChiTiet ct = new HoaDonChiTiet();
+                ct.setHoaDonID(rs.getInt("hoadonID"));
+                ct.setMaHD(rs.getString("MaHoaDon"));
+                ct.setTrangThai(rs.getString("TrangThai"));
+                ct.setNgay(rs.getTimestamp("NgayTao"));
+                ct.setTenNV(rs.getString("TenNhanVien"));
+                ct.setTenKH(rs.getString("TenKhachHang"));
+                ct.setId(rs.getInt("ChiTietID"));
+                ct.setTenSP(rs.getString("TenSanPham"));
+                ct.setSoLuong(rs.getInt("SoLuong"));
+                ct.setDonGia(rs.getBigDecimal("GiaBan"));
+                ct.setTongTien(rs.getBigDecimal("TongTien"));
+                ct.setMauSac(rs.getString("MauSac"));
+                ct.setKichThuoc(rs.getString("KichThuoc"));
+                list.add(ct);
+            }
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+
+    return list;
+}
+
     
     public List<HoaDon> getAllHD() {
     List<HoaDon> list = new ArrayList<>();

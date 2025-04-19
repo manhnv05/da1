@@ -3,6 +3,13 @@ package da.application.form.other;
 
 import com.formdev.flatlaf.FlatClientProperties;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.Element;
+import com.itextpdf.text.Font;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.pdf.BaseFont;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
 import da.application.Application;
 import da.component.MyList1;
 import da.model.GioHang;
@@ -17,7 +24,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import javax.swing.BorderFactory;
@@ -485,10 +494,10 @@ public class FormDonHang extends javax.swing.JPanel {
     public void loadHoaDonData(ArrayList<HoaDonChiTiet> list) {
         DefaultTableModel tblModel = (DefaultTableModel) tblHoaDon.getModel();
         tblModel.setRowCount(0); // Xóa tất cả các hàng trong bảng trước khi tải dữ liệu mới
-        int index = 1;
+        //int index = 1;
         for (HoaDonChiTiet hoaDon : list) {
             Object[] rowData = {
-                index++,
+                hoaDon.getId(),
                 hoaDon.getMaHD(),
                 hoaDon.getTenSP(),
                 hoaDon.getSoLuong(),
@@ -572,6 +581,79 @@ public class FormDonHang extends javax.swing.JPanel {
         }
     }
 }
+    
+public void inHoaDon() {
+    int selectedRow = tblHoaDon.getSelectedRow();
+    if (selectedRow == -1) {
+        JOptionPane.showMessageDialog(this, "Vui lòng chọn một hóa đơn trước khi in!", "Lỗi", JOptionPane.WARNING_MESSAGE);
+        return;
+    }
+
+    int id = Integer.parseInt(tblHoaDon.getValueAt(selectedRow, 0).toString());
+    Document document = new Document();
+
+    try {
+        BaseFont baseFont = BaseFont.createFont("C:/Windows/Fonts/times.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
+        Font titleFont = new Font(baseFont, 16, Font.BOLD);
+        Font normalFont = new Font(baseFont, 12, Font.NORMAL);
+
+        String fileName = "hoa_don_" + id + "_" + System.currentTimeMillis() + ".pdf";
+        PdfWriter.getInstance(document, new FileOutputStream(fileName));
+        document.open();
+
+        Paragraph title = new Paragraph("HÓA ĐƠN BÁN HÀNG", titleFont);
+        title.setAlignment(Element.ALIGN_CENTER);
+        document.add(title);
+
+        document.add(new Paragraph("Mã hóa đơn: " + tblHoaDon.getValueAt(selectedRow, 1).toString(), normalFont));
+        document.add(new Paragraph("Tên khách hàng: " + tblHoaDon.getValueAt(selectedRow, 5).toString(), normalFont));
+        document.add(new Paragraph("Tổng tiền: " + tblHoaDon.getValueAt(selectedRow, 4).toString() + " VND", normalFont));
+        document.add(new Paragraph("Trạng thái: " + tblHoaDon.getValueAt(selectedRow, 6).toString(), normalFont));
+        document.add(new Paragraph("\nNgày lập: " + new SimpleDateFormat("dd/MM/yyyy").format(new Date()), normalFont));
+        document.add(new Paragraph("\n"));
+
+        PdfPTable table = new PdfPTable(4);
+        table.addCell(new Paragraph("Tên SP", normalFont));
+        table.addCell(new Paragraph("Màu sắc", normalFont));
+        table.addCell(new Paragraph("Số lượng", normalFont));
+        table.addCell(new Paragraph("Thành tiền", normalFont));
+
+        List<HoaDonChiTiet> invoiceDetails = service2.getAllID(id);
+        if (invoiceDetails == null || invoiceDetails.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Không có dữ liệu chi tiết hóa đơn để in!", "Lỗi", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        BigDecimal tongTienSanPham = BigDecimal.ZERO;
+
+        for (HoaDonChiTiet detail : invoiceDetails) {
+        table.addCell(new Paragraph(detail.getTenSP(), normalFont));
+        table.addCell(new Paragraph(detail.getMauSac(), normalFont));
+        table.addCell(new Paragraph(String.valueOf(detail.getSoLuong()), normalFont));
+        table.addCell(new Paragraph(detail.getTongTien().toPlainString(), normalFont)); // dùng toPlainString() thay vì toString()
+
+            tongTienSanPham = tongTienSanPham.add(detail.getTongTien());
+        }
+
+        document.add(table);
+
+        // Dòng tổng tiền sản phẩm
+        Paragraph totalAmount = new Paragraph("\nTổng tiền sản phẩm: " + String.format("%.0f", tongTienSanPham) + " VND", normalFont);
+        totalAmount.setAlignment(Element.ALIGN_RIGHT);
+        document.add(totalAmount);
+
+        document.add(new Paragraph("\nCảm ơn quý khách đã mua hàng!", normalFont));
+        JOptionPane.showMessageDialog(this, "✅ Hóa đơn đã được tạo: " + fileName);
+    } catch (Exception e) {
+        e.printStackTrace();
+        JOptionPane.showMessageDialog(this, "❌ Lỗi khi tạo hóa đơn: " + e.getMessage());
+    } finally {
+        if (document.isOpen()) {
+            document.close();
+        }
+    }
+}
+
     
     /**
      * This method is called from within the constructor to initialize the form.
@@ -1238,6 +1320,11 @@ public class FormDonHang extends javax.swing.JPanel {
         crazyPanel8.add(cmdExcel3);
 
         jButton4.setText("In Hóa Đơn");
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
+        });
         crazyPanel8.add(jButton4);
 
         jButton5.setText("Refesh");
@@ -1264,6 +1351,11 @@ public class FormDonHang extends javax.swing.JPanel {
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
+            }
+        });
+        tblHoaDon.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tblHoaDonMouseClicked(evt);
             }
         });
         jScrollPane4.setViewportView(tblHoaDon);
@@ -1385,7 +1477,30 @@ public class FormDonHang extends javax.swing.JPanel {
         // TODO add your handling code here:
     }//GEN-LAST:event_jButton7ActionPerformed
 
-    
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+        inHoaDon();
+    }//GEN-LAST:event_jButton4ActionPerformed
+
+    private void tblHoaDonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblHoaDonMouseClicked
+        int selectedRow = tblHoaDon.getSelectedRow();
+    if (selectedRow == -1) {
+        Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng chọn một hóa đơn!");
+        return;
+    }
+
+    // Lấy dữ liệu từ hàng được chọn
+    selectedInvoiceId = tblHoaDon.getValueAt(selectedRow, 1).toString(); // Mã hóa đơn
+    selectedCustomerName = tblHoaDon.getValueAt(selectedRow, 5).toString(); // Tên khách hàng
+    selectedTotalAmount = tblHoaDon.getValueAt(selectedRow, 4).toString(); // Tổng tiền
+    selectedStatus = tblHoaDon.getValueAt(selectedRow, 6).toString(); // Trạng thái
+
+    System.out.println("Hóa đơn được chọn: Mã = " + selectedInvoiceId);
+    }//GEN-LAST:event_tblHoaDonMouseClicked
+
+    private String selectedInvoiceId = null;
+private String selectedCustomerName = null;
+private String selectedTotalAmount = null;
+private String selectedStatus = null;
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox<String> cboKichThuoc;
     private javax.swing.JComboBox<String> cboMau;

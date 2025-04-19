@@ -3,14 +3,9 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/D:/da1/da1/src/da/application/form/MainForm.java</file>
             <file>file:/D:/da1/da1/src/da/service/GioHangService.java</file>
-            <file>file:/D:/da1/da1/src/da/service/SanPhamService.java</file>
-            <file>file:/D:/da1/da1/src/da/service/HoaDonService.java</file>
-            <file>file:/D:/da1/da1/src/da/application/form/other/FormGioHang.java</file>
-            <file>file:/D:/da1/da1/src/da/application/form/other/FormQLSanPham.java</file>
-            <file>file:/D:/da1/da1/src/da/application/Application.java</file>
             <file>file:/D:/da1/da1/src/da/application/form/other/FormDonHang.java</file>
+            <file>file:/D:/da1/da1/src/da/application/form/other/AddSanPham.java</file>
             <file>file:/D:/da1/da1/src/da/application/form/other/PaymentForm.java</file>
         </group>
     </open-files>

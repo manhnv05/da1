@@ -4,6 +4,7 @@
  */
 package da.service;
 
+import da.model.HoaDonChiTiet;
 import da.model.HoaDonOnlineChiTiet;
 import da.util.connectDB;
 import java.sql.Connection;
@@ -139,6 +140,115 @@ public class HoaDonOnlineService {
             ct.setMauSac(rs.getString("MauSac"));
             ct.setKichThuoc(rs.getString("KichThuoc"));
             list.add(ct);
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+
+    return list;
+}
+    
+    public List<HoaDonOnlineChiTiet> InHoaDon() {
+    List<HoaDonOnlineChiTiet> list = new ArrayList<>();
+    String sql = """
+            SELECT 
+                hd.id AS hoadononlineID,
+                hd.mahoadon AS MaHoaDon, 
+                hd.trangthai AS TrangThai, 
+                hd.ngaytao AS NgayTao, 
+                hd.tenkhachhang AS TenKhachHang,
+                hd.sodienthoai AS SoDienThoai,
+                hd.diaChiGiaoHang AS DiaChiGiaoHang,
+                hd.hinhthucvanchuyen AS HinhThucVanChuyen,
+                ctht.id AS ChiTietID, 
+                sp.tensp AS TenSanPham, 
+                gh.soLuong AS SoLuong, 
+                sp.gia AS GiaBan, 
+                (gh.soLuong * sp.gia) AS TongTien, 
+                gh.tenMauSac AS MauSac, 
+                gh.kichThuoc AS KichThuoc 
+            FROM ChiTietHoaDonOnline ctht
+            JOIN HoaDonOnLine hd ON ctht.hoadononlineID = hd.id
+            JOIN GioHang gh ON ctht.gioHangid = gh.id
+            JOIN SanPham sp ON gh.idSanPham = sp.id
+            WHERE hd.trangthai = 2;
+        """;
+
+    try (PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+        while (rs.next()) {
+            HoaDonOnlineChiTiet ct = new HoaDonOnlineChiTiet();
+            ct.setHoadononlineID(rs.getInt("hoadononlineID"));
+            ct.setMaHD(rs.getString("MaHoaDon"));
+            ct.setTrangThai(rs.getInt("TrangThai"));
+            ct.setNgay(rs.getTimestamp("NgayTao"));
+            ct.setTenKH(rs.getString("TenKhachHang"));
+            ct.setSDT(rs.getString("SoDienThoai"));
+            ct.setDiaChiGiaoHang(rs.getString("DiaChiGiaoHang"));
+            ct.setHinhThucVanChuyen(rs.getString("HinhThucVanChuyen"));
+            ct.setId(rs.getInt("ChiTietID"));
+            ct.setTenSP(rs.getString("TenSanPham"));
+            ct.setSoLuong(rs.getInt("SoLuong"));
+            ct.setDonGia(rs.getBigDecimal("GiaBan"));
+            ct.setTongTien(rs.getBigDecimal("TongTien"));
+            ct.setMauSac(rs.getString("MauSac"));
+            ct.setKichThuoc(rs.getString("KichThuoc"));
+            list.add(ct);
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+
+    return list;
+}
+    
+    public List<HoaDonOnlineChiTiet> InHoaDonTheoMa(String maHoaDon) {
+    List<HoaDonOnlineChiTiet> list = new ArrayList<>();
+    String sql = """
+            SELECT 
+                hd.id AS hoadononlineID,
+                hd.mahoadon AS MaHoaDon, 
+                hd.trangthai AS TrangThai, 
+                hd.ngaytao AS NgayTao, 
+                hd.tenkhachhang AS TenKhachHang,
+                hd.sodienthoai AS SoDienThoai,
+                hd.diaChiGiaoHang AS DiaChiGiaoHang,
+                hd.hinhthucvanchuyen AS HinhThucVanChuyen,
+                ctht.id AS ChiTietID, 
+                sp.tensp AS TenSanPham, 
+                gh.soLuong AS SoLuong, 
+                sp.gia AS GiaBan, 
+                (gh.soLuong * sp.gia) AS TongTien, 
+                gh.tenMauSac AS MauSac, 
+                gh.kichThuoc AS KichThuoc 
+            FROM ChiTietHoaDonOnline ctht
+            JOIN HoaDonOnLine hd ON ctht.hoadononlineID = hd.id
+            JOIN GioHang gh ON ctht.gioHangid = gh.id
+            JOIN SanPham sp ON gh.idSanPham = sp.id
+            WHERE hd.trangthai = 2 AND hd.mahoadon = ?;
+        """;
+
+    try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        ps.setString(1, maHoaDon); // Gán giá trị mã hóa đơn vào câu lệnh SQL
+        try (ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                HoaDonOnlineChiTiet ct = new HoaDonOnlineChiTiet();
+                ct.setHoadononlineID(rs.getInt("hoadononlineID"));
+                ct.setMaHD(rs.getString("MaHoaDon"));
+                ct.setTrangThai(rs.getInt("TrangThai"));
+                ct.setNgay(rs.getTimestamp("NgayTao"));
+                ct.setTenKH(rs.getString("TenKhachHang"));
+                ct.setSDT(rs.getString("SoDienThoai"));
+                ct.setDiaChiGiaoHang(rs.getString("DiaChiGiaoHang"));
+                ct.setHinhThucVanChuyen(rs.getString("HinhThucVanChuyen"));
+                ct.setId(rs.getInt("ChiTietID"));
+                ct.setTenSP(rs.getString("TenSanPham"));
+                ct.setSoLuong(rs.getInt("SoLuong"));
+                ct.setDonGia(rs.getBigDecimal("GiaBan"));
+                ct.setTongTien(rs.getBigDecimal("TongTien"));
+                ct.setMauSac(rs.getString("MauSac"));
+                ct.setKichThuoc(rs.getString("KichThuoc"));
+                list.add(ct);
+            }
         }
     } catch (SQLException e) {
         e.printStackTrace();

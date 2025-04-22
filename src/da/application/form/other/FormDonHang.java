@@ -56,6 +56,7 @@ public class FormDonHang extends javax.swing.JPanel {
     SanPhamService service = new SanPhamService();
     GioHangService service1 = new GioHangService();
     HoaDonService service2 = new HoaDonService();
+    String folderPath = "D:\\da1\\da1\\hoadon"; // Đường dẫn thư mục lưu hóa đơn
     HoaDonOnlineService service3 = new HoaDonOnlineService();
     private String Email;
     private List<Integer> selectedProductIds = new ArrayList<>();
@@ -737,7 +738,76 @@ public void loadHoaDonOnlineData(ArrayList<HoaDonOnlineChiTiet> list) {
             System.out.println("Cập nhật trạng thái thất bại hoặc không có hóa đơn nào cần cập nhật.");
         }
     }
+    
+    public void inTatCaHoaDonOnlineTungCai(String folderPath) {
+    try {
+        File folder = new File(folderPath);
+        if (!folder.exists()) {
+            folder.mkdirs(); // Tạo thư mục
+        }
+        BaseFont baseFont = BaseFont.createFont("C:/Windows/Fonts/times.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
+        Font titleFont = new Font(baseFont, 16, Font.BOLD);
+        Font normalFont = new Font(baseFont, 12, Font.NORMAL);
 
+        List<HoaDonOnlineChiTiet> danhSachHoaDon = service3.InHoaDon();
+        if (danhSachHoaDon == null || danhSachHoaDon.isEmpty()) {
+            Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Không có hóa đơn nào !");
+            return;
+        }
+
+        for (HoaDonOnlineChiTiet hoaDon : danhSachHoaDon) {
+            // Tạo file PDF trong thư mục chỉ định
+            String fileName = folderPath + File.separator + "hoa_don_" + hoaDon.getMaHD() + ".pdf";
+            Document document = new Document();
+            PdfWriter.getInstance(document, new FileOutputStream(fileName));
+            document.open();
+
+            Paragraph title = new Paragraph("HÓA ĐƠN BÁN HÀNG", titleFont);
+            title.setAlignment(Element.ALIGN_CENTER);
+            document.add(title);
+
+            // Thông tin hóa đơn
+            document.add(new Paragraph("Mã hóa đơn: " + hoaDon.getMaHD(), normalFont));
+            document.add(new Paragraph("Tên khách hàng: " + hoaDon.getTenKH(), normalFont));
+            document.add(new Paragraph("Số điện thoại: " + hoaDon.getSDT(), normalFont));
+            document.add(new Paragraph("Địa chỉ giao hàng: " + hoaDon.getDiaChiGiaoHang(), normalFont));
+            document.add(new Paragraph("Hình thức vận chuyển: " + hoaDon.getHinhThucVanChuyen(), normalFont));
+            document.add(new Paragraph("\nNgày lập: " + new SimpleDateFormat("dd/MM/yyyy").format(new Date()), normalFont));
+            document.add(new Paragraph("\n"));
+
+            PdfPTable table = new PdfPTable(5); // 5 cột
+            table.addCell(new Paragraph("Tên SP", normalFont));
+            table.addCell(new Paragraph("Màu sắc", normalFont));
+            table.addCell(new Paragraph("Size", normalFont));
+            table.addCell(new Paragraph("Số lượng", normalFont));
+            table.addCell(new Paragraph("Thành tiền", normalFont));
+
+            BigDecimal tongTienSanPham = BigDecimal.ZERO;
+            List<HoaDonOnlineChiTiet> chiTietSanPham = service3.InHoaDonTheoMa(hoaDon.getMaHD());
+            if (chiTietSanPham != null && !chiTietSanPham.isEmpty()) {
+                for (HoaDonOnlineChiTiet detail : chiTietSanPham) {
+                    table.addCell(new Paragraph(detail.getTenSP(), normalFont));
+                    table.addCell(new Paragraph(detail.getMauSac(), normalFont));
+                    table.addCell(new Paragraph(detail.getKichThuoc(), normalFont));
+                    table.addCell(new Paragraph(String.valueOf(detail.getSoLuong()), normalFont));
+                    table.addCell(new Paragraph(detail.getTongTien().toPlainString(), normalFont)); // Dùng toPlainString() thay vì toString()
+                    tongTienSanPham = tongTienSanPham.add(detail.getTongTien());
+                }
+            }
+            document.add(table);
+            Paragraph totalAmount = new Paragraph("\nTổng tiền sản phẩm: " + String.format("%.0f", tongTienSanPham) + " VND", normalFont);
+            totalAmount.setAlignment(Element.ALIGN_RIGHT);
+            document.add(totalAmount);
+
+            document.add(new Paragraph("\nCảm ơn quý khách đã mua hàng!", normalFont));
+            Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Hóa Đơn đã được tạo thanhh công!");
+            document.close();
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+        Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Lỗi khi tạo hóa đơn!" + e.getMessage());
+    }
+}
 
     
     /**
@@ -804,6 +874,7 @@ public void loadHoaDonOnlineData(ArrayList<HoaDonOnlineChiTiet> list) {
         jButton7 = new javax.swing.JButton();
         jButton1 = new javax.swing.JButton();
         jButton8 = new javax.swing.JButton();
+        jButton9 = new javax.swing.JButton();
         jScrollPane5 = new javax.swing.JScrollPane();
         tblHoaDonOnline = new javax.swing.JTable();
         jPanel3 = new javax.swing.JPanel();
@@ -1333,6 +1404,14 @@ public void loadHoaDonOnlineData(ArrayList<HoaDonOnlineChiTiet> list) {
         });
         crazyPanel11.add(jButton8);
 
+        jButton9.setText("In Hóa Đơn");
+        jButton9.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton9ActionPerformed(evt);
+            }
+        });
+        crazyPanel11.add(jButton9);
+
         crazyPanel10.add(crazyPanel11);
 
         tblHoaDonOnline.setModel(new javax.swing.table.DefaultTableModel(
@@ -1617,6 +1696,10 @@ public void loadHoaDonOnlineData(ArrayList<HoaDonOnlineChiTiet> list) {
         hoanTat();
     }//GEN-LAST:event_jButton8ActionPerformed
 
+    private void jButton9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton9ActionPerformed
+        inTatCaHoaDonOnlineTungCai(folderPath);
+    }//GEN-LAST:event_jButton9ActionPerformed
+
     private String selectedInvoiceId = null;
 private String selectedCustomerName = null;
 private String selectedTotalAmount = null;
@@ -1656,6 +1739,7 @@ private String selectedStatus = null;
     private javax.swing.JButton jButton6;
     private javax.swing.JButton jButton7;
     private javax.swing.JButton jButton8;
+    private javax.swing.JButton jButton9;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;

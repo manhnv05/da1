@@ -9,6 +9,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class GioHangService {
 
@@ -121,6 +122,17 @@ public class GioHangService {
         }
 
         return list;
+    }
+    
+    
+    public List<Integer> getGioHangIdsByEmail(String email) {
+        // Lấy danh sách giỏ hàng theo email
+        List<GioHang> gioHangList = getGioHangByEmail(email);
+
+        // Trích xuất danh sách ID từ danh sách giỏ hàng
+        return gioHangList.stream()
+                .map(GioHang::getId) // Lấy ID của từng mục
+                .collect(Collectors.toList());
     }
 
     // Xóa sản phẩm khỏi giỏ hàng theo id

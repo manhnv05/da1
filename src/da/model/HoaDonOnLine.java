@@ -16,11 +16,12 @@ public class HoaDonOnLine {
     private String diaChiGiaoHang;
     private String hinhThucThanhToan;
     private String hinhThucVanChuyen;
+    private String luuy;
 
     public HoaDonOnLine() {
     }
 
-    public HoaDonOnLine(int id, String maHoaDon, Timestamp ngayTao, int trangThai, String soDienThoai, String diaChiGiaoHang, String hinhThucThanhToan, String hinhThucVanChuyen) {
+    public HoaDonOnLine(int id, String maHoaDon, Timestamp ngayTao, int trangThai, String soDienThoai, String diaChiGiaoHang, String hinhThucThanhToan, String hinhThucVanChuyen, String luuy) {
         this.id = id;
         this.maHoaDon = maHoaDon;
         this.ngayTao = ngayTao;
@@ -29,6 +30,7 @@ public class HoaDonOnLine {
         this.diaChiGiaoHang = diaChiGiaoHang;
         this.hinhThucThanhToan = hinhThucThanhToan;
         this.hinhThucVanChuyen = hinhThucVanChuyen;
+        this.luuy = luuy;
     }
 
     public int getId() {
@@ -93,6 +95,14 @@ public class HoaDonOnLine {
 
     public void setHinhThucVanChuyen(String hinhThucVanChuyen) {
         this.hinhThucVanChuyen = hinhThucVanChuyen;
+    }
+
+    public String getLuuy() {
+        return luuy;
+    }
+
+    public void setLuuy(String luuy) {
+        this.luuy = luuy;
     }
     
     

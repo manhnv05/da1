@@ -44,6 +44,11 @@ public class HoaDonOnlineChiTiet {
         this.trangThai = trangThai;
         this.ngay = ngay;
     }
+    
+    public HoaDonOnlineChiTiet(int gioHangID) {
+        this.gioHangID = gioHangID;
+    }
+
 
     public int getId() {
         return id;

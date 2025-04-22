@@ -296,19 +296,22 @@ VALUES
 ('NK009', 4, 4, 4,  30, '2025-04-09 11:45:00', 12000000), -- Nhập 30 sản phẩm SP004 từ NCC D, NV H, khu vực E
 ('NK010', 5, 5, 5,  50, '2025-04-10 09:00:00', 10000000); -- Nhập 50 sản phẩm SP005 từ NCC E, NV I, khu vực E
 
-
+select *from HoaDonOnline
 drop table HoaDonOnLine
 CREATE TABLE HoaDonOnLine (
     id INT IDENTITY PRIMARY KEY,
     mahoadon VARCHAR(50) NOT NULL,
     ngaytao DATETIME DEFAULT GETDATE(),
-    trangthai INT NOT NULL, -- 0: Chờ xác nhận, 1: Đang giao, 2: Hoàn tất, 3: Hủy
+    trangthai INT DEFAULT 0, -- 0: Chờ xác nhận, 1: Đang giao, 2: Hoàn tất, 3: Hủy
 	sodienthoai NVARCHAR(15),
 	tenkhachhang NVARCHAR(100),
 	diaChiGiaoHang NVARCHAR(255),
     hinhthucthanhtoan NVARCHAR(50),
 	hinhthucvanchuyen NVARCHAR(50),
+	luuy NVARCHAR(255)
 );
+select *from ChiTietHoaDonOnline
+
 drop table ChiTietHoaDonOnline
 CREATE TABLE ChiTietHoaDonOnline (
     id INT IDENTITY PRIMARY KEY,

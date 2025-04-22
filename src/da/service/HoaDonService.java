@@ -196,12 +196,7 @@ public List<HoaDonChiTiet> getAllID(int id) {
         return -1; // Trả về -1 nếu có lỗi
     }
 
-    /**
-     * Thêm danh sách chi tiết hóa đơn vào cơ sở dữ liệu.
-     *
-     * @param chiTietList Danh sách chi tiết hóa đơn
-     * @return true nếu thêm thành công, false nếu có lỗi
-     */
+
     public boolean addChiTietHoaDon(List<HoaDonChiTiet> chiTietList) {
     // Chỉ thêm dữ liệu vào các cột hoadonID và gioHangid
     String insertChiTietSQL = """

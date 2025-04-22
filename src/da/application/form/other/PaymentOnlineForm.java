@@ -1,10 +1,9 @@
 package da.application.form.other;
 
 import com.formdev.flatlaf.FlatClientProperties;
-import da.model.HoaDonChiTiet;
-import da.model.NhanVien;
+import da.model.HoaDonOnlineChiTiet;
 import da.service.GioHangService;
-import da.service.HoaDonService;
+import da.service.HoaDonOnlineService;
 import da.service.NhanVienService;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -17,15 +16,17 @@ import raven.modal.component.SimpleModalBorder;
 
 public class PaymentOnlineForm extends JPanel {
     private NhanVienService service = new NhanVienService();
-    private HoaDonService service1 = new HoaDonService();
+    private HoaDonOnlineService service1 = new HoaDonOnlineService();
     private GioHangService service2 = new GioHangService();
-    //private List<Integer> productIds;
+    private String Email;
 
-    public PaymentOnlineForm() {
-        //this.productIds = productIds;
+    private List<Integer> productIds;
+
+    public PaymentOnlineForm(String Email) {
+        this.Email = Email;
+        this.productIds = service2.getGioHangIdsByEmail(Email);
         init();
-        //initNV();
-        //System.out.println("Product IDs in PaymentForm: " + productIds);
+        System.out.println("Product IDs in PaymentForm: " + productIds);
     }
 
     private void init() {
@@ -88,7 +89,7 @@ public class PaymentOnlineForm extends JPanel {
         txtLuuY.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Lưu ý cho người bán");
         add(txtLuuY, "Span 2");
 
-        //JButton cmdCancel = new JButton("Cancel");
+        JButton cmdCancel = new JButton("Cancel");
         JButton cmdPayment = new JButton("Thêm Hóa Đơn") {
             @Override
             public boolean isDefaultButton() {
@@ -96,60 +97,66 @@ public class PaymentOnlineForm extends JPanel {
             }
         };
 
-        //cmdCancel.addActionListener(actionEvent -> ModalBorderAction.getModalBorderAction(this).doAction(SimpleModalBorder.CANCEL_OPTION));
+        cmdCancel.addActionListener(actionEvent -> {
+            ModalBorderAction modalAction = ModalBorderAction.getModalBorderAction(this);
+            if (modalAction != null) {
+                modalAction.doAction(SimpleModalBorder.CANCEL_OPTION);
+            } else {
+                System.out.println("ModalBorderAction is null. Ensure the modal is configured properly.");
+            }
+        });
 
         cmdPayment.addActionListener(actionEvent -> {
             // Lấy thông tin từ form
             String maHoaDon = "HDO" + System.currentTimeMillis(); // Mã hóa đơn tự động sinh
             String tenKhachHang = txtEmail.getText().trim(); // Tên khách hàng
-            //String ghiChu = textArea.getText().trim(); // Ghi chú
-            String hinhThucThanhToan = (String) comboPaymentType.getSelectedItem(); // Hình thức thanh toán
-            int trangThai = comboAccount.getSelectedIndex(); // 0: Chưa thanh toán, 1: Đã thanh toán
+            String soDienThoai = txtSDT.getText().trim();
+            String diaChiGiaoHang = txtDiaChiNhanHang.getText().trim();
+            String hinhThucThanhToan = (String) comboPaymentType.getSelectedItem();
+            String hinhThucVanChuyen = (String) comboAccount.getSelectedItem();
+            String luuy = txtLuuY.getText().trim();
 
-            if (tenKhachHang.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Tên người nhận không được để trống!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            if (tenKhachHang.isEmpty() || soDienThoai.isEmpty() || diaChiGiaoHang.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Vui lòng nhập đầy đủ thông tin cần thiết!", "Lỗi", JOptionPane.ERROR_MESSAGE);
                 return;
             }
-            // Lấy nhân viên ID từ combo box
-//            int nhanVienID = cboNhanVien.getSelectedIndex() > 0 ? cboNhanVien.getSelectedIndex() : -1;
-//            if (nhanVienID == -1) {
-//                JOptionPane.showMessageDialog(this, "Vui lòng chọn nhân viên bán hàng!", "Lỗi", JOptionPane.ERROR_MESSAGE);
-//                return;
-//            }
-//
-//            // Gọi phương thức thêm hóa đơn
-//            int hoaDonID = service1.addHoaDon(maHoaDon, trangThai, ghiChu, tenKhachHang, nhanVienID, hinhThucThanhToan);
-//            if (hoaDonID == -1) {
-//                JOptionPane.showMessageDialog(this, "Thêm hóa đơn thất bại!", "Lỗi", JOptionPane.ERROR_MESSAGE);
-//                return;
-//            }
+
+            // Gọi phương thức thêm hóa đơn
+            int hoaDonID = service1.addHoaDonOnline(maHoaDon, soDienThoai, tenKhachHang, diaChiGiaoHang, hinhThucThanhToan, hinhThucVanChuyen, luuy);
+            if (hoaDonID == -1) {
+                JOptionPane.showMessageDialog(this, "Thêm hóa đơn thất bại!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
 
             // Nếu thêm hóa đơn thành công, tiếp tục thêm chi tiết hóa đơn
-            List<HoaDonChiTiet> chiTietList = new ArrayList<>();
-//            for (Integer productId : productIds) {
-//                HoaDonChiTiet chiTiet = new HoaDonChiTiet(productId); // Đơn giá giả định
-//                chiTiet.setHoaDonID(hoaDonID); // Gắn ID hóa đơn
-//                chiTietList.add(chiTiet);
-//            }
+            List<HoaDonOnlineChiTiet> chiTietList = new ArrayList<>();
+            for (Integer productId : productIds) {
+                HoaDonOnlineChiTiet chiTiet = new HoaDonOnlineChiTiet(productId);
+                chiTiet.setHoadononlineID(hoaDonID);
+                chiTietList.add(chiTiet);
+            }
 
             boolean detailsSuccess = service1.addChiTietHoaDon(chiTietList);
             if (detailsSuccess) {
-            //boolean deleted = service2.deleteGioHangByIds(productIds); // Gọi phương thức xóa ẩn
-                //if (deleted) {
-            //JOptionPane.showMessageDialog(this, "Thêm hóa đơn và chi tiết hóa đơn thành công! Giỏ hàng đã được cập nhật.", "Thành Công", JOptionPane.INFORMATION_MESSAGE);
-        //} else {
-            //JOptionPane.showMessageDialog(this, "Thêm hóa đơn thành công nhưng không thể cập nhật trạng thái giỏ hàng!", "Lỗi", JOptionPane.WARNING_MESSAGE);
-        //}
-        ModalBorderAction.getModalBorderAction(this).doAction(SimpleModalBorder.OK_OPTION);
-    } else {
-        JOptionPane.showMessageDialog(this, "Thêm hóa đơn thành công nhưng thêm chi tiết thất bại!", "Lỗi", JOptionPane.WARNING_MESSAGE);
-    }
-                    });
-
-                    //add(cmdCancel, "grow 0");
-                    add(cmdPayment, "grow 0, al trailing");
+                boolean deleted = service2.deleteGioHangByIds(productIds);
+                if (deleted) {
+                    JOptionPane.showMessageDialog(this, "Thêm hóa đơn và chi tiết hóa đơn thành công! Giỏ hàng đã được cập nhật.", "Thành Công", JOptionPane.INFORMATION_MESSAGE);
+                } else {
+                    JOptionPane.showMessageDialog(this, "Thêm hóa đơn thành công nhưng không thể cập nhật trạng thái giỏ hàng!", "Lỗi", JOptionPane.WARNING_MESSAGE);
                 }
-
-                //private JComboBox<String> cboNhanVien;
-                //private JTextField txtEmail;
+                // Đóng modal nếu có
+                ModalBorderAction modalAction = ModalBorderAction.getModalBorderAction(this);
+                if (modalAction != null) {
+                    modalAction.doAction(SimpleModalBorder.OK_OPTION);
+                } else {
+                    System.out.println("ModalBorderAction is null. Ensure the modal is configured.");
+                }
+            } else {
+                JOptionPane.showMessageDialog(this, "Thêm hóa đơn thành công nhưng thêm chi tiết thất bại!", "Lỗi", JOptionPane.WARNING_MESSAGE);
             }
+        });
+
+        add(cmdCancel, "grow 0");
+        add(cmdPayment, "grow 0, al trailing");
+    }
+}

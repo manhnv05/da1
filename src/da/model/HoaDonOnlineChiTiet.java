@@ -1,7 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+
 package da.model;
 
 import java.math.BigDecimal;
@@ -22,6 +19,9 @@ public class HoaDonOnlineChiTiet {
     private String mauSac;
     private String kichThuoc;
     private String tenKH;
+    private String SDT;
+    private String diaChiGiaoHang;
+    private String HinhThucVanChuyen;
     private String maHD;
     private int trangThai;
     private Timestamp ngay;
@@ -29,7 +29,7 @@ public class HoaDonOnlineChiTiet {
     public HoaDonOnlineChiTiet() {
     }
 
-    public HoaDonOnlineChiTiet(int id, int hoadononlineID, int gioHangID, String tenSP, int soLuong, BigDecimal donGia, BigDecimal tongTien, String mauSac, String kichThuoc, String tenKH, String maHD, int trangThai, Timestamp ngay) {
+    public HoaDonOnlineChiTiet(int id, int hoadononlineID, int gioHangID, String tenSP, int soLuong, BigDecimal donGia, BigDecimal tongTien, String mauSac, String kichThuoc, String tenKH, String SDT, String diaChiGiaoHang, String HinhThucVanChuyen, String maHD, int trangThai, Timestamp ngay) {
         this.id = id;
         this.hoadononlineID = hoadononlineID;
         this.gioHangID = gioHangID;
@@ -40,15 +40,19 @@ public class HoaDonOnlineChiTiet {
         this.mauSac = mauSac;
         this.kichThuoc = kichThuoc;
         this.tenKH = tenKH;
+        this.SDT = SDT;
+        this.diaChiGiaoHang = diaChiGiaoHang;
+        this.HinhThucVanChuyen = HinhThucVanChuyen;
         this.maHD = maHD;
         this.trangThai = trangThai;
         this.ngay = ngay;
     }
+
+    
     
     public HoaDonOnlineChiTiet(int gioHangID) {
         this.gioHangID = gioHangID;
     }
-
 
     public int getId() {
         return id;
@@ -130,6 +134,30 @@ public class HoaDonOnlineChiTiet {
         this.tenKH = tenKH;
     }
 
+    public String getSDT() {
+        return SDT;
+    }
+
+    public void setSDT(String SDT) {
+        this.SDT = SDT;
+    }
+
+    public String getDiaChiGiaoHang() {
+        return diaChiGiaoHang;
+    }
+
+    public void setDiaChiGiaoHang(String diaChiGiaoHang) {
+        this.diaChiGiaoHang = diaChiGiaoHang;
+    }
+
+    public String getHinhThucVanChuyen() {
+        return HinhThucVanChuyen;
+    }
+
+    public void setHinhThucVanChuyen(String HinhThucVanChuyen) {
+        this.HinhThucVanChuyen = HinhThucVanChuyen;
+    }
+
     public String getMaHD() {
         return maHD;
     }
@@ -153,6 +181,9 @@ public class HoaDonOnlineChiTiet {
     public void setNgay(Timestamp ngay) {
         this.ngay = ngay;
     }
+
+
+    
     
     
 }

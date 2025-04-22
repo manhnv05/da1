@@ -14,8 +14,10 @@ import da.application.Application;
 import da.component.MyList1;
 import da.model.GioHang;
 import da.model.HoaDonChiTiet;
+import da.model.HoaDonOnlineChiTiet;
 import da.model.SanPham;
 import da.service.GioHangService;
+import da.service.HoaDonOnlineService;
 import da.service.HoaDonService;
 import da.service.SanPhamService;
 import java.awt.BorderLayout;
@@ -54,8 +56,9 @@ public class FormDonHang extends javax.swing.JPanel {
     SanPhamService service = new SanPhamService();
     GioHangService service1 = new GioHangService();
     HoaDonService service2 = new HoaDonService();
-        private String Email;
-        private List<Integer> selectedProductIds = new ArrayList<>();
+    HoaDonOnlineService service3 = new HoaDonOnlineService();
+    private String Email;
+    private List<Integer> selectedProductIds = new ArrayList<>();
 
     
     /**
@@ -69,8 +72,10 @@ public class FormDonHang extends javax.swing.JPanel {
         applyTableStyle(tblSanPham);
         applyTableStyle(tblGioHang);
         applyTableStyle(tblHoaDon);
+        applyTableStyle(tblHoaDonOnline);
         loadSanPhamData(service.searchSanPham(""));
         loadHoaDonData((ArrayList<HoaDonChiTiet>) service2.getAll());
+        loadHoaDonOnlineData((ArrayList<HoaDonOnlineChiTiet>) service3.getAll());
         refreshGioHangData();
         //updateTotalOnLabel(jLabel9);
         
@@ -513,11 +518,14 @@ public class FormDonHang extends javax.swing.JPanel {
     public void refeshHD(){
         ArrayList<HoaDonChiTiet> hoaDonList = (ArrayList<HoaDonChiTiet>) service2.getAll(); // Lấy danh sách hóa đơn từ service
         loadHoaDonData(hoaDonList);
+        Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Đã làm mới");
     }
     
     public void refeshGH(){
         ArrayList<GioHang> gioHang =  service1.getGioHangByEmail(Email); // Lấy danh sách hóa đơn từ service
         loadGioHangData(gioHang);
+        Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Đã làm mới");
+
     }
     
     public void searchHD() {
@@ -654,6 +662,83 @@ public void inHoaDon() {
     }
 }
 
+public void loadHoaDonOnlineData(ArrayList<HoaDonOnlineChiTiet> list) {
+        DefaultTableModel tblModel = (DefaultTableModel) tblHoaDonOnline.getModel();
+        tblModel.setRowCount(0); // Xóa tất cả các hàng trong bảng trước khi tải dữ liệu mới
+        //int index = 1;
+        for (HoaDonOnlineChiTiet hoaDon : list) {
+            String trangThaiStr = hoaDon.getTrangThai() == 0 ? "Chờ xác nhận" :
+                              hoaDon.getTrangThai() == 1 ? "Đã Duyệt" :
+                              hoaDon.getTrangThai() == 2 ? "Đang chuẩn bị hàng" :
+                              hoaDon.getTrangThai() == 3 ? "Đang Giao Hàng" : 
+                              hoaDon.getTrangThai() == 4 ? "Hoàn Tất" :
+                              hoaDon.getTrangThai() == 5 ? "Đã Hủy" : "Không xác định";
+            Object[] rowData = {
+                hoaDon.getId(),
+                hoaDon.getMaHD(),
+                hoaDon.getTenSP(),
+                hoaDon.getSoLuong(),
+                hoaDon.getTongTien(),
+                hoaDon.getTenKH(),
+                trangThaiStr,
+                hoaDon.getNgay(),
+            };
+            tblModel.addRow(rowData);
+        }
+    }
+
+    public void searchHDOnline() {
+        String keyword = txtSearch4.getText().trim();
+        loadHoaDonOnlineData(service3.searchHoaDonOnlineChiTiet(keyword));
+    }
+    
+    public void refeshHDOnline(){
+        ArrayList<HoaDonOnlineChiTiet> hoaDonOnlineList = (ArrayList<HoaDonOnlineChiTiet>) service3.getAll(); // Lấy danh sách hóa đơn từ service
+        loadHoaDonOnlineData(hoaDonOnlineList);
+        Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Đã làm mới");
+    }
+    
+    public void duyetDon(){
+        boolean success = service3.duyetDon();
+        if (success) {
+            System.out.println("Cập nhật trạng thái tất cả hóa đơn thành công!");
+            refeshHDOnline();
+        } else {
+            System.out.println("Cập nhật trạng thái thất bại hoặc không có hóa đơn nào cần cập nhật.");
+        }
+    }
+    
+    public void ChuanBiHang(){
+        boolean success = service3.ChuanBiHang();
+        if (success) {
+            System.out.println("Cập nhật trạng thái tất cả hóa đơn thành công!");
+            refeshHDOnline();
+        } else {
+            System.out.println("Cập nhật trạng thái thất bại hoặc không có hóa đơn nào cần cập nhật.");
+        }
+    }
+    
+    public void giaoHang(){
+        boolean success = service3.giaoHang();
+        if (success) {
+            System.out.println("Cập nhật trạng thái tất cả hóa đơn thành công!");
+            refeshHDOnline();
+        } else {
+            System.out.println("Cập nhật trạng thái thất bại hoặc không có hóa đơn nào cần cập nhật.");
+        }
+    }
+    
+    public void hoanTat(){
+        boolean success = service3.hoanTat();
+        if (success) {
+            System.out.println("Cập nhật trạng thái tất cả hóa đơn thành công!");
+            refeshHDOnline();
+        } else {
+            System.out.println("Cập nhật trạng thái thất bại hoặc không có hóa đơn nào cần cập nhật.");
+        }
+    }
+
+
     
     /**
      * This method is called from within the constructor to initialize the form.
@@ -717,8 +802,10 @@ public void inHoaDon() {
         cmdExcel4 = new javax.swing.JButton();
         jButton6 = new javax.swing.JButton();
         jButton7 = new javax.swing.JButton();
+        jButton1 = new javax.swing.JButton();
+        jButton8 = new javax.swing.JButton();
         jScrollPane5 = new javax.swing.JScrollPane();
-        tblHoaDon1 = new javax.swing.JTable();
+        tblHoaDonOnline = new javax.swing.JTable();
         jPanel3 = new javax.swing.JPanel();
         crazyPanel7 = new raven.crazypanel.CrazyPanel();
         crazyPanel8 = new raven.crazypanel.CrazyPanel();
@@ -1206,7 +1293,7 @@ public void inHoaDon() {
         });
         crazyPanel11.add(cmdSearch4);
 
-        cmdExcel4.setText("Excel");
+        cmdExcel4.setText("Duyệt đơn");
         cmdExcel4.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cmdExcel4ActionPerformed(evt);
@@ -1214,10 +1301,15 @@ public void inHoaDon() {
         });
         crazyPanel11.add(cmdExcel4);
 
-        jButton6.setText("In Hóa Đơn");
+        jButton6.setText("Chuẩn Bị Hàng");
+        jButton6.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton6ActionPerformed(evt);
+            }
+        });
         crazyPanel11.add(jButton6);
 
-        jButton7.setText("Refesh");
+        jButton7.setText("Giao Hàng");
         jButton7.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton7ActionPerformed(evt);
@@ -1225,9 +1317,25 @@ public void inHoaDon() {
         });
         crazyPanel11.add(jButton7);
 
+        jButton1.setText("Refesh");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+        crazyPanel11.add(jButton1);
+
+        jButton8.setText("Hoàn Tất");
+        jButton8.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton8ActionPerformed(evt);
+            }
+        });
+        crazyPanel11.add(jButton8);
+
         crazyPanel10.add(crazyPanel11);
 
-        tblHoaDon1.setModel(new javax.swing.table.DefaultTableModel(
+        tblHoaDonOnline.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
@@ -1243,7 +1351,7 @@ public void inHoaDon() {
                 return canEdit [columnIndex];
             }
         });
-        jScrollPane5.setViewportView(tblHoaDon1);
+        jScrollPane5.setViewportView(tblHoaDonOnline);
 
         crazyPanel10.add(jScrollPane5);
 
@@ -1466,15 +1574,15 @@ public void inHoaDon() {
     }//GEN-LAST:event_cmdExcel3ActionPerformed
 
     private void cmdSearch4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdSearch4ActionPerformed
-        // TODO add your handling code here:
+        searchHDOnline();
     }//GEN-LAST:event_cmdSearch4ActionPerformed
 
     private void cmdExcel4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdExcel4ActionPerformed
-        // TODO add your handling code here:
+        duyetDon();
     }//GEN-LAST:event_cmdExcel4ActionPerformed
 
     private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
-        // TODO add your handling code here:
+       giaoHang();
     }//GEN-LAST:event_jButton7ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
@@ -1496,6 +1604,18 @@ public void inHoaDon() {
 
     System.out.println("Hóa đơn được chọn: Mã = " + selectedInvoiceId);
     }//GEN-LAST:event_tblHoaDonMouseClicked
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        refeshHDOnline();
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
+        ChuanBiHang();
+    }//GEN-LAST:event_jButton6ActionPerformed
+
+    private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton8ActionPerformed
+        hoanTat();
+    }//GEN-LAST:event_jButton8ActionPerformed
 
     private String selectedInvoiceId = null;
 private String selectedCustomerName = null;
@@ -1528,12 +1648,14 @@ private String selectedStatus = null;
     private raven.crazypanel.CrazyPanel crazyPanel7;
     private raven.crazypanel.CrazyPanel crazyPanel8;
     private raven.crazypanel.CrazyPanel crazyPanel9;
+    private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
     private javax.swing.JButton jButton6;
     private javax.swing.JButton jButton7;
+    private javax.swing.JButton jButton8;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -1557,7 +1679,7 @@ private String selectedStatus = null;
     private da.component.PanelTransparent panelTransparent2;
     private javax.swing.JTable tblGioHang;
     private javax.swing.JTable tblHoaDon;
-    private javax.swing.JTable tblHoaDon1;
+    private javax.swing.JTable tblHoaDonOnline;
     private javax.swing.JTable tblSanPham;
     private javax.swing.JTextField txtGia;
     private javax.swing.JTextField txtMa;

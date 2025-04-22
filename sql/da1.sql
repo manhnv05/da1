@@ -264,33 +264,7 @@ INSERT INTO KhuVucKho (tenKhuVuc, moTa) VALUES
 
 
 
-select *from SanPham
 
-
--- Kiểm tra dữ liệu trong bảng KhoHang
-select *from HoaDonTaiQuay
-select *from ChiTietHoaDonTaiQuay
-drop table HoaDonTaiQuay
-CREATE TABLE HoaDonTaiQuay (
-    id INT IDENTITY PRIMARY KEY,
-    mahoadon VARCHAR(50) NOT NULL,
-    ngaytao DATETIME DEFAULT GETDATE(),
-    trangthai INT NOT NULL, -- 0: Chưa thanh toán, 1: Đã thanh toán, 2: Hủy
-    ghichu NVARCHAR(255),
-    tenkhachhang NVARCHAR(100),
-    nhanvienID INT NOT NULL,
-    hinhthucthanhtoan NVARCHAR(50), -- Tiền mặt, Chuyển khoản, v.v.
-    FOREIGN KEY (nhanvienID) REFERENCES NhanVien(id)
-);
-drop table ChiTietHoaDonTaiQuay
-
-CREATE TABLE ChiTietHoaDonTaiQuay (
-    id INT IDENTITY PRIMARY KEY,
-    hoadonID INT NOT NULL,
-    gioHangid INT NOT NULL,
-    FOREIGN KEY (hoadonID) REFERENCES HoaDonTaiQuay(id),
-    FOREIGN KEY (gioHangid) REFERENCES GioHang(id)
-);
 drop table NhapKho
 
 select *from NhapKho
@@ -323,38 +297,52 @@ VALUES
 ('NK010', 5, 5, 5,  50, '2025-04-10 09:00:00', 10000000); -- Nhập 50 sản phẩm SP005 từ NCC E, NV I, khu vực E
 
 
-SELECT 
-    hd.mahoadon AS MaHoaDon,              -- Mã hóa đơn
-    hd.trangthai AS TrangThai,            -- Trạng thái hóa đơn
-    hd.ngaytao AS NgayTao,                -- Ngày tạo hóa đơn
-    nv.ho + ' ' + nv.ten AS TenNhanVien,  -- Tên nhân viên
-    hd.tenkhachhang AS TenKhachHang,      -- Tên khách hàng
-    ctht.id AS ChiTietID,                 -- ID chi tiết hóa đơn
-    sp.tensp AS TenSanPham,               -- Tên sản phẩm
-    gh.soLuong AS SoLuong,                -- Số lượng sản phẩm
-    sp.gia AS GiaBan,                     -- Giá bán của sản phẩm
-    (gh.soLuong * sp.gia) AS TongTien,    -- Tổng tiền (số lượng * giá bán)
-    gh.tenMauSac AS MauSac,               -- Màu sắc của sản phẩm
-    gh.kichThuoc AS KichThuoc             -- Kích thước của sản phẩm
-FROM ChiTietHoaDonTaiQuay ctht
-JOIN HoaDonTaiQuay hd ON ctht.hoadonID = hd.id   -- Kết nối với bảng hóa đơn
-JOIN NhanVien nv ON hd.nhanvienID = nv.id        -- Kết nối với bảng nhân viên
-JOIN GioHang gh ON ctht.gioHangid = gh.id        -- Kết nối với bảng giỏ hàng
-JOIN SanPham sp ON gh.idSanPham = sp.id          -- Kết nối với bảng sản phẩm
-WHERE ctht.hoadonID = 9;                -- Thay <hoaDonID> bằng ID của hóa đơn cần truy vấn -- Thay <hoaDonID> bằng ID của hóa đơn cần truy vấn
-
 drop table HoaDonOnLine
 CREATE TABLE HoaDonOnLine (
     id INT IDENTITY PRIMARY KEY,
     mahoadon VARCHAR(50) NOT NULL,
     ngaytao DATETIME DEFAULT GETDATE(),
     trangthai INT NOT NULL, -- 0: Chờ xác nhận, 1: Đang giao, 2: Hoàn tất, 3: Hủy
-    ghichu NVARCHAR(255),
+	sodienthoai NVARCHAR(15),
+	tenkhachhang NVARCHAR(100),
 	diaChiGiaoHang NVARCHAR(255),
     hinhthucthanhtoan NVARCHAR(50),
-    nguoidungID INT,       -- Khách hàng mua
-    giohangID INT,         -- Liên kết với giỏ hàng (nếu có)
+	hinhthucvanchuyen NVARCHAR(50),
+);
+drop table ChiTietHoaDonOnline
+CREATE TABLE ChiTietHoaDonOnline (
+    id INT IDENTITY PRIMARY KEY,
+    hoadononlineID INT NOT NULL,
+    gioHangid INT NOT NULL,
+    FOREIGN KEY (hoadononlineID) REFERENCES HoaDonOnLine(id),
+    FOREIGN KEY (gioHangid) REFERENCES GioHang(id)
+);
 
-    FOREIGN KEY (nguoidungID) REFERENCES NguoiDung(id),
-    FOREIGN KEY (giohangID) REFERENCES GioHang(id)
+
+select *from SanPham
+
+
+-- Kiểm tra dữ liệu trong bảng KhoHang
+select *from HoaDonTaiQuay
+select *from ChiTietHoaDonTaiQuay
+drop table HoaDonTaiQuay
+CREATE TABLE HoaDonTaiQuay (
+    id INT IDENTITY PRIMARY KEY,
+    mahoadon VARCHAR(50) NOT NULL,
+    ngaytao DATETIME DEFAULT GETDATE(),
+    trangthai INT NOT NULL, -- 0: Chưa thanh toán, 1: Đã thanh toán, 2: Hủy
+    ghichu NVARCHAR(255),
+    tenkhachhang NVARCHAR(100),
+    nhanvienID INT NOT NULL,
+    hinhthucthanhtoan NVARCHAR(50), -- Tiền mặt, Chuyển khoản, v.v.
+    FOREIGN KEY (nhanvienID) REFERENCES NhanVien(id)
+);
+drop table ChiTietHoaDonTaiQuay
+
+CREATE TABLE ChiTietHoaDonTaiQuay (
+    id INT IDENTITY PRIMARY KEY,
+    hoadonID INT NOT NULL,
+    gioHangid INT NOT NULL,
+    FOREIGN KEY (hoadonID) REFERENCES HoaDonTaiQuay(id),
+    FOREIGN KEY (gioHangid) REFERENCES GioHang(id)
 );

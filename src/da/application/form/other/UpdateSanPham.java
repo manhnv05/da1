@@ -28,13 +28,7 @@ public class UpdateSanPham extends javax.swing.JPanel {
     SanPhamService service = new SanPhamService();
         private SanPham sanpham;
 
-    /**
-     * Creates new form AddNhanVien
-     */
-    
-    /**
-     * Creates new form AddNhanVien
-     */
+
     public UpdateSanPham(SanPham sanpham) {
         this.sanpham = sanpham;
         initComponents();

@@ -1,13 +1,19 @@
-
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
 package da.model;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 
-
-public class HoaDonChiTiet {
+/**
+ *
+ * @author ADMIN
+ */
+public class HoaDonOnlineChiTiet {
     private int id;
-    private int hoaDonID;
+    private int hoadononlineID;
     private int gioHangID;
     private String tenSP;
     private int soLuong;
@@ -16,17 +22,16 @@ public class HoaDonChiTiet {
     private String mauSac;
     private String kichThuoc;
     private String tenKH;
-    private String tenNV;
     private String maHD;
-    private String trangThai;
+    private int trangThai;
     private Timestamp ngay;
 
-    public HoaDonChiTiet() {
+    public HoaDonOnlineChiTiet() {
     }
 
-    public HoaDonChiTiet(int id, int hoaDonID, int gioHangID, String tenSP, int soLuong, BigDecimal donGia, BigDecimal tongTien, String mauSac, String kichThuoc, String tenKH, String tenNV, String maHD, String trangThai, Timestamp ngay) {
+    public HoaDonOnlineChiTiet(int id, int hoadononlineID, int gioHangID, String tenSP, int soLuong, BigDecimal donGia, BigDecimal tongTien, String mauSac, String kichThuoc, String tenKH, String maHD, int trangThai, Timestamp ngay) {
         this.id = id;
-        this.hoaDonID = hoaDonID;
+        this.hoadononlineID = hoadononlineID;
         this.gioHangID = gioHangID;
         this.tenSP = tenSP;
         this.soLuong = soLuong;
@@ -35,16 +40,10 @@ public class HoaDonChiTiet {
         this.mauSac = mauSac;
         this.kichThuoc = kichThuoc;
         this.tenKH = tenKH;
-        this.tenNV = tenNV;
         this.maHD = maHD;
         this.trangThai = trangThai;
         this.ngay = ngay;
     }
-    
-    public HoaDonChiTiet(int gioHangID) {
-        this.gioHangID = gioHangID;
-    }
-
 
     public int getId() {
         return id;
@@ -54,12 +53,12 @@ public class HoaDonChiTiet {
         this.id = id;
     }
 
-    public int getHoaDonID() {
-        return hoaDonID;
+    public int getHoadononlineID() {
+        return hoadononlineID;
     }
 
-    public void setHoaDonID(int hoaDonID) {
-        this.hoaDonID = hoaDonID;
+    public void setHoadononlineID(int hoadononlineID) {
+        this.hoadononlineID = hoadononlineID;
     }
 
     public int getGioHangID() {
@@ -126,14 +125,6 @@ public class HoaDonChiTiet {
         this.tenKH = tenKH;
     }
 
-    public String getTenNV() {
-        return tenNV;
-    }
-
-    public void setTenNV(String tenNV) {
-        this.tenNV = tenNV;
-    }
-
     public String getMaHD() {
         return maHD;
     }
@@ -142,11 +133,11 @@ public class HoaDonChiTiet {
         this.maHD = maHD;
     }
 
-    public String getTrangThai() {
+    public int getTrangThai() {
         return trangThai;
     }
 
-    public void setTrangThai(String trangThai) {
+    public void setTrangThai(int trangThai) {
         this.trangThai = trangThai;
     }
 

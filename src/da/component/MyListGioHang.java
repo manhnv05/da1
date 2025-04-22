@@ -1,7 +1,6 @@
 package da.component;
 
 import da.model.GioHang;
-import da.model.SanPham;
 import java.awt.*;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;

@@ -4,6 +4,7 @@
  */
 package da.application.form.other;
 
+import da.application.Application;
 import da.component.MyList1;
 import da.model.GioHang;
 import da.service.GioHangService;
@@ -165,87 +166,69 @@ public class FormGioHang extends javax.swing.JPanel {
     panel.add(txtTongTien, gbc);
 
     // Hiển thị hộp thoại với các nút Update và Delete
-    Object[] options = {"Update", "Delete", "Đặt Hàng", "Cancel"};
-while (true) {
-    int result = JOptionPane.showOptionDialog(
-        null,
-        panel,
-        "Chi Tiết Sản Phẩm",
-        JOptionPane.DEFAULT_OPTION,
-        JOptionPane.PLAIN_MESSAGE,
-        null,
-        options,
-        options[0]
-    );
-
-    if (result == 3 || result == JOptionPane.CLOSED_OPTION) {
-        return;
-    } else if (result == 1) {
-        int confirm = JOptionPane.showConfirmDialog(
+    Object[] options = {"Update", "Delete", "Cancel"};
+    while (true) {
+        int result = JOptionPane.showOptionDialog(
             null,
-            "Bạn có chắc chắn muốn xóa sản phẩm này khỏi giỏ hàng?",
-            "Xác nhận xóa",
-            JOptionPane.YES_NO_OPTION
+            panel,
+            "Chi Tiết Sản Phẩm",
+            JOptionPane.DEFAULT_OPTION,
+            JOptionPane.PLAIN_MESSAGE,
+            null,
+            options,
+            options[0]
         );
-        if (confirm == JOptionPane.YES_OPTION) {
-            boolean isDeleted = new GioHangService().deleteGioHangById(gioHang.getId());
-            if (isDeleted) {
-                JOptionPane.showMessageDialog(null, "Xóa sản phẩm thành công!", "Thành Công", JOptionPane.INFORMATION_MESSAGE);
+
+        if (result == 2 || result == JOptionPane.CLOSED_OPTION) {
+            return;
+        } else if (result == 1) {
+            int confirm = JOptionPane.showConfirmDialog(
+                null,
+                "Bạn có chắc chắn muốn xóa sản phẩm này khỏi giỏ hàng?",
+                "Xác nhận xóa",
+                JOptionPane.YES_NO_OPTION
+            );
+            if (confirm == JOptionPane.YES_OPTION) {
+                boolean isDeleted = new GioHangService().deleteGioHangById(gioHang.getId());
+                if (isDeleted) {
+                    JOptionPane.showMessageDialog(null, "Xóa sản phẩm thành công!", "Thành Công", JOptionPane.INFORMATION_MESSAGE);
+                    refreshGioHangData(); // Làm mới danh sách giỏ hàng
+                    capNhatTongTien();
+                    return;
+                } else {
+                    JOptionPane.showMessageDialog(null, "Xóa sản phẩm thất bại!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        } else if (result == 0) {
+            // Người dùng nhấn Update
+            String soLuongStr = txtSoLuong.getText().trim();
+            int soLuong;
+            try {
+                soLuong = Integer.parseInt(soLuongStr);
+                if (soLuong <= 0) {
+                    JOptionPane.showMessageDialog(null, "Số lượng phải lớn hơn 0!", "Cảnh Báo", JOptionPane.WARNING_MESSAGE);
+                    continue;
+                }
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(null, "Số lượng phải là số hợp lệ!", "Cảnh Báo", JOptionPane.WARNING_MESSAGE);
+                continue;
+            }
+            String kichThuoc = (String) cboKichThuoc.getSelectedItem();
+            String mauSac = (String) cboMauSac.getSelectedItem();
+            boolean isUpdated = new GioHangService().updateGioHang(
+                gioHang.getId(), soLuong, kichThuoc, mauSac
+            );
+            if (isUpdated) {
+                JOptionPane.showMessageDialog(null, "Cập nhật sản phẩm thành công!", "Thành Công", JOptionPane.INFORMATION_MESSAGE);
                 refreshGioHangData(); // Làm mới danh sách giỏ hàng
                 capNhatTongTien();
                 return;
             } else {
-                JOptionPane.showMessageDialog(null, "Xóa sản phẩm thất bại!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Cập nhật sản phẩm thất bại!", "Lỗi", JOptionPane.ERROR_MESSAGE);
             }
-        }
-    } else if (result == 0) {
-        // Người dùng nhấn Update
-        String soLuongStr = txtSoLuong.getText().trim();
-        int soLuong;
-        try {
-            soLuong = Integer.parseInt(soLuongStr);
-            if (soLuong <= 0) {
-                JOptionPane.showMessageDialog(null, "Số lượng phải lớn hơn 0!", "Cảnh Báo", JOptionPane.WARNING_MESSAGE);
-                continue;
-            }
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(null, "Số lượng phải là số hợp lệ!", "Cảnh Báo", JOptionPane.WARNING_MESSAGE);
-            continue;
-        }
-        String kichThuoc = (String) cboKichThuoc.getSelectedItem();
-        String mauSac = (String) cboMauSac.getSelectedItem();
-        boolean isUpdated = new GioHangService().updateGioHang(
-            gioHang.getId(), soLuong, kichThuoc, mauSac
-        );
-        if (isUpdated) {
-            JOptionPane.showMessageDialog(null, "Cập nhật sản phẩm thành công!", "Thành Công", JOptionPane.INFORMATION_MESSAGE);
-            refreshGioHangData(); // Làm mới danh sách giỏ hàng
-            capNhatTongTien();
-            return;
-        } else {
-            JOptionPane.showMessageDialog(null, "Cập nhật sản phẩm thất bại!", "Lỗi", JOptionPane.ERROR_MESSAGE);
-        }
-    } else if (result == 2) {
-        // Người dùng nhấn Đặt Hàng
-        int confirm = JOptionPane.showConfirmDialog(
-            null,
-            "Bạn có chắc chắn muốn đặt hàng sản phẩm này?",
-            "Xác nhận đặt hàng",
-            JOptionPane.YES_NO_OPTION
-        );
-        if (confirm == JOptionPane.YES_OPTION) {
-//            boolean isOrdered = new GioHangService().placeOrder(gioHang.getId());
-//            if (isOrdered) {
-//                JOptionPane.showMessageDialog(null, "Đặt hàng thành công!", "Thành Công", JOptionPane.INFORMATION_MESSAGE);
-//                refreshGioHangData(); // Làm mới danh sách giỏ hàng
-//                capNhatTongTien();
-//                return;
-//            } else {
-//                JOptionPane.showMessageDialog(null, "Đặt hàng thất bại!", "Lỗi", JOptionPane.ERROR_MESSAGE);
-//            }
         }
     }
-}}
+} 
     
     public void refreshGioHangData() {
         applyListStyle();
@@ -378,7 +361,7 @@ while (true) {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
+        Application.showForm(new PaymentOnlineForm());
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed

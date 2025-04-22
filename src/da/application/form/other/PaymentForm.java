@@ -71,13 +71,13 @@ public class PaymentForm extends JPanel {
         lbRequestDetail.putClientProperty(FlatClientProperties.STYLE, "font:bold +2;");
         add(lbRequestDetail, "gapy 10 10,span 2");
 
-        add(new JLabel("Ngày"));
+        add(new JLabel("Ngày"), "gapy 5,span 2");
         JFormattedTextField dateEditor = new JFormattedTextField();
         DatePicker datePicker = new DatePicker();
         datePicker.setEditor(dateEditor);
         datePicker.setDateSelectionAble((date) -> !date.isAfter(LocalDate.now()));
         datePicker.now();
-        add(dateEditor, "wrap");
+        add(dateEditor, "Span 2");
 
         add(new JLabel("Nhân viên bán hàng"), "gapy 5,span 2");
         cboNhanVien = new JComboBox<>();

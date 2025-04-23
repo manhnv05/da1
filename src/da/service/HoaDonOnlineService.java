@@ -4,7 +4,6 @@
  */
 package da.service;
 
-import da.model.HoaDonChiTiet;
 import da.model.HoaDonOnlineChiTiet;
 import da.util.connectDB;
 import java.sql.Connection;
@@ -379,5 +378,129 @@ public class HoaDonOnlineService {
         e.printStackTrace(); // In lỗi ra console để kiểm tra
         return false; // Trả về false nếu xảy ra lỗi
     }
+}
+    
+public List<HoaDonOnlineChiTiet> getDonHangByEmail(String email) {
+    List<HoaDonOnlineChiTiet> list = new ArrayList<>();
+    String sql = """
+            SELECT 
+                hd.id AS hoadononlineID,
+                hd.mahoadon AS MaHoaDon, 
+                hd.trangthai AS TrangThai, 
+                hd.ngaytao AS NgayTao, 
+                hd.tenkhachhang AS TenKhachHang,
+                hd.sodienthoai AS SoDienThoai,
+                hd.diaChiGiaoHang AS DiaChiGiaoHang,
+                hd.hinhthucthanhtoan AS HinhThucThanhToan,
+                hd.hinhthucvanchuyen AS HinhThucVanChuyen,
+                ctht.id AS ChiTietID, 
+                sp.tensp AS TenSanPham, 
+                sp.hinhanh AS HinhAnh, 
+                gh.soLuong AS SoLuong, 
+                sp.gia AS GiaBan, 
+                (gh.soLuong * sp.gia) AS TongTien, 
+                gh.tenMauSac AS MauSac, 
+                gh.kichThuoc AS KichThuoc 
+            FROM ChiTietHoaDonOnline ctht
+            JOIN HoaDonOnLine hd ON ctht.hoadononlineID = hd.id
+            JOIN GioHang gh ON ctht.gioHangid = gh.id
+            JOIN SanPham sp ON gh.idSanPham = sp.id
+            JOIN NguoiDung nd ON gh.idNguoiDung = nd.id
+            WHERE nd.email = ? AND hd.trangthai IN (0, 1, 2, 3);
+        """;
+
+    try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        ps.setString(1, email);
+
+        try (ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                HoaDonOnlineChiTiet ct = new HoaDonOnlineChiTiet();
+                ct.setHoadononlineID(rs.getInt("hoadononlineID"));
+                ct.setMaHD(rs.getString("MaHoaDon"));
+                ct.setTrangThai(rs.getInt("TrangThai"));
+                ct.setNgay(rs.getTimestamp("NgayTao"));
+                ct.setTenKH(rs.getString("TenKhachHang"));
+                ct.setSDT(rs.getString("SoDienThoai"));
+                ct.setDiaChiGiaoHang(rs.getString("DiaChiGiaoHang"));
+                ct.setHinhThucVanChuyen(rs.getString("HinhThucVanChuyen"));
+                ct.setId(rs.getInt("ChiTietID"));
+                ct.setTenSP(rs.getString("TenSanPham"));
+                ct.setHinhAnh(rs.getString("HinhAnh"));
+                ct.setSoLuong(rs.getInt("SoLuong"));
+                ct.setDonGia(rs.getBigDecimal("GiaBan"));
+                ct.setTongTien(rs.getBigDecimal("TongTien"));
+                ct.setMauSac(rs.getString("MauSac"));
+                ct.setKichThuoc(rs.getString("KichThuoc"));
+                list.add(ct);
+            }
+        }
+    } catch (SQLException e) {
+        System.err.println("Lỗi khi lấy thông tin đơn hàng theo email: " + e.getMessage());
+        e.printStackTrace();
+    }
+
+    return list;
+}
+
+public List<HoaDonOnlineChiTiet> getDonHangByEmail2(String email) {
+    List<HoaDonOnlineChiTiet> list = new ArrayList<>();
+    String sql = """
+            SELECT 
+                hd.id AS hoadononlineID,
+                hd.mahoadon AS MaHoaDon, 
+                hd.trangthai AS TrangThai, 
+                hd.ngaytao AS NgayTao, 
+                hd.tenkhachhang AS TenKhachHang,
+                hd.sodienthoai AS SoDienThoai,
+                hd.diaChiGiaoHang AS DiaChiGiaoHang,
+                hd.hinhthucthanhtoan AS HinhThucThanhToan,
+                hd.hinhthucvanchuyen AS HinhThucVanChuyen,
+                ctht.id AS ChiTietID, 
+                sp.tensp AS TenSanPham, 
+                sp.hinhanh AS HinhAnh, 
+                gh.soLuong AS SoLuong, 
+                sp.gia AS GiaBan, 
+                (gh.soLuong * sp.gia) AS TongTien, 
+                gh.tenMauSac AS MauSac, 
+                gh.kichThuoc AS KichThuoc 
+            FROM ChiTietHoaDonOnline ctht
+            JOIN HoaDonOnLine hd ON ctht.hoadononlineID = hd.id
+            JOIN GioHang gh ON ctht.gioHangid = gh.id
+            JOIN SanPham sp ON gh.idSanPham = sp.id
+            JOIN NguoiDung nd ON gh.idNguoiDung = nd.id
+            WHERE nd.email = ? AND hd.trangthai IN (4, 5);
+        """;
+
+    try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        ps.setString(1, email);
+
+        try (ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                HoaDonOnlineChiTiet ct = new HoaDonOnlineChiTiet();
+                ct.setHoadononlineID(rs.getInt("hoadononlineID"));
+                ct.setMaHD(rs.getString("MaHoaDon"));
+                ct.setTrangThai(rs.getInt("TrangThai"));
+                ct.setNgay(rs.getTimestamp("NgayTao"));
+                ct.setTenKH(rs.getString("TenKhachHang"));
+                ct.setSDT(rs.getString("SoDienThoai"));
+                ct.setDiaChiGiaoHang(rs.getString("DiaChiGiaoHang"));
+                ct.setHinhThucVanChuyen(rs.getString("HinhThucVanChuyen"));
+                ct.setId(rs.getInt("ChiTietID"));
+                ct.setTenSP(rs.getString("TenSanPham"));
+                ct.setHinhAnh(rs.getString("HinhAnh"));
+                ct.setSoLuong(rs.getInt("SoLuong"));
+                ct.setDonGia(rs.getBigDecimal("GiaBan"));
+                ct.setTongTien(rs.getBigDecimal("TongTien"));
+                ct.setMauSac(rs.getString("MauSac"));
+                ct.setKichThuoc(rs.getString("KichThuoc"));
+                list.add(ct);
+            }
+        }
+    } catch (SQLException e) {
+        System.err.println("Lỗi khi lấy thông tin đơn hàng theo email: " + e.getMessage());
+        e.printStackTrace();
+    }
+
+    return list;
 }
 }

@@ -25,6 +25,8 @@ public class HoaDonOnlineChiTiet {
     private String maHD;
     private int trangThai;
     private Timestamp ngay;
+    private String hinhAnh;
+
 
     public HoaDonOnlineChiTiet() {
     }
@@ -47,6 +49,28 @@ public class HoaDonOnlineChiTiet {
         this.trangThai = trangThai;
         this.ngay = ngay;
     }
+
+    public HoaDonOnlineChiTiet(int id, int hoadononlineID, int gioHangID, String tenSP, int soLuong, BigDecimal donGia, BigDecimal tongTien, String mauSac, String kichThuoc, String tenKH, String SDT, String diaChiGiaoHang, String HinhThucVanChuyen, String maHD, int trangThai, Timestamp ngay, String hinhAnh) {
+        this.id = id;
+        this.hoadononlineID = hoadononlineID;
+        this.gioHangID = gioHangID;
+        this.tenSP = tenSP;
+        this.soLuong = soLuong;
+        this.donGia = donGia;
+        this.tongTien = tongTien;
+        this.mauSac = mauSac;
+        this.kichThuoc = kichThuoc;
+        this.tenKH = tenKH;
+        this.SDT = SDT;
+        this.diaChiGiaoHang = diaChiGiaoHang;
+        this.HinhThucVanChuyen = HinhThucVanChuyen;
+        this.maHD = maHD;
+        this.trangThai = trangThai;
+        this.ngay = ngay;
+        this.hinhAnh = hinhAnh;
+    }
+    
+    
 
     
     
@@ -180,6 +204,14 @@ public class HoaDonOnlineChiTiet {
 
     public void setNgay(Timestamp ngay) {
         this.ngay = ngay;
+    }
+
+    public String getHinhAnh() {
+        return hinhAnh;
+    }
+
+    public void setHinhAnh(String hinhAnh) {
+        this.hinhAnh = hinhAnh;
     }
 
 

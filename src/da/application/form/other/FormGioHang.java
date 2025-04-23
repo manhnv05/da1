@@ -6,8 +6,11 @@ package da.application.form.other;
 
 import da.application.Application;
 import da.component.MyList1;
+import da.component.ThongTinDonHang;
 import da.model.GioHang;
+import da.model.HoaDonOnlineChiTiet;
 import da.service.GioHangService;
+import da.service.HoaDonOnlineService;
 import da.service.SanPhamService;
 import java.awt.BorderLayout;
 import java.awt.Font;
@@ -31,7 +34,8 @@ import javax.swing.SwingConstants;
  * @author ADMIN
  */
 public class FormGioHang extends javax.swing.JPanel {
-        SanPhamService service = new SanPhamService();
+    SanPhamService service = new SanPhamService();
+    HoaDonOnlineService service2 = new HoaDonOnlineService();
 
     GioHangService service1 = new GioHangService();
     private String Email;
@@ -42,6 +46,8 @@ public class FormGioHang extends javax.swing.JPanel {
         this.Email = Email;
         initComponents();
         applyListStyle();
+        applyListStyle2();
+        applyListStyle3();
         capNhatTongTien();
     }
     
@@ -92,6 +98,102 @@ public class FormGioHang extends javax.swing.JPanel {
     // Làm mới giao diện
     myListGioHang1.revalidate();
     myListGioHang1.repaint();
+}
+    
+        private void applyListStyle2() {
+    // Lấy danh sách giỏ hàng theo email
+    List<HoaDonOnlineChiTiet> khList = service2.getDonHangByEmail(Email);
+    thongTinDonHang1.removeAll(); // Xóa các phần tử cũ trong giao diện
+
+    if (khList == null || khList.isEmpty()) {
+        // Hiển thị thông báo nếu giỏ hàng trống
+        JLabel emptyLabel = new JLabel("Giỏ hàng của bạn hiện đang trống.");
+        emptyLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        emptyLabel.setFont(new Font("Arial", Font.PLAIN, 16));
+        thongTinDonHang1.setLayout(new BorderLayout());
+        thongTinDonHang1.add(emptyLabel, BorderLayout.CENTER);
+    } else {
+        // Tạo danh sách giỏ hàng
+        ThongTinDonHang<HoaDonOnlineChiTiet> list = new ThongTinDonHang<>();
+        for (HoaDonOnlineChiTiet kh : khList) {
+            list.addItem(kh); // Thêm từng sản phẩm vào danh sách
+        }
+
+        // Xử lý sự kiện nhấn chuột vào danh sách
+        list.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                int index = list.locationToIndex(evt.getPoint()); // Lấy vị trí nhấn chuột
+                if (index >= 0) {
+                    HoaDonOnlineChiTiet selectedItem = list.getModel().getElementAt(index);
+                    // Thực hiện hành động khi nhấn vào một mục (ví dụ: hiển thị chi tiết sản phẩm)
+                    System.out.println("Sản phẩm được chọn: " + selectedItem.getTenSP());
+                    // Hiển thị thông tin chi tiết
+                    //showProductDetails(selectedItem);
+                }
+            }
+        });
+
+        // Đặt danh sách trong JScrollPane
+        JScrollPane scrollPane = new JScrollPane(list);
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+
+        thongTinDonHang1.setLayout(new BorderLayout());
+        thongTinDonHang1.add(scrollPane, BorderLayout.CENTER);
+    }
+
+    // Làm mới giao diện
+    thongTinDonHang1.revalidate();
+    thongTinDonHang1.repaint();
+}
+        
+        private void applyListStyle3() {
+    // Lấy danh sách giỏ hàng theo email
+    List<HoaDonOnlineChiTiet> khList = service2.getDonHangByEmail2(Email);
+    thongTinDonHang2.removeAll(); // Xóa các phần tử cũ trong giao diện
+
+    if (khList == null || khList.isEmpty()) {
+        // Hiển thị thông báo nếu giỏ hàng trống
+        JLabel emptyLabel = new JLabel("Giỏ hàng của bạn hiện đang trống.");
+        emptyLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        emptyLabel.setFont(new Font("Arial", Font.PLAIN, 16));
+        thongTinDonHang2.setLayout(new BorderLayout());
+        thongTinDonHang2.add(emptyLabel, BorderLayout.CENTER);
+    } else {
+        // Tạo danh sách giỏ hàng
+        ThongTinDonHang<HoaDonOnlineChiTiet> list = new ThongTinDonHang<>();
+        for (HoaDonOnlineChiTiet kh : khList) {
+            list.addItem(kh); // Thêm từng sản phẩm vào danh sách
+        }
+
+        // Xử lý sự kiện nhấn chuột vào danh sách
+        list.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                int index = list.locationToIndex(evt.getPoint()); // Lấy vị trí nhấn chuột
+                if (index >= 0) {
+                    HoaDonOnlineChiTiet selectedItem = list.getModel().getElementAt(index);
+                    // Thực hiện hành động khi nhấn vào một mục (ví dụ: hiển thị chi tiết sản phẩm)
+                    System.out.println("Sản phẩm được chọn: " + selectedItem.getTenSP());
+                    // Hiển thị thông tin chi tiết
+                    //showProductDetails(selectedItem);
+                }
+            }
+        });
+
+        // Đặt danh sách trong JScrollPane
+        JScrollPane scrollPane = new JScrollPane(list);
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+
+        thongTinDonHang2.setLayout(new BorderLayout());
+        thongTinDonHang2.add(scrollPane, BorderLayout.CENTER);
+    }
+
+    // Làm mới giao diện
+    thongTinDonHang2.revalidate();
+    thongTinDonHang2.repaint();
 }
     
     private void showProductDetails(GioHang gioHang) {
@@ -232,6 +334,7 @@ public class FormGioHang extends javax.swing.JPanel {
     
     public void refreshGioHangData() {
         applyListStyle();
+        applyListStyle2();
         capNhatTongTien();
     }
     
@@ -259,7 +362,11 @@ public class FormGioHang extends javax.swing.JPanel {
         jButton3 = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        thongTinDonHang1 = new da.component.ThongTinDonHang<>();
         jPanel3 = new javax.swing.JPanel();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        thongTinDonHang2 = new da.component.ThongTinDonHang<>();
 
         myListGioHang1.setModel(new javax.swing.AbstractListModel<String>() {
             String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
@@ -299,7 +406,7 @@ public class FormGioHang extends javax.swing.JPanel {
                     .addComponent(jScrollPane1)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addComponent(jButton3)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 522, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 534, Short.MAX_VALUE)
                         .addComponent(jLabel1)
                         .addGap(18, 18, 18)
                         .addComponent(jLabel2)
@@ -317,33 +424,51 @@ public class FormGioHang extends javax.swing.JPanel {
                     .addComponent(jLabel1)
                     .addComponent(jButton3)
                     .addComponent(jLabel2))
-                .addContainerGap(32, Short.MAX_VALUE))
+                .addContainerGap(69, Short.MAX_VALUE))
         );
 
         materialTabbed1.addTab("Giỏ hàng", jPanel1);
+
+        thongTinDonHang1.setModel(new javax.swing.AbstractListModel<String>() {
+            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
+            public int getSize() { return strings.length; }
+            public String getElementAt(int i) { return strings[i]; }
+        });
+        jScrollPane2.setViewportView(thongTinDonHang1);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 854, Short.MAX_VALUE)
+            .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING)
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 611, Short.MAX_VALUE)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 534, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 114, Short.MAX_VALUE))
         );
 
         materialTabbed1.addTab("Thông tin đơn hàng", jPanel2);
+
+        thongTinDonHang2.setModel(new javax.swing.AbstractListModel<String>() {
+            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
+            public int getSize() { return strings.length; }
+            public String getElementAt(int i) { return strings[i]; }
+        });
+        jScrollPane3.setViewportView(thongTinDonHang2);
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 854, Short.MAX_VALUE)
+            .addComponent(jScrollPane3, javax.swing.GroupLayout.Alignment.TRAILING)
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 611, Short.MAX_VALUE)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 534, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 114, Short.MAX_VALUE))
         );
 
         materialTabbed1.addTab("Lịch sử mua hàng", jPanel3);
@@ -378,7 +503,11 @@ public class FormGioHang extends javax.swing.JPanel {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
     private da.component.MaterialTabbed materialTabbed1;
     private da.component.MyListGioHang<String> myListGioHang1;
+    private da.component.ThongTinDonHang<String> thongTinDonHang1;
+    private da.component.ThongTinDonHang<String> thongTinDonHang2;
     // End of variables declaration//GEN-END:variables
 }

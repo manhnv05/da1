@@ -28,11 +28,6 @@ CREATE TABLE VaiTro_ChucNang (
     PRIMARY KEY (idVaiTro, idChucNang)
 );
 
-SELECT v.idVaiTro, d.id AS idChucNang, d.tenChucNang 
-FROM VaiTro_ChucNang v
-JOIN DanhMucChucNang d ON v.idChucNang = d.id
-WHERE v.idVaiTro = 1;
-
 
 --drop table NguoiDung
 CREATE TABLE NguoiDung (
@@ -310,6 +305,7 @@ CREATE TABLE HoaDonOnLine (
 	hinhthucvanchuyen NVARCHAR(50),
 	luuy NVARCHAR(255)
 );
+
 select *from ChiTietHoaDonOnline
 
 drop table ChiTietHoaDonOnline

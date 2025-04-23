@@ -1,6 +1,7 @@
 package da.application.form.other;
 
 import com.formdev.flatlaf.FlatClientProperties;
+import da.application.Application;
 import da.model.HoaDonOnlineChiTiet;
 import da.service.GioHangService;
 import da.service.HoaDonOnlineService;
@@ -13,6 +14,7 @@ import javax.swing.*;
 import raven.datetime.component.date.DatePicker;
 import raven.modal.component.ModalBorderAction;
 import raven.modal.component.SimpleModalBorder;
+import raven.toast.Notifications;
 
 public class PaymentOnlineForm extends JPanel {
     private NhanVienService service = new NhanVienService();
@@ -101,8 +103,14 @@ public class PaymentOnlineForm extends JPanel {
             String hinhThucThanhToan = (String) comboPaymentType.getSelectedItem();
             String hinhThucVanChuyen = (String) comboAccount.getSelectedItem();
             String luuy = txtLuuY.getText().trim();
+            String sdtPattern = "^(0\\d{9})$";
             if (tenKhachHang.isEmpty() || soDienThoai.isEmpty() || diaChiGiaoHang.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "Vui lòng nhập đầy đủ thông tin cần thiết!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            if (!soDienThoai.matches(sdtPattern)) {
+                JOptionPane.showMessageDialog(this, "Vui lòng nhập SDT đúng định dạng!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                txtSDT.requestFocus();
                 return;
             }
             int hoaDonID = service1.addHoaDonOnline(maHoaDon, soDienThoai, tenKhachHang, diaChiGiaoHang, hinhThucThanhToan, hinhThucVanChuyen, luuy);
@@ -121,6 +129,7 @@ public class PaymentOnlineForm extends JPanel {
                 boolean deleted = service2.deleteGioHangByIds(productIds);
                 if (deleted) {
                     JOptionPane.showMessageDialog(this, "Thêm hóa đơn và chi tiết hóa đơn thành công! Giỏ hàng đã được cập nhật.", "Thành Công", JOptionPane.INFORMATION_MESSAGE);
+                    Application.showForm(new FormGioHang(Email));
                 } else {
                     JOptionPane.showMessageDialog(this, "Thêm hóa đơn thành công nhưng không thể cập nhật trạng thái giỏ hàng!", "Lỗi", JOptionPane.WARNING_MESSAGE);
                 }

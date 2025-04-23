@@ -101,6 +101,7 @@ public class FormQLSanPham extends javax.swing.JPanel {
     public void search() {
         String keyword = txtSearch.getText().trim();
         loadSanPhamData(service.searchSanPham(keyword));
+        txtSearch.setText("");
     }
     
     public void update() {

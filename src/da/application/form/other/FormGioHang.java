@@ -25,6 +25,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import raven.toast.Notifications;
 
 
 public class FormGioHang extends javax.swing.JPanel {
@@ -103,9 +104,11 @@ public class FormGioHang extends javax.swing.JPanel {
                         if (selectedItem.getTrangThai() == 0) {
                             System.out.println("Hủy đơn hàng: " + selectedItem.getTenSP());
                             huyDon(selectedItem);
+                            Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Hủy thành công!");
                         } else if (selectedItem.getTrangThai() == 4 || selectedItem.getTrangThai() == 5) {
                             System.out.println("Đặt lại đơn hàng: " + selectedItem.getTenSP());
                             datLai(selectedItem);
+                            Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Đặt lại đơn hàng thành công!");
                         } else {
                             System.out.println("Sản phẩm được chọn: " + selectedItem.getTenSP());
                             showProductDetails(selectedItem);
@@ -178,9 +181,11 @@ public class FormGioHang extends javax.swing.JPanel {
                         if (selectedItem.getTrangThai() == 0) {
                             System.out.println("Hủy đơn hàng: " + selectedItem.getTenSP());
                             huyDon(selectedItem);
+                            Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Hủy đơn hàng thành công!");
                         } else if (selectedItem.getTrangThai() == 4 || selectedItem.getTrangThai() == 5) {
                             System.out.println("Đặt lại đơn hàng: " + selectedItem.getTenSP());
                             datLai(selectedItem);
+                            Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Đặt lại đơn hàng thành công!");
                         } else {
                             System.out.println("Sản phẩm được chọn: " + selectedItem.getTenSP());
                             showProductDetails(selectedItem);
@@ -320,14 +325,17 @@ public class FormGioHang extends javax.swing.JPanel {
     public void refreshGioHangData() {
         applyListStyle();
         capNhatTongTien();
+        Notifications.getInstance().show(Notifications.Type.INFO, Notifications.Location.TOP_CENTER, "Đã làm mới!");
     }
     
     public void refreshThongTinData() {
         applyListStyle2();
+        Notifications.getInstance().show(Notifications.Type.INFO, Notifications.Location.TOP_CENTER, "Đã làm mới!");
     }
     
     public void refreshLichSuData() {
         applyListStyle3();
+        Notifications.getInstance().show(Notifications.Type.INFO, Notifications.Location.TOP_CENTER, "Đã làm mới!");
     }
     
     private void capNhatTongTien() {

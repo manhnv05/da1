@@ -1,7 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
- */
+
 package da.application.form.other;
 
 import da.application.Application;
@@ -29,19 +26,14 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
-/**
- *
- * @author ADMIN
- */
+
 public class FormGioHang extends javax.swing.JPanel {
     SanPhamService service = new SanPhamService();
     HoaDonOnlineService service2 = new HoaDonOnlineService();
-
     GioHangService service1 = new GioHangService();
     private String Email;
-    /**
-     * Creates new form FormGioHang
-     */
+
+    
     public FormGioHang(String Email) {
         this.Email = Email;
         initComponents();
@@ -53,157 +45,166 @@ public class FormGioHang extends javax.swing.JPanel {
     
     
     private void applyListStyle() {
-    // Lấy danh sách giỏ hàng theo email
-    List<GioHang> khList = service1.getGioHangByEmail(Email);
-    myListGioHang1.removeAll(); // Xóa các phần tử cũ trong giao diện
-
-    if (khList == null || khList.isEmpty()) {
-        // Hiển thị thông báo nếu giỏ hàng trống
-        JLabel emptyLabel = new JLabel("Giỏ hàng của bạn hiện đang trống.");
-        emptyLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        emptyLabel.setFont(new Font("Arial", Font.PLAIN, 16));
-        myListGioHang1.setLayout(new BorderLayout());
-        myListGioHang1.add(emptyLabel, BorderLayout.CENTER);
-    } else {
-        // Tạo danh sách giỏ hàng
-        MyList1<GioHang> list = new MyList1<>();
-        for (GioHang kh : khList) {
-            list.addItem(kh); // Thêm từng sản phẩm vào danh sách
-        }
-
-        // Xử lý sự kiện nhấn chuột vào danh sách
-        list.addMouseListener(new java.awt.event.MouseAdapter() {
-            @Override
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                int index = list.locationToIndex(evt.getPoint()); // Lấy vị trí nhấn chuột
-                if (index >= 0) {
-                    GioHang selectedItem = list.getModel().getElementAt(index);
-                    // Thực hiện hành động khi nhấn vào một mục (ví dụ: hiển thị chi tiết sản phẩm)
-                    System.out.println("Sản phẩm được chọn: " + selectedItem.getTenSP());
-                    // Hiển thị thông tin chi tiết
-                    showProductDetails(selectedItem);
-                }
+        List<GioHang> khList = service1.getGioHangByEmail(Email);
+        myListGioHang1.removeAll(); 
+        if (khList == null || khList.isEmpty()) {
+            JLabel emptyLabel = new JLabel("Giỏ hàng của bạn hiện đang trống.");
+            emptyLabel.setHorizontalAlignment(SwingConstants.CENTER);
+            emptyLabel.setFont(new Font("Arial", Font.PLAIN, 16));
+            myListGioHang1.setLayout(new BorderLayout());
+            myListGioHang1.add(emptyLabel, BorderLayout.CENTER);
+        } else {
+            MyList1<GioHang> list = new MyList1<>();
+            for (GioHang kh : khList) {
+                list.addItem(kh);
             }
-        });
-
-        // Đặt danh sách trong JScrollPane
-        JScrollPane scrollPane = new JScrollPane(list);
-        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-
-        myListGioHang1.setLayout(new BorderLayout());
-        myListGioHang1.add(scrollPane, BorderLayout.CENTER);
+            list.addMouseListener(new java.awt.event.MouseAdapter() {
+                @Override
+                public void mouseClicked(java.awt.event.MouseEvent evt) {
+                    int index = list.locationToIndex(evt.getPoint());
+                    if (index >= 0) {
+                        GioHang selectedItem = list.getModel().getElementAt(index);
+                        System.out.println("Sản phẩm được chọn: " + selectedItem.getTenSP());
+                        showProductDetails(selectedItem);
+                    }
+                }
+            });
+            JScrollPane scrollPane = new JScrollPane(list);
+            scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+            scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+            myListGioHang1.setLayout(new BorderLayout());
+            myListGioHang1.add(scrollPane, BorderLayout.CENTER);
+        }
+        myListGioHang1.revalidate();
+        myListGioHang1.repaint();
     }
-
-    // Làm mới giao diện
-    myListGioHang1.revalidate();
-    myListGioHang1.repaint();
-}
     
-        private void applyListStyle2() {
-    // Lấy danh sách giỏ hàng theo email
-    List<HoaDonOnlineChiTiet> khList = service2.getDonHangByEmail(Email);
-    thongTinDonHang1.removeAll(); // Xóa các phần tử cũ trong giao diện
-
-    if (khList == null || khList.isEmpty()) {
-        // Hiển thị thông báo nếu giỏ hàng trống
-        JLabel emptyLabel = new JLabel("Giỏ hàng của bạn hiện đang trống.");
-        emptyLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        emptyLabel.setFont(new Font("Arial", Font.PLAIN, 16));
-        thongTinDonHang1.setLayout(new BorderLayout());
-        thongTinDonHang1.add(emptyLabel, BorderLayout.CENTER);
-    } else {
-        // Tạo danh sách giỏ hàng
-        ThongTinDonHang<HoaDonOnlineChiTiet> list = new ThongTinDonHang<>();
-        for (HoaDonOnlineChiTiet kh : khList) {
-            list.addItem(kh); // Thêm từng sản phẩm vào danh sách
-        }
-
-        // Xử lý sự kiện nhấn chuột vào danh sách
-        list.addMouseListener(new java.awt.event.MouseAdapter() {
-            @Override
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                int index = list.locationToIndex(evt.getPoint()); // Lấy vị trí nhấn chuột
-                if (index >= 0) {
-                    HoaDonOnlineChiTiet selectedItem = list.getModel().getElementAt(index);
-                    // Thực hiện hành động khi nhấn vào một mục (ví dụ: hiển thị chi tiết sản phẩm)
-                    System.out.println("Sản phẩm được chọn: " + selectedItem.getTenSP());
-                    // Hiển thị thông tin chi tiết
-                    //showProductDetails(selectedItem);
-                }
+    private void applyListStyle2() {
+        List<HoaDonOnlineChiTiet> khList = service2.getDonHangByEmail(Email);
+        thongTinDonHang1.removeAll();
+        if (khList == null || khList.isEmpty()) {
+            JLabel emptyLabel = new JLabel("Giỏ hàng của bạn hiện đang trống.");
+            emptyLabel.setHorizontalAlignment(SwingConstants.CENTER);
+            emptyLabel.setFont(new Font("Arial", Font.PLAIN, 16));
+            thongTinDonHang1.setLayout(new BorderLayout());
+            thongTinDonHang1.add(emptyLabel, BorderLayout.CENTER);
+        } else {
+            ThongTinDonHang<HoaDonOnlineChiTiet> list = new ThongTinDonHang<>();
+            for (HoaDonOnlineChiTiet kh : khList) {
+                list.addItem(kh);
             }
-        });
+            list.addMouseListener(new java.awt.event.MouseAdapter() {
+                @Override
+                public void mouseClicked(java.awt.event.MouseEvent evt) {
+                    int index = list.locationToIndex(evt.getPoint());
+                    if (index >= 0) {
+                        HoaDonOnlineChiTiet selectedItem = list.getModel().getElementAt(index);
 
-        // Đặt danh sách trong JScrollPane
-        JScrollPane scrollPane = new JScrollPane(list);
-        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-
-        thongTinDonHang1.setLayout(new BorderLayout());
-        thongTinDonHang1.add(scrollPane, BorderLayout.CENTER);
+                        if (selectedItem.getTrangThai() == 0) {
+                            System.out.println("Hủy đơn hàng: " + selectedItem.getTenSP());
+                            huyDon(selectedItem);
+                        } else if (selectedItem.getTrangThai() == 4 || selectedItem.getTrangThai() == 5) {
+                            System.out.println("Đặt lại đơn hàng: " + selectedItem.getTenSP());
+                            datLai(selectedItem);
+                        } else {
+                            System.out.println("Sản phẩm được chọn: " + selectedItem.getTenSP());
+                            showProductDetails(selectedItem);
+                        }
+                    }
+                }
+            });
+            JScrollPane scrollPane = new JScrollPane(list);
+            scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+            scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+            thongTinDonHang1.setLayout(new BorderLayout());
+            thongTinDonHang1.add(scrollPane, BorderLayout.CENTER);
+        }
+        thongTinDonHang1.revalidate();
+        thongTinDonHang1.repaint();
     }
 
-    // Làm mới giao diện
-    thongTinDonHang1.revalidate();
-    thongTinDonHang1.repaint();
-}
+    private void huyDon(HoaDonOnlineChiTiet hoaDon) {
+        boolean success = service2.huyDon(hoaDon.getHoadononlineID());
+        if (success) {
+            System.out.println("Hủy đơn hàng thành công: " + hoaDon.getTenSP());
+            hoaDon.setTrangThai(5);
+            applyListStyle2();
+        } else {
+            System.out.println("Hủy đơn hàng thất bại: " + hoaDon.getTenSP());
+        }
+    }
+
+    private void datLai(HoaDonOnlineChiTiet hoaDon) {
+        boolean success = service2.datLai(hoaDon.getHoadononlineID());
+        if (success) {
+            System.out.println("Đặt lại đơn hàng thành công: " + hoaDon.getTenSP());
+            hoaDon.setTrangThai(0); 
+            applyListStyle2();
+        } else {
+            System.out.println("Đặt lại đơn hàng thất bại: " + hoaDon.getTenSP());
+        }
+    }
+
+    private void showProductDetails(HoaDonOnlineChiTiet item) {
+        JOptionPane.showMessageDialog(null,
+            "Tên sản phẩm: " + item.getTenSP() + "\n" +
+            "Số lượng: " + item.getSoLuong() + "\n" +
+            "Giá: " + item.getTongTien() + " VND",
+            "Chi tiết sản phẩm",
+            JOptionPane.INFORMATION_MESSAGE
+        );
+    }
         
-        private void applyListStyle3() {
-    // Lấy danh sách giỏ hàng theo email
-    List<HoaDonOnlineChiTiet> khList = service2.getDonHangByEmail2(Email);
-    thongTinDonHang2.removeAll(); // Xóa các phần tử cũ trong giao diện
-
-    if (khList == null || khList.isEmpty()) {
-        // Hiển thị thông báo nếu giỏ hàng trống
-        JLabel emptyLabel = new JLabel("Giỏ hàng của bạn hiện đang trống.");
-        emptyLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        emptyLabel.setFont(new Font("Arial", Font.PLAIN, 16));
-        thongTinDonHang2.setLayout(new BorderLayout());
-        thongTinDonHang2.add(emptyLabel, BorderLayout.CENTER);
-    } else {
-        // Tạo danh sách giỏ hàng
-        ThongTinDonHang<HoaDonOnlineChiTiet> list = new ThongTinDonHang<>();
-        for (HoaDonOnlineChiTiet kh : khList) {
-            list.addItem(kh); // Thêm từng sản phẩm vào danh sách
-        }
-
-        // Xử lý sự kiện nhấn chuột vào danh sách
-        list.addMouseListener(new java.awt.event.MouseAdapter() {
-            @Override
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                int index = list.locationToIndex(evt.getPoint()); // Lấy vị trí nhấn chuột
-                if (index >= 0) {
-                    HoaDonOnlineChiTiet selectedItem = list.getModel().getElementAt(index);
-                    // Thực hiện hành động khi nhấn vào một mục (ví dụ: hiển thị chi tiết sản phẩm)
-                    System.out.println("Sản phẩm được chọn: " + selectedItem.getTenSP());
-                    // Hiển thị thông tin chi tiết
-                    //showProductDetails(selectedItem);
-                }
+    private void applyListStyle3() {
+        List<HoaDonOnlineChiTiet> khList = service2.getDonHangByEmail2(Email);
+        thongTinDonHang2.removeAll();
+        if (khList == null || khList.isEmpty()) {
+            JLabel emptyLabel = new JLabel("Giỏ hàng của bạn hiện đang trống.");
+            emptyLabel.setHorizontalAlignment(SwingConstants.CENTER);
+            emptyLabel.setFont(new Font("Arial", Font.PLAIN, 16));
+            thongTinDonHang2.setLayout(new BorderLayout());
+            thongTinDonHang2.add(emptyLabel, BorderLayout.CENTER);
+        } else {
+            ThongTinDonHang<HoaDonOnlineChiTiet> list = new ThongTinDonHang<>();
+            for (HoaDonOnlineChiTiet kh : khList) {
+                list.addItem(kh);
             }
-        });
-
-        // Đặt danh sách trong JScrollPane
-        JScrollPane scrollPane = new JScrollPane(list);
-        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-
-        thongTinDonHang2.setLayout(new BorderLayout());
-        thongTinDonHang2.add(scrollPane, BorderLayout.CENTER);
+            list.addMouseListener(new java.awt.event.MouseAdapter() {
+                @Override
+                public void mouseClicked(java.awt.event.MouseEvent evt) {
+                    int index = list.locationToIndex(evt.getPoint());
+                    if (index >= 0) {
+                        HoaDonOnlineChiTiet selectedItem = list.getModel().getElementAt(index);
+                        if (selectedItem.getTrangThai() == 0) {
+                            System.out.println("Hủy đơn hàng: " + selectedItem.getTenSP());
+                            huyDon(selectedItem);
+                        } else if (selectedItem.getTrangThai() == 4 || selectedItem.getTrangThai() == 5) {
+                            System.out.println("Đặt lại đơn hàng: " + selectedItem.getTenSP());
+                            datLai(selectedItem);
+                        } else {
+                            System.out.println("Sản phẩm được chọn: " + selectedItem.getTenSP());
+                            showProductDetails(selectedItem);
+                        }
+                    }
+                }
+            });
+            JScrollPane scrollPane = new JScrollPane(list);
+            scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+            scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+            thongTinDonHang2.setLayout(new BorderLayout());
+            thongTinDonHang2.add(scrollPane, BorderLayout.CENTER);
+        }
+        thongTinDonHang2.revalidate();
+        thongTinDonHang2.repaint();
     }
-
-    // Làm mới giao diện
-    thongTinDonHang2.revalidate();
-    thongTinDonHang2.repaint();
-}
     
     private void showProductDetails(GioHang gioHang) {
-    JTextField txtTenSP = new JTextField(gioHang.getTenSP());
-    txtTenSP.setEnabled(false); // Không cho phép chỉnh sửa tên sản phẩm
-    JTextField txtSoLuong = new JTextField(String.valueOf(gioHang.getSoLuong()));
-    JTextField txtTongTien = new JTextField(gioHang.getTongTien().toString());
-    txtTongTien.setEnabled(false); // Không cho phép chỉnh sửa tổng tiền
-
-    JComboBox<String> cboKichThuoc = new JComboBox<>();
+        JTextField txtTenSP = new JTextField(gioHang.getTenSP());
+        txtTenSP.setEnabled(false);
+        JTextField txtSoLuong = new JTextField(String.valueOf(gioHang.getSoLuong()));
+        JTextField txtTongTien = new JTextField(gioHang.getTongTien().toString());
+        txtTongTien.setEnabled(false);
+        JComboBox<String> cboKichThuoc = new JComboBox<>();
         DefaultComboBoxModel<String> boxModel = new DefaultComboBoxModel<>();
         boxModel.addElement("-- Chọn kích thước --");
         HashSet<String> kichThuocSet = service.getAllKichThuoc();
@@ -213,11 +214,8 @@ public class FormGioHang extends javax.swing.JPanel {
             }
         }
         cboKichThuoc.setModel(boxModel);
-    
-    
-    JComboBox<String> cboMauSac = new JComboBox<>();
-    
-    DefaultComboBoxModel<String> boxModel2 = new DefaultComboBoxModel<>();
+        JComboBox<String> cboMauSac = new JComboBox<>();
+        DefaultComboBoxModel<String> boxModel2 = new DefaultComboBoxModel<>();
         boxModel2.addElement("-- Chọn màu sắc --");
         HashSet<String> mauSacSet = service.getAllMauSac();
         for (String mauSac : mauSacSet) {
@@ -226,124 +224,118 @@ public class FormGioHang extends javax.swing.JPanel {
             }
         }
         cboMauSac.setModel(boxModel2);
-
-    cboKichThuoc.setSelectedItem(gioHang.getKichThuoc());
-    cboMauSac.setSelectedItem(gioHang.getTenMauSac());
-
-    JPanel panel = new JPanel(new GridBagLayout());
-    GridBagConstraints gbc = new GridBagConstraints();
-    gbc.insets = new Insets(10, 10, 10, 10);
-    gbc.fill = GridBagConstraints.HORIZONTAL;
-
-    gbc.gridx = 0;
-    gbc.gridy = 0;
-    panel.add(new JLabel("Tên Sản Phẩm:"), gbc);
-    gbc.gridx = 1;
-    panel.add(txtTenSP, gbc);
-
-    
-
-    gbc.gridx = 0;
-    gbc.gridy = 2;
-    panel.add(new JLabel("Kích Thước:"), gbc);
-    gbc.gridx = 1;
-    panel.add(cboKichThuoc, gbc);
-
-    gbc.gridx = 0;
-    gbc.gridy = 3;
-    panel.add(new JLabel("Màu Sắc:"), gbc);
-    gbc.gridx = 1;
-    panel.add(cboMauSac, gbc);
-
-    gbc.gridx = 0;
-    gbc.gridy = 4;
-    panel.add(new JLabel("Số Lượng:"), gbc);
-    gbc.gridx = 1;
-    panel.add(txtSoLuong, gbc);
-
-    gbc.gridx = 0;
-    gbc.gridy = 5;
-    panel.add(new JLabel("Tổng Tiền:"), gbc);
-    gbc.gridx = 1;
-    panel.add(txtTongTien, gbc);
-
-    // Hiển thị hộp thoại với các nút Update và Delete
-    Object[] options = {"Update", "Delete", "Cancel"};
-    while (true) {
-        int result = JOptionPane.showOptionDialog(
-            null,
-            panel,
-            "Chi Tiết Sản Phẩm",
-            JOptionPane.DEFAULT_OPTION,
-            JOptionPane.PLAIN_MESSAGE,
-            null,
-            options,
-            options[0]
-        );
-
-        if (result == 2 || result == JOptionPane.CLOSED_OPTION) {
-            return;
-        } else if (result == 1) {
-            int confirm = JOptionPane.showConfirmDialog(
+        cboKichThuoc.setSelectedItem(gioHang.getKichThuoc());
+        cboMauSac.setSelectedItem(gioHang.getTenMauSac());
+        JPanel panel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10, 10, 10, 10);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        panel.add(new JLabel("Tên Sản Phẩm:"), gbc);
+        gbc.gridx = 1;
+        panel.add(txtTenSP, gbc);
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        panel.add(new JLabel("Kích Thước:"), gbc);
+        gbc.gridx = 1;
+        panel.add(cboKichThuoc, gbc);
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        panel.add(new JLabel("Màu Sắc:"), gbc);
+        gbc.gridx = 1;
+        panel.add(cboMauSac, gbc);
+        gbc.gridx = 0;
+        gbc.gridy = 4;
+        panel.add(new JLabel("Số Lượng:"), gbc);
+        gbc.gridx = 1;
+        panel.add(txtSoLuong, gbc);
+        gbc.gridx = 0;
+        gbc.gridy = 5;
+        panel.add(new JLabel("Tổng Tiền:"), gbc);
+        gbc.gridx = 1;
+        panel.add(txtTongTien, gbc);
+        Object[] options = {"Update", "Delete", "Cancel"};
+        while (true) {
+            int result = JOptionPane.showOptionDialog(
                 null,
-                "Bạn có chắc chắn muốn xóa sản phẩm này khỏi giỏ hàng?",
-                "Xác nhận xóa",
-                JOptionPane.YES_NO_OPTION
+                panel,
+                "Chi Tiết Sản Phẩm",
+                JOptionPane.DEFAULT_OPTION,
+                JOptionPane.PLAIN_MESSAGE,
+                null,
+                options,
+                options[0]
             );
-            if (confirm == JOptionPane.YES_OPTION) {
-                boolean isDeleted = new GioHangService().deleteGioHangById(gioHang.getId());
-                if (isDeleted) {
-                    JOptionPane.showMessageDialog(null, "Xóa sản phẩm thành công!", "Thành Công", JOptionPane.INFORMATION_MESSAGE);
+            if (result == 2 || result == JOptionPane.CLOSED_OPTION) {
+                return;
+            } else if (result == 1) {
+                int confirm = JOptionPane.showConfirmDialog(
+                    null,
+                    "Bạn có chắc chắn muốn xóa sản phẩm này khỏi giỏ hàng?",
+                    "Xác nhận xóa",
+                    JOptionPane.YES_NO_OPTION
+                );
+                if (confirm == JOptionPane.YES_OPTION) {
+                    boolean isDeleted = new GioHangService().deleteGioHangById(gioHang.getId());
+                    if (isDeleted) {
+                        JOptionPane.showMessageDialog(null, "Xóa sản phẩm thành công!", "Thành Công", JOptionPane.INFORMATION_MESSAGE);
+                        refreshGioHangData(); // Làm mới danh sách giỏ hàng
+                        capNhatTongTien();
+                        return;
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Xóa sản phẩm thất bại!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+            } else if (result == 0) {
+                String soLuongStr = txtSoLuong.getText().trim();
+                int soLuong;
+                try {
+                    soLuong = Integer.parseInt(soLuongStr);
+                    if (soLuong <= 0) {
+                        JOptionPane.showMessageDialog(null, "Số lượng phải lớn hơn 0!", "Cảnh Báo", JOptionPane.WARNING_MESSAGE);
+                        continue;
+                    }
+                } catch (NumberFormatException e) {
+                    JOptionPane.showMessageDialog(null, "Số lượng phải là số hợp lệ!", "Cảnh Báo", JOptionPane.WARNING_MESSAGE);
+                    continue;
+                }
+                String kichThuoc = (String) cboKichThuoc.getSelectedItem();
+                String mauSac = (String) cboMauSac.getSelectedItem();
+                boolean isUpdated = new GioHangService().updateGioHang(
+                    gioHang.getId(), soLuong, kichThuoc, mauSac
+                );
+                if (isUpdated) {
+                    JOptionPane.showMessageDialog(null, "Cập nhật sản phẩm thành công!", "Thành Công", JOptionPane.INFORMATION_MESSAGE);
                     refreshGioHangData(); // Làm mới danh sách giỏ hàng
                     capNhatTongTien();
                     return;
                 } else {
-                    JOptionPane.showMessageDialog(null, "Xóa sản phẩm thất bại!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "Cập nhật sản phẩm thất bại!", "Lỗi", JOptionPane.ERROR_MESSAGE);
                 }
-            }
-        } else if (result == 0) {
-            // Người dùng nhấn Update
-            String soLuongStr = txtSoLuong.getText().trim();
-            int soLuong;
-            try {
-                soLuong = Integer.parseInt(soLuongStr);
-                if (soLuong <= 0) {
-                    JOptionPane.showMessageDialog(null, "Số lượng phải lớn hơn 0!", "Cảnh Báo", JOptionPane.WARNING_MESSAGE);
-                    continue;
-                }
-            } catch (NumberFormatException e) {
-                JOptionPane.showMessageDialog(null, "Số lượng phải là số hợp lệ!", "Cảnh Báo", JOptionPane.WARNING_MESSAGE);
-                continue;
-            }
-            String kichThuoc = (String) cboKichThuoc.getSelectedItem();
-            String mauSac = (String) cboMauSac.getSelectedItem();
-            boolean isUpdated = new GioHangService().updateGioHang(
-                gioHang.getId(), soLuong, kichThuoc, mauSac
-            );
-            if (isUpdated) {
-                JOptionPane.showMessageDialog(null, "Cập nhật sản phẩm thành công!", "Thành Công", JOptionPane.INFORMATION_MESSAGE);
-                refreshGioHangData(); // Làm mới danh sách giỏ hàng
-                capNhatTongTien();
-                return;
-            } else {
-                JOptionPane.showMessageDialog(null, "Cập nhật sản phẩm thất bại!", "Lỗi", JOptionPane.ERROR_MESSAGE);
             }
         }
-    }
-} 
+    } 
     
     public void refreshGioHangData() {
         applyListStyle();
-        applyListStyle2();
         capNhatTongTien();
+    }
+    
+    public void refreshThongTinData() {
+        applyListStyle2();
+    }
+    
+    public void refreshLichSuData() {
+        applyListStyle3();
     }
     
     private void capNhatTongTien() {
         List<GioHang> gioHangList = service1.getGioHangByEmail(Email);
-        BigDecimal total = BigDecimal.ZERO; // Khởi tạo tổng tiền
+        BigDecimal total = BigDecimal.ZERO;
         for (GioHang product : gioHangList) {
-            BigDecimal giaSanPham = product.getTongTien(); // Lấy giá trị tổng tiền của sản phẩm
-            total = total.add(giaSanPham); // Cộng dồn vào tổng tiền
+            BigDecimal giaSanPham = product.getTongTien();
+            total = total.add(giaSanPham);
         }
         jLabel2.setText(total.toString() + " VND");
     }
@@ -364,9 +356,11 @@ public class FormGioHang extends javax.swing.JPanel {
         jPanel2 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         thongTinDonHang1 = new da.component.ThongTinDonHang<>();
+        jButton2 = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
         thongTinDonHang2 = new da.component.ThongTinDonHang<>();
+        jButton4 = new javax.swing.JButton();
 
         myListGioHang1.setModel(new javax.swing.AbstractListModel<String>() {
             String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
@@ -436,17 +430,29 @@ public class FormGioHang extends javax.swing.JPanel {
         });
         jScrollPane2.setViewportView(thongTinDonHang1);
 
+        jButton2.setText("Refesh");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING)
+            .addComponent(jScrollPane2)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addComponent(jButton2)
+                .addGap(0, 794, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 534, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 114, Short.MAX_VALUE))
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 592, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButton2)
+                .addGap(0, 27, Short.MAX_VALUE))
         );
 
         materialTabbed1.addTab("Thông tin đơn hàng", jPanel2);
@@ -458,17 +464,29 @@ public class FormGioHang extends javax.swing.JPanel {
         });
         jScrollPane3.setViewportView(thongTinDonHang2);
 
+        jButton4.setText("Refesh");
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane3, javax.swing.GroupLayout.Alignment.TRAILING)
+            .addComponent(jScrollPane3)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addComponent(jButton4)
+                .addGap(0, 794, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 534, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 114, Short.MAX_VALUE))
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 608, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButton4)
+                .addGap(0, 11, Short.MAX_VALUE))
         );
 
         materialTabbed1.addTab("Lịch sử mua hàng", jPanel3);
@@ -493,10 +511,20 @@ public class FormGioHang extends javax.swing.JPanel {
         refreshGioHangData();
     }//GEN-LAST:event_jButton3ActionPerformed
 
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        refreshThongTinData();
+    }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+        
+    }//GEN-LAST:event_jButton4ActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
+    private javax.swing.JButton jButton4;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;

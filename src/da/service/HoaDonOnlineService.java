@@ -503,4 +503,52 @@ public List<HoaDonOnlineChiTiet> getDonHangByEmail2(String email) {
 
     return list;
 }
+
+public boolean huyDon(int hoaDonId) {
+    String sql = """
+            UPDATE HoaDonOnLine
+            SET trangthai = 5
+            WHERE id = ? AND trangthai = 0;
+        """;
+
+    try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        ps.setInt(1, hoaDonId); // Truyền tham số id hóa đơn
+        int rowsAffected = ps.executeUpdate(); // Thực thi câu lệnh SQL
+        if (rowsAffected > 0) {
+            System.out.println("Hủy đơn hàng thành công! ID: " + hoaDonId);
+            return true;
+        } else {
+            System.out.println("Không thể hủy đơn hàng. ID: " + hoaDonId + " không ở trạng thái phù hợp.");
+            return false;
+        }
+    } catch (SQLException e) {
+        System.err.println("Lỗi khi hủy đơn hàng với ID: " + hoaDonId);
+        e.printStackTrace(); // In lỗi chi tiết ra console
+        return false; // Trả về false nếu xảy ra lỗi
+    }
+}
+
+public boolean datLai(int hoaDonId) {
+    String sql = """
+            UPDATE HoaDonOnLine
+            SET trangthai = 0
+            WHERE id = ? AND trangthai IN (4, 5);
+        """;
+
+    try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        ps.setInt(1, hoaDonId); // Truyền tham số id hóa đơn
+        int rowsAffected = ps.executeUpdate(); // Thực thi câu lệnh SQL
+        if (rowsAffected > 0) {
+            System.out.println("Đặt lại đơn hàng thành công! ID: " + hoaDonId);
+            return true;
+        } else {
+            System.out.println("Không thể đặt lại đơn hàng. ID: " + hoaDonId + " không ở trạng thái phù hợp.");
+            return false;
+        }
+    } catch (SQLException e) {
+        System.err.println("Lỗi khi đặt lại đơn hàng với ID: " + hoaDonId);
+        e.printStackTrace(); // In lỗi chi tiết ra console
+        return false; // Trả về false nếu xảy ra lỗi
+    }
+}
 }

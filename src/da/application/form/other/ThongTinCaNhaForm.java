@@ -1,12 +1,7 @@
 
 package da.application.form.other;
 
-import da.application.form.*;
 import com.formdev.flatlaf.FlatClientProperties;
-import da.application.Application;
-import java.awt.Component;
-import java.awt.Cursor;
-import java.awt.FlowLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -15,18 +10,16 @@ import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import net.miginfocom.swing.MigLayout;
 import da.component.PasswordStrengthStatus;
-import da.manager.FormsManager;
 import da.model.NguoiDung;
 import da.service.NguoiDungService;
 import java.awt.Color;
 import java.util.Arrays;
-import org.springframework.security.crypto.bcrypt.BCrypt;
 import raven.toast.Notifications;
 
 
 public class ThongTinCaNhaForm extends JPanel {
     NguoiDungService service = new NguoiDungService();
-            private String Email;
+    private String Email;
 
     public ThongTinCaNhaForm(String Email) {
         this.Email = Email;
@@ -47,7 +40,6 @@ public class ThongTinCaNhaForm extends JPanel {
         lblError.setForeground(Color.RED);
         lblError.setVisible(false);
         cmdRegister = new JButton("Lưu Thông Tin");
-
         cmdRegister.addActionListener(e -> {
             if (isMatchPassword()) {
         updateNguoiDung();
@@ -56,13 +48,11 @@ public class ThongTinCaNhaForm extends JPanel {
             }
         });
         passwordStrengthStatus = new PasswordStrengthStatus();
-
         JPanel panel = new JPanel(new MigLayout("wrap,fillx,insets 35 45 30 45", "[fill,360]"));
         panel.putClientProperty(FlatClientProperties.STYLE, "" +
                 "arc:20;" +
                 "[light]background:darken(@background,3%);" +
                 "[dark]background:lighten(@background,3%)");
-
         txtFirstName.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Tên");
         txtLastName.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Họ");
         txtUsername.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Nhập tên tài khoản hoặc email của bạn");
@@ -75,14 +65,12 @@ public class ThongTinCaNhaForm extends JPanel {
                 "showRevealButton:true");
         txtConfirmPassword.putClientProperty(FlatClientProperties.STYLE, "" +
                 "showRevealButton:true");
-
         cmdRegister.putClientProperty(FlatClientProperties.STYLE, "" +
                 "[light]background:darken(@background,10%);" +
                 "[dark]background:lighten(@background,10%);" +
                 "borderWidth:0;" +
                 "focusWidth:0;" +
                 "innerFocusWidth:0");
-
         JLabel lbTitle = new JLabel("Thông tin tài khoản!");
         JLabel description = new JLabel("Thông tin cá nhân của bạn được hiển thị bên dưới. Vui lòng kiểm tra và cập nhật nếu có thay đổi!");
         lbTitle.putClientProperty(FlatClientProperties.STYLE, "" +
@@ -90,9 +78,7 @@ public class ThongTinCaNhaForm extends JPanel {
         description.putClientProperty(FlatClientProperties.STYLE, "" +
                 "[light]foreground:lighten(@foreground,30%);" +
                 "[dark]foreground:darken(@foreground,30%)");
-
         passwordStrengthStatus.initPasswordField(txtPasswordNew);
-
         panel.add(lbTitle);
         panel.add(description);
         panel.add(new JLabel("Họ Tên"), "gapy 10");
@@ -116,13 +102,9 @@ public class ThongTinCaNhaForm extends JPanel {
     public boolean isMatchPassword() {
         char[] password = txtPasswordNew.getPassword();
         char[] confirmPassword = txtConfirmPassword.getPassword();
-
         boolean isMatch = Arrays.equals(password, confirmPassword);
-
-        // Xóa dữ liệu sau khi sử dụng
         Arrays.fill(password, ' ');
         Arrays.fill(confirmPassword, ' ');
-
         return isMatch;
     }
     
@@ -135,9 +117,9 @@ public class ThongTinCaNhaForm extends JPanel {
         txtFirstName.setText(nd.getTen());
         txtLastName.setText(nd.getHo());
         txtUsername.setText(nd.getEmail());
-        txtPassword.setText(""); // Mật khẩu hiện tại
-        txtPasswordNew.setText(""); // Mật khẩu mới
-        txtConfirmPassword.setText(""); // Xác nhận mật khẩu
+        txtPassword.setText("");
+        txtPasswordNew.setText("");
+        txtConfirmPassword.setText("");
     }
     
     private void updateNguoiDung() {
@@ -182,7 +164,7 @@ public class ThongTinCaNhaForm extends JPanel {
     
     private void cmdRegisterActionPerformed(java.awt.event.ActionEvent evt) {                                         
         updateNguoiDung();
-}  
+    }  
 
     private JTextField txtFirstName;
     private JTextField txtLastName;

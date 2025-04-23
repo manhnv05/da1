@@ -1,7 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
- */
+
 package da.application.form.other;
 
 import com.formdev.flatlaf.FlatClientProperties;
@@ -58,10 +55,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import raven.toast.Notifications;
 
-/**
- *
- * @author ADMIN
- */
+
 public class FormKhoHang extends javax.swing.JPanel {
     KhuVucKhoService service = new KhuVucKhoService();
     NhapKhoService service2 = new NhapKhoService();
@@ -69,9 +63,7 @@ public class FormKhoHang extends javax.swing.JPanel {
     NhanVienService service3 = new NhanVienService();
     NhaCCService service4 = new NhaCCService();
 
-    /**
-     * Creates new form FormKhoHang
-     */
+
     public FormKhoHang() {
         initComponents();
         initUI();
@@ -87,29 +79,21 @@ public class FormKhoHang extends javax.swing.JPanel {
     
     private void initUI() {
         DateTimeFormatter df = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-
         if (datePicker1 != null) {
             datePicker1.setEditor(txtTuNgay);
-
-            // Lắng nghe sự kiện khi người dùng chọn ngày
             datePicker1.addDateSelectionListener(event -> {
                 LocalDate date = datePicker1.getSelectedDate();
                 txtTuNgay.setText((date != null) ? date.format(df) : "");
             });
-
             datePicker1.setDateSelectionAble(date -> date != null && !date.isAfter(LocalDate.now()));
             datePicker1.now();
         }
-
         if (datePicker2 != null) {
             datePicker2.setEditor(txtDenNgay);
-
-            // Lắng nghe sự kiện khi người dùng chọn ngày
             datePicker2.addDateSelectionListener(event -> {
                 LocalDate date = datePicker2.getSelectedDate();
                 txtDenNgay.setText((date != null) ? date.format(df) : "");
             });
-
             datePicker2.setDateSelectionAble(date -> date != null && !date.isAfter(LocalDate.now()));
             datePicker2.now();
         }
@@ -143,7 +127,6 @@ public class FormKhoHang extends javax.swing.JPanel {
     }
     
     private void applyTableStyle(JTable table) {
-
         cmdSearch.setIcon(new FlatSVGIcon("da/icon/svg/search.svg", 0.35f));
         cmdSearch1.setIcon(new FlatSVGIcon("da/icon/svg/search.svg", 0.35f));
         cmdAdd.setIcon(new FlatSVGIcon("da/icon/svg/add.svg", 0.35f));
@@ -153,7 +136,6 @@ public class FormKhoHang extends javax.swing.JPanel {
         cmdAdd1.setIcon(new FlatSVGIcon("da/icon/svg/add.svg", 0.35f));
         cmdDelete1.setIcon(new FlatSVGIcon("da/icon/svg/delete.svg", 0.35f));
         cmdExcel1.setIcon(new FlatSVGIcon("da/icon/svg/print.svg", 0.35f));
-
         txtSearch.putClientProperty(FlatClientProperties.TEXT_FIELD_TRAILING_ICON, new FlatSVGIcon("da/icon/svg/search.svg", 0.35f));
         txtSearch1.putClientProperty(FlatClientProperties.TEXT_FIELD_TRAILING_ICON, new FlatSVGIcon("da/icon/svg/search.svg", 0.35f));
         //  Change scroll style
@@ -163,10 +145,8 @@ public class FormKhoHang extends javax.swing.JPanel {
                 + "background:$Table.background;"
                 + "track:$Table.background;"
                 + "trackArc:999");
-
         table.getTableHeader().putClientProperty(FlatClientProperties.STYLE_CLASS, "table_style");
         table.putClientProperty(FlatClientProperties.STYLE_CLASS, "table_style");
-
         //  To Create table alignment
         table.getTableHeader().setDefaultRenderer(getAlignmentCellRender(table.getTableHeader().getDefaultRenderer(), true));
         table.setDefaultRenderer(Object.class, getAlignmentCellRender(table.getDefaultRenderer(Object.class), false));
@@ -215,13 +195,12 @@ public class FormKhoHang extends javax.swing.JPanel {
     
     public void loadKhuVucKhoData(ArrayList<KhuVucKho> list) {
         DefaultTableModel tblModel = (DefaultTableModel) tblKhuVuc.getModel();
-        tblModel.setRowCount(0); // Xóa dữ liệu cũ trong bảng
-
+        tblModel.setRowCount(0); 
         for (KhuVucKho kvk : list) {
             Object[] rowData = {
                 kvk.getId(),
-                kvk.getTenKhuVuc(),       // Tên khu vực
-                kvk.getMoTa(),            // Mô tả khu vực
+                kvk.getTenKhuVuc(),     
+                kvk.getMoTa(),        
             };
             tblModel.addRow(rowData);
         }
@@ -239,7 +218,6 @@ public class FormKhoHang extends javax.swing.JPanel {
         if (khuVucKho == null) {
             return;
         }
-
         boolean isAdded = service.addKhuVucKho(khuVucKho);
         if (isAdded) {
             Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Thêm khu vực kho thành công!");
@@ -253,7 +231,6 @@ public class FormKhoHang extends javax.swing.JPanel {
         JTextField txtTenKhuVuc = new JTextField();
         JTextArea txtMoTa = new JTextArea(5, 20);
         JScrollPane scrollMoTa = new JScrollPane(txtMoTa);
-
         JPanel panel = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
@@ -303,24 +280,17 @@ public class FormKhoHang extends javax.swing.JPanel {
     }
     
     public void update() {
-        // Lấy dòng được chọn trong bảng
         int selectedRow = tblKhuVuc.getSelectedRow();
         if (selectedRow == -1) {
             Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng chọn một khu vực để cập nhật!");
             return;
         }
-
-        // Lấy thông tin hiện tại từ bảng
         int id = (int) tblKhuVuc.getValueAt(selectedRow, 0);
         String currentTenKhuVuc = (String) tblKhuVuc.getValueAt(selectedRow, 1);
         String currentMoTa = (String) tblKhuVuc.getValueAt(selectedRow, 2);
-
-        // Tạo các trường nhập liệu cho hộp thoại
         JTextField txtTenKhuVuc = new JTextField(currentTenKhuVuc);
         JTextArea txtMoTa = new JTextArea(currentMoTa, 5, 20);
         JScrollPane scrollMoTa = new JScrollPane(txtMoTa);
-
-        // Panel để sắp xếp các trường nhập liệu
         JPanel panel = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
@@ -335,8 +305,6 @@ public class FormKhoHang extends javax.swing.JPanel {
         panel.add(new JLabel("Mô Tả:"), gbc);
         gbc.gridx = 1;
         panel.add(scrollMoTa, gbc);
-
-        // Hiển thị hộp thoại với vòng lặp kiểm tra
         while (true) {
             int result = JOptionPane.showConfirmDialog(
                 null,
@@ -346,13 +314,10 @@ public class FormKhoHang extends javax.swing.JPanel {
                 JOptionPane.PLAIN_MESSAGE
             );
             if (result != JOptionPane.OK_OPTION) {
-                return; // Người dùng nhấn "Cancel"
+                return; 
             }
-
             String tenKhuVuc = txtTenKhuVuc.getText().trim();
             String moTa = txtMoTa.getText().trim();
-
-            // Kiểm tra dữ liệu đầu vào
             if (tenKhuVuc.isEmpty()) {
                 Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Tên khu vực không được để trống!");
                 txtTenKhuVuc.requestFocus();
@@ -373,11 +338,7 @@ public class FormKhoHang extends javax.swing.JPanel {
                 txtMoTa.requestFocus();
                 continue;
             }
-
-            // Tạo đối tượng KhuVucKho với dữ liệu đã chỉnh sửa
             KhuVucKho updatedKhuVucKho = new KhuVucKho(id, tenKhuVuc, moTa);
-
-            // Gọi service để cập nhật thông tin khu vực kho
             boolean isUpdated = service.updateKhuVucKho(updatedKhuVucKho);
             if (isUpdated) {
                 Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Cập nhật khu vực kho thành công!");
@@ -385,23 +346,18 @@ public class FormKhoHang extends javax.swing.JPanel {
             } else {
                 Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Cập nhật khu vực kho thất bại!");
             }
-            return; // Thoát vòng lặp sau khi cập nhật thành công
+            return;
         }
     }
     
     public void delete() {
-        // Lấy dòng được chọn trong bảng
         int selectedRow = tblKhuVuc.getSelectedRow();
         if (selectedRow == -1) {
             Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng chọn một khu vực để xóa!");
             return;
         }
-
-        // Lấy thông tin khu vực từ bảng
         int id = (int) tblKhuVuc.getValueAt(selectedRow, 0);
         String tenKhuVuc = (String) tblKhuVuc.getValueAt(selectedRow, 1);
-
-        // Hiển thị hộp thoại xác nhận
         int confirm = JOptionPane.showConfirmDialog(
             this,
             "Bạn có chắc chắn muốn xóa khu vực kho \"" + tenKhuVuc + "\"?",
@@ -409,13 +365,9 @@ public class FormKhoHang extends javax.swing.JPanel {
             JOptionPane.YES_NO_OPTION,
             JOptionPane.WARNING_MESSAGE
         );
-
-        // Nếu người dùng chọn "No", thoát
         if (confirm != JOptionPane.YES_OPTION) {
             return;
         }
-
-        // Gọi service để xóa khu vực kho
         boolean isDeleted = service.deleteKhuVucKho(id);
         if (isDeleted) {
             Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Xóa khu vực kho thành công!");
@@ -427,38 +379,33 @@ public class FormKhoHang extends javax.swing.JPanel {
     
     public void loadNhapKho(List<NhapKho> list) {
        DefaultTableModel tblModel = (DefaultTableModel) tblNhapKho.getModel();
-    tblModel.setRowCount(0); // Xóa dữ liệu cũ
-
-    for (NhapKho nk : list) {
-        Object[] rowData = {
-            nk.getId(),
-            nk.getManhap(),
-            nk.getNhacungcap(),
-            nk.getNhanvien(),
-            nk.getSanPham(),
-            nk.getSoLuong(),
-            nk.getNgaynhap(),
-            nk.getTongtien()
-        };
-        tblModel.addRow(rowData);
-    }
-
-    tblNhapKho.repaint();
-    tblNhapKho.revalidate();
+        tblModel.setRowCount(0);
+        for (NhapKho nk : list) {
+            Object[] rowData = {
+                nk.getId(),
+                nk.getManhap(),
+                nk.getNhacungcap(),
+                nk.getNhanvien(),
+                nk.getSanPham(),
+                nk.getSoLuong(),
+                nk.getNgaynhap(),
+                nk.getTongtien()
+            };
+            tblModel.addRow(rowData);
+        }
+        tblNhapKho.repaint();
+        tblNhapKho.revalidate();
     }
     
-    // Phương thức khởi tạo các ComboBox
     private void initializeComboBoxes(JComboBox<NhaCC> cbNhaCungCap, JComboBox<NhanVien> cbNhanVien, JComboBox<SanPham> cboSanPham) {
         List<NhanVien> nhanVienList = service3.getAllNhanVien();
         List<NhaCC> nhaCCList = service4.getAllNhaCungCap();
         List<SanPham> sanPhamList = service1.getAll();
-
         cbNhaCungCap.setModel(new DefaultComboBoxModel<>(nhaCCList.toArray(new NhaCC[0])));
         cbNhanVien.setModel(new DefaultComboBoxModel<>(nhanVienList.toArray(new NhanVien[0])));
         cboSanPham.setModel(new DefaultComboBoxModel<>(sanPhamList.toArray(new SanPham[0])));
     }
 
-// Phương thức thiết lập renderer cho các ComboBox
     private void setupComboBoxRenderers(JComboBox<NhaCC> cbNhaCungCap, JComboBox<NhanVien> cbNhanVien, JComboBox<SanPham> cboSanPham) {
         cbNhaCungCap.setRenderer(new DefaultListCellRenderer() {
             @Override
@@ -470,7 +417,6 @@ public class FormKhoHang extends javax.swing.JPanel {
                 return this;
             }
         });
-
         cbNhanVien.setRenderer(new DefaultListCellRenderer() {
             @Override
             public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
@@ -481,7 +427,6 @@ public class FormKhoHang extends javax.swing.JPanel {
                 return this;
             }
         });
-
         cboSanPham.setRenderer(new DefaultListCellRenderer() {
             @Override
             public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
@@ -494,54 +439,45 @@ public class FormKhoHang extends javax.swing.JPanel {
         });
     }
 
-// Phương thức tạo giao diện nhập kho
     private JPanel createNhapKhoPanel(JTextField txtMaNhap, JComboBox<NhaCC> cbNhaCungCap, JComboBox<NhanVien> cbNhanVien,
                                       JTextField txtNgayNhap, JTextField txtSoLuong, JComboBox<SanPham> cboSanPham) {
         JPanel panel = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
         gbc.fill = GridBagConstraints.HORIZONTAL;
-
         gbc.gridx = 0;
         gbc.gridy = 0;
         panel.add(new JLabel("Mã Nhập Kho:"), gbc);
         gbc.gridx = 1;
         panel.add(txtMaNhap, gbc);
-
         gbc.gridx = 0;
         gbc.gridy = 1;
         panel.add(new JLabel("Nhà Cung Cấp:"), gbc);
         gbc.gridx = 1;
         panel.add(cbNhaCungCap, gbc);
-
         gbc.gridx = 0;
         gbc.gridy = 2;
         panel.add(new JLabel("Nhân Viên Nhập:"), gbc);
         gbc.gridx = 1;
         panel.add(cbNhanVien, gbc);
-
         gbc.gridx = 0;
         gbc.gridy = 3;
         panel.add(new JLabel("Ngày Nhập (dd/MM/yyyy):"), gbc);
         gbc.gridx = 1;
         panel.add(txtNgayNhap, gbc);
-
         gbc.gridx = 0;
         gbc.gridy = 5;
         panel.add(new JLabel("Sản Phẩm:"), gbc);
         gbc.gridx = 1;
         panel.add(cboSanPham, gbc);
-
         gbc.gridx = 0;
         gbc.gridy = 6;
         panel.add(new JLabel("Số Lượng:"), gbc);
         gbc.gridx = 1;
         panel.add(txtSoLuong, gbc);
-
         return panel;
     }
 
-    // Phương thức xử lý thêm phiếu nhập kho
     private boolean processNhapKho(String maNhap, NhaCC nhaCungCap, NhanVien nhanVien, String ngayNhapStr,
                                    String soLuongStr, SanPham sanPham, NhapKhoService service2) {
         if (maNhap.isEmpty() || nhaCungCap == null || nhanVien == null || ngayNhapStr.isEmpty() ||
@@ -549,7 +485,6 @@ public class FormKhoHang extends javax.swing.JPanel {
             Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng điền đầy đủ thông tin!");
             return false;
         }
-
         Timestamp ngayNhap;
         try {
             SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
@@ -560,7 +495,6 @@ public class FormKhoHang extends javax.swing.JPanel {
             Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Ngày nhập không đúng định dạng (dd/MM/yyyy)!");
             return false;
         }
-
         int soLuong;
         try {
             soLuong = Integer.parseInt(soLuongStr);
@@ -572,7 +506,6 @@ public class FormKhoHang extends javax.swing.JPanel {
             Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Số lượng phải là số hợp lệ!");
             return false;
         }
-
         NhapKho nhapKho = new NhapKho();
         nhapKho.setManhap(maNhap);
         nhapKho.setNhacungcap(nhaCungCap.getTen());
@@ -580,11 +513,9 @@ public class FormKhoHang extends javax.swing.JPanel {
         nhapKho.setSanPham(sanPham.getTensp());
         nhapKho.setSoLuong(soLuong);
         nhapKho.setNgaynhap(ngayNhap);
-
         return service2.addNhapKho(nhapKho, nhaCungCap.getId(), nhanVien.getId(), sanPham.getId());
     }
 
-    // Phương thức chính gọi các phương thức trên
     public void Nhap() {
         JTextField txtMaNhap = new JTextField();
         JTextField txtNgayNhap = new JTextField();
@@ -592,30 +523,24 @@ public class FormKhoHang extends javax.swing.JPanel {
         JComboBox<NhaCC> cbNhaCungCap = new JComboBox<>();
         JComboBox<NhanVien> cbNhanVien = new JComboBox<>();
         JComboBox<SanPham> cboSanPham = new JComboBox<>();
-
         LocalDate today = LocalDate.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         txtNgayNhap.setText(today.format(formatter));
         initializeComboBoxes(cbNhaCungCap, cbNhanVien, cboSanPham);
         setupComboBoxRenderers(cbNhaCungCap, cbNhanVien, cboSanPham);
-
         JPanel panel = createNhapKhoPanel(txtMaNhap, cbNhaCungCap, cbNhanVien, txtNgayNhap, txtSoLuong, cboSanPham);
-
         while (true) {
             int result = JOptionPane.showConfirmDialog(
                 null, panel, "Thêm Phiếu Nhập Kho", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
-
             if (result != JOptionPane.OK_OPTION) {
                 return;
             }
-
             String maNhap = txtMaNhap.getText().trim();
             NhaCC nhaCungCap = (NhaCC) cbNhaCungCap.getSelectedItem();
             NhanVien nhanVien = (NhanVien) cbNhanVien.getSelectedItem();
             String ngayNhapStr = txtNgayNhap.getText().trim();
             String soLuongStr = txtSoLuong.getText().trim();
             SanPham sanPham = (SanPham) cboSanPham.getSelectedItem();
-
             if (processNhapKho(maNhap, nhaCungCap, nhanVien, ngayNhapStr, soLuongStr, sanPham, service2)) {
                 Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Thêm phiếu nhập kho thành công!");
                 loadNhapKho(service2.getListNhapKho());
@@ -627,7 +552,6 @@ public class FormKhoHang extends javax.swing.JPanel {
     }
 
     public void updateNhapKho() {
-        // Lấy dòng được chọn trong bảng
         int selectedRow = tblNhapKho.getSelectedRow();
         if (selectedRow == -1) {
             Notifications.getInstance().show(
@@ -637,8 +561,6 @@ public class FormKhoHang extends javax.swing.JPanel {
             );
             return;
         }
-
-        // Lấy thông tin hiện tại từ bảng
         int id = (int) tblNhapKho.getValueAt(selectedRow, 0);
         String currentMaNhap = (String) tblNhapKho.getValueAt(selectedRow, 1);
         String currentNhaCungCap = (String) tblNhapKho.getValueAt(selectedRow, 2);
@@ -646,22 +568,15 @@ public class FormKhoHang extends javax.swing.JPanel {
         String currentSanPham = (String) tblNhapKho.getValueAt(selectedRow, 4);
         int currentSoLuong = (int) tblNhapKho.getValueAt(selectedRow, 5);
         Timestamp currentNgayNhap = (Timestamp) tblNhapKho.getValueAt(selectedRow, 6);
-
-        // Tạo các trường nhập liệu cho hộp thoại
         JTextField txtMaNhap = new JTextField(currentMaNhap);
         txtMaNhap.setEnabled(false);
         JTextField txtNgayNhap = new JTextField(new SimpleDateFormat("dd/MM/yyyy").format(currentNgayNhap));
         JTextField txtSoLuong = new JTextField(String.valueOf(currentSoLuong));
-        //txtSoLuong.setEnabled(false);
         JComboBox<NhaCC> cbNhaCungCap = new JComboBox<>();
         JComboBox<NhanVien> cbNhanVien = new JComboBox<>();
         JComboBox<SanPham> cboSanPham = new JComboBox<>();
-
-        // Khởi tạo và thiết lập ComboBox
         initializeComboBoxes(cbNhaCungCap, cbNhanVien, cboSanPham);
         setupComboBoxRenderers(cbNhaCungCap, cbNhanVien, cboSanPham);
-
-        // Đặt giá trị hiện tại cho ComboBox
         List<NhaCC> nhaCungCapList = new NhaCCService().getAllNhaCungCap();
         for (NhaCC nhaCungCap : nhaCungCapList) {
             cbNhaCungCap.addItem(nhaCungCap);
@@ -674,7 +589,6 @@ public class FormKhoHang extends javax.swing.JPanel {
         for (SanPham sanPham : sanPhamList) {
             cboSanPham.addItem(sanPham);
         }
-
         int idNhaCungCap = service2.getIdNhaCungCapByNhapKhoId(id);
         for (NhaCC nhaCungCap : nhaCungCapList) {
             if (nhaCungCap.getId() == idNhaCungCap) {
@@ -696,43 +610,35 @@ public class FormKhoHang extends javax.swing.JPanel {
                 break;
             }
         }
-
-        // Panel để sắp xếp các trường nhập liệu
         JPanel panel = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
         gbc.fill = GridBagConstraints.HORIZONTAL;
-
         gbc.gridx = 0;
         gbc.gridy = 0;
         panel.add(new JLabel("Mã Nhập Kho:"), gbc);
         gbc.gridx = 1;
         panel.add(txtMaNhap, gbc);
-
         gbc.gridx = 0;
         gbc.gridy = 1;
         panel.add(new JLabel("Nhà Cung Cấp:"), gbc);
         gbc.gridx = 1;
         panel.add(cbNhaCungCap, gbc);
-
         gbc.gridx = 0;
         gbc.gridy = 2;
         panel.add(new JLabel("Nhân Viên Nhập:"), gbc);
         gbc.gridx = 1;
         panel.add(cbNhanVien, gbc);
-
         gbc.gridx = 0;
         gbc.gridy = 3;
         panel.add(new JLabel("Ngày Nhập (dd/MM/yyyy):"), gbc);
         gbc.gridx = 1;
         panel.add(txtNgayNhap, gbc);
-
         gbc.gridx = 0;
         gbc.gridy = 4;
         panel.add(new JLabel("Sản Phẩm:"), gbc);
         gbc.gridx = 1;
         panel.add(cboSanPham, gbc);
-
         gbc.gridx = 0;
         gbc.gridy = 5;
         panel.add(new JLabel("Số Lượng:"), gbc);
@@ -747,7 +653,7 @@ public class FormKhoHang extends javax.swing.JPanel {
                 JOptionPane.PLAIN_MESSAGE
             );
             if (result != JOptionPane.OK_OPTION) {
-                return; // Người dùng nhấn "Cancel"
+                return;
             }
             String maNhap = txtMaNhap.getText().trim();
             String ngayNhapStr = txtNgayNhap.getText().trim();
@@ -800,7 +706,6 @@ public class FormKhoHang extends javax.swing.JPanel {
             boolean isUpdated = service2.updateNhapKho(
                 id, nhaCungCap.getId(), nhanVien.getId(), sanPham.getId(), soLuong
             );
-
             if (isUpdated) {
                 Notifications.getInstance().show(
                     Notifications.Type.SUCCESS,
@@ -851,22 +756,15 @@ public class FormKhoHang extends javax.swing.JPanel {
         JFileChooser jFileChooser = new JFileChooser();
         if (jFileChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
             File saveFile = new File(jFileChooser.getSelectedFile().getAbsolutePath() + ".xlsx");
-
-            // Lấy danh sách phiếu nhập kho từ cơ sở dữ liệu
             ArrayList<NhapKho> nhapKhoList = (ArrayList<NhapKho>) service2.getListNhapKho();
-
             try (Workbook wb = new XSSFWorkbook(); FileOutputStream out = new FileOutputStream(saveFile)) {
                 Sheet sheet = wb.createSheet("Danh Sách Nhập Kho");
-
-                // Tiêu đề cột
                 String[] headers = {"STT", "ID Nhập Kho", "Mã Nhập", "Tên Nhà Cung Cấp", "Tên Nhân Viên", 
                                     "Tên Sản Phẩm", "Số Lượng", "Ngày Nhập", "Tổng Tiền"};
                 Row rowCol = sheet.createRow(0);
                 for (int i = 0; i < headers.length; i++) {
                     rowCol.createCell(i).setCellValue(headers[i]);
                 }
-
-                // Dữ liệu
                 int rowIndex = 1;
                 for (NhapKho nk : nhapKhoList) {
                     Row row = sheet.createRow(rowIndex++);
@@ -880,8 +778,6 @@ public class FormKhoHang extends javax.swing.JPanel {
                     row.createCell(7).setCellValue(nk.getNgaynhap().toString());
                     row.createCell(8).setCellValue(nk.getTongtien());
                 }
-
-                // Ghi dữ liệu ra file
                 wb.write(out);
                 Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Xuất file thành công!");
             } catch (IOException e) {
@@ -900,11 +796,7 @@ public class FormKhoHang extends javax.swing.JPanel {
 
 
 
-    /**
-     * This method is called from within the constructor to initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is always
-     * regenerated by the Form Editor.
-     */
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -1364,9 +1256,7 @@ public class FormKhoHang extends javax.swing.JPanel {
     private void tblKhuVucMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblKhuVucMouseClicked
         int selectedRow = tblKhuVuc.getSelectedRow();
             if (selectedRow != -1) {
-                // Lấy ID khu vực kho từ bảng
                 int idKhuVucKho = (int) tblKhuVuc.getValueAt(selectedRow, 0);
-                // Gọi phương thức để hiển thị danh sách sản phẩm trong khu vực kho
                 applyListStyle(idKhuVucKho);
             }
     }//GEN-LAST:event_tblKhuVucMouseClicked

@@ -48,10 +48,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import raven.toast.Notifications;
 
-/**
- *
- * @author ADMIN
- */
+
 public class FormDonHang extends javax.swing.JPanel {
     SanPhamService service = new SanPhamService();
     GioHangService service1 = new GioHangService();
@@ -62,9 +59,7 @@ public class FormDonHang extends javax.swing.JPanel {
     private List<Integer> selectedProductIds = new ArrayList<>();
 
     
-    /**
-     * Creates new form FormDonHang
-     */
+
     public FormDonHang(String Email) {
         this.Email = Email;
         initComponents();
@@ -77,17 +72,13 @@ public class FormDonHang extends javax.swing.JPanel {
         loadSanPhamData(service.searchSanPham(""));
         loadHoaDonData((ArrayList<HoaDonChiTiet>) service2.getAll());
         loadHoaDonOnlineData((ArrayList<HoaDonOnlineChiTiet>) service3.getAll());
-        refreshGioHangData();
-        //updateTotalOnLabel(jLabel9);
-        
+        refreshGioHangData();        
     }
     
     private void applyTableStyle(JTable table) {
-
         cmdDelete.setIcon(new FlatSVGIcon("da/icon/svg/delete.svg", 0.35f));
         cmdExcel.setIcon(new FlatSVGIcon("da/icon/svg/print.svg", 0.35f));
         cmdAdd.setIcon(new FlatSVGIcon("da/icon/svg/add.svg", 0.35f));
-
         txtSearch.putClientProperty(FlatClientProperties.TEXT_FIELD_TRAILING_ICON, new FlatSVGIcon("da/icon/svg/search.svg", 0.35f));
         //  Change scroll style
         JScrollPane scroll = (JScrollPane) table.getParent().getParent();
@@ -96,10 +87,8 @@ public class FormDonHang extends javax.swing.JPanel {
                 + "background:$Table.background;"
                 + "track:$Table.background;"
                 + "trackArc:999");
-
         table.getTableHeader().putClientProperty(FlatClientProperties.STYLE_CLASS, "table_style");
         table.putClientProperty(FlatClientProperties.STYLE_CLASS, "table_style");
-
         //  To Create table alignment
         table.getTableHeader().setDefaultRenderer(getAlignmentCellRender(table.getTableHeader().getDefaultRenderer(), true));
         table.setDefaultRenderer(Object.class, getAlignmentCellRender(table.getDefaultRenderer(Object.class), false));
@@ -127,10 +116,6 @@ public class FormDonHang extends javax.swing.JPanel {
         List<GioHang> khList = service1.getProductsByGioHang(id);
         myList11.removeAll();
         if (khList.isEmpty()) {
-//            JLabel emptyLabel = new JLabel("Không có sản phẩm nào trong khu vực kho này.");
-//            emptyLabel.setHorizontalAlignment(SwingConstants.CENTER);
-//            myList11.setLayout(new BorderLayout());
-//            myList11.add(emptyLabel, BorderLayout.CENTER);
         } else {
             MyList1<GioHang> list = new MyList1<>();
             for (GioHang kh : khList) {
@@ -218,8 +203,6 @@ public class FormDonHang extends javax.swing.JPanel {
             txtTen.setText(sanPham.getTensp());
             txtSoLuongTon.setText(String.valueOf(sanPham.getSoluongton()));
             txtGia.setText(String.valueOf(sanPham.getGia()));
-            //cboMau.setSelectedIndex(sanPham.getIdMauSac());
-            //cboKichThuoc.setSelectedIndex(sanPham.getIdMauSac());    
         }
         
         
@@ -254,8 +237,6 @@ public class FormDonHang extends javax.swing.JPanel {
             txtTen.requestFocus();
             return false;
         }
-
-        // Kiểm tra trống cho txtSoLuongTon
         if (txtSoLuongTon.getText().trim().isEmpty()) {
             Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Số lượng tồn không được để trống!");
             txtSoLuongTon.requestFocus();
@@ -274,8 +255,6 @@ public class FormDonHang extends javax.swing.JPanel {
             txtSoLuongTon.requestFocus();
             return false;
         }
-
-        // Kiểm tra trống cho txtGia
         if (txtGia.getText().trim().isEmpty()) {
             Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Giá không được để trống!");
             txtGia.requestFocus();
@@ -304,8 +283,6 @@ public class FormDonHang extends javax.swing.JPanel {
             cboKichThuoc.requestFocus();
             return false;
         }
-
-        // Kiểm tra trống cho txtSoLuong
         if (txtSoLuong.getText().trim().isEmpty()) {
             Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Số lượng không được để trống!");
             txtSoLuong.requestFocus();
@@ -318,7 +295,7 @@ public class FormDonHang extends javax.swing.JPanel {
                 txtSoLuong.requestFocus();
                 return false;
             }
-            if (soLuong > soLuongTon) { // Kiểm tra số lượng lớn hơn số lượng tồn
+            if (soLuong > soLuongTon) {
                 Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Số lượng không được lớn hơn số lượng tồn!");
                 txtSoLuong.requestFocus();
                 return false;
@@ -328,7 +305,6 @@ public class FormDonHang extends javax.swing.JPanel {
             txtSoLuong.requestFocus();
             return false;
         }
-
         return true;
     }
     
@@ -354,7 +330,6 @@ public class FormDonHang extends javax.swing.JPanel {
             }
             String tenMauSac = cboMau.getSelectedItem().toString();
             String kichThuoc = cboKichThuoc.getSelectedItem().toString();
-            // Tạo đối tượng GioHang và thêm vào cơ sở dữ liệu
             GioHang gioHang = new GioHang(0, idNguoiDung, idSanPham, maSP, tenSP,tenMauSac,kichThuoc, tongTien, soLuong);
             boolean success = service1.addGioHang(gioHang);
             if (success) {
@@ -384,36 +359,26 @@ public class FormDonHang extends javax.swing.JPanel {
     }
     
     private void deleteFromCart() {
-        // Lấy hàng được chọn từ bảng tblGioHang
         int selectedRow = tblGioHang.getSelectedRow();
         if (selectedRow == -1) {
             Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng chọn mục cần xóa khỏi giỏ hàng!");
             return;
         }
-
-        // Lấy ID của mục giỏ hàng từ cột đầu tiên
         int idGioHang = (int) tblGioHang.getValueAt(selectedRow, 0);
-
-        // Lấy số lượng và ID sản phẩm để khôi phục số lượng tồn trong kho
         int soLuong = (int) tblGioHang.getValueAt(selectedRow, 3);
         String maSP = (String) tblGioHang.getValueAt(selectedRow, 1);
         int idSanPham = service1.getIdByMaSP(maSP);
-
-        // Hiển thị hộp thoại xác nhận
         int confirm = JOptionPane.showConfirmDialog(this, "Bạn có chắc chắn muốn xóa mục này khỏi giỏ hàng?", "Xác nhận", JOptionPane.YES_NO_OPTION);
         if (confirm != JOptionPane.YES_OPTION) {
-            return; // Người dùng chọn "Không"
+            return; 
         }
-
-        // Xóa mục giỏ hàng
         boolean deleted = service1.deleteGioHangById(idGioHang);
         if (deleted) {
-            // Khôi phục số lượng tồn kho của sản phẩm
             boolean restored = service.updateSoLuongTon(idSanPham, -soLuong); // Số âm để tăng số lượng tồn
             if (restored) {
                 Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Xóa sản phẩm khỏi giỏ hàng thành công!");
-                refreshGioHangData(); // Làm mới bảng giỏ hàng
-                refreshSanPham(); // Làm mới bảng sản phẩm
+                refreshGioHangData();
+                refreshSanPham();
             } else {
                 Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Không thể khôi phục số lượng tồn, vui lòng kiểm tra lại!");
             }
@@ -426,22 +391,15 @@ public class FormDonHang extends javax.swing.JPanel {
         JFileChooser jFileChooser = new JFileChooser();
         if (jFileChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
             File saveFile = new File(jFileChooser.getSelectedFile().getAbsolutePath() + ".xlsx");
-
-            // Lấy danh sách giỏ hàng từ cơ sở dữ liệu
             ArrayList<GioHang> gioHangList = service1.getGioHangByEmail(Email);
-
             try (Workbook wb = new XSSFWorkbook(); FileOutputStream out = new FileOutputStream(saveFile)) {
                 Sheet sheet = wb.createSheet("Danh Sách Giỏ Hàng");
-
-                // Tiêu đề cột
                 String[] headers = {"STT", "ID Giỏ Hàng", "Mã Sản Phẩm", "Tên Sản Phẩm", "Số Lượng", 
                                     "Tổng Tiền", "Màu Sắc", "Kích Thước"};
                 Row rowCol = sheet.createRow(0);
                 for (int i = 0; i < headers.length; i++) {
                     rowCol.createCell(i).setCellValue(headers[i]);
                 }
-
-                // Dữ liệu
                 int rowIndex = 1;
                 for (GioHang gh : gioHangList) {
                     Row row = sheet.createRow(rowIndex++);
@@ -454,8 +412,6 @@ public class FormDonHang extends javax.swing.JPanel {
                     row.createCell(6).setCellValue(gh.getTenMauSac());
                     row.createCell(7).setCellValue(gh.getKichThuoc());
                 }
-
-                // Ghi dữ liệu ra file
                 wb.write(out);
                 Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Xuất file thành công!");
             } catch (IOException e) {
@@ -471,17 +427,17 @@ public class FormDonHang extends javax.swing.JPanel {
     }
     
     private void capNhatTongTien(JLabel totalLabel) {
-    List<Integer> selectedIds = getSelectedIdsFromTable();
-    BigDecimal total = tinhTongTien(selectedIds);
-    totalLabel.setText(total.toString() + " VND");
-}
+        List<Integer> selectedIds = getSelectedIdsFromTable();
+        BigDecimal total = tinhTongTien(selectedIds);
+        totalLabel.setText(total.toString() + " VND");
+    }
 
     private List<Integer> getSelectedIdsFromTable() {
         List<Integer> ids = new ArrayList<>();
         for (int row = 0; row < tblGioHang.getRowCount(); row++) {
             Boolean isChecked = (Boolean) tblGioHang.getValueAt(row, tblGioHang.getColumnCount() - 1); // Cột checkbox
-            if (isChecked != null && isChecked) { // Kiểm tra nếu checkbox được tick
-                int id = (int) tblGioHang.getValueAt(row, 0); // Lấy ID từ cột đầu tiên
+            if (isChecked != null && isChecked) {
+                int id = (int) tblGioHang.getValueAt(row, 0);
                 ids.add(id);
             }
         }
@@ -499,8 +455,7 @@ public class FormDonHang extends javax.swing.JPanel {
     
     public void loadHoaDonData(ArrayList<HoaDonChiTiet> list) {
         DefaultTableModel tblModel = (DefaultTableModel) tblHoaDon.getModel();
-        tblModel.setRowCount(0); // Xóa tất cả các hàng trong bảng trước khi tải dữ liệu mới
-        //int index = 1;
+        tblModel.setRowCount(0);
         for (HoaDonChiTiet hoaDon : list) {
             Object[] rowData = {
                 hoaDon.getId(),
@@ -517,13 +472,13 @@ public class FormDonHang extends javax.swing.JPanel {
     }
     
     public void refeshHD(){
-        ArrayList<HoaDonChiTiet> hoaDonList = (ArrayList<HoaDonChiTiet>) service2.getAll(); // Lấy danh sách hóa đơn từ service
+        ArrayList<HoaDonChiTiet> hoaDonList = (ArrayList<HoaDonChiTiet>) service2.getAll();
         loadHoaDonData(hoaDonList);
         Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Đã làm mới");
     }
     
     public void refeshGH(){
-        ArrayList<GioHang> gioHang =  service1.getGioHangByEmail(Email); // Lấy danh sách hóa đơn từ service
+        ArrayList<GioHang> gioHang =  service1.getGioHangByEmail(Email);
         loadGioHangData(gioHang);
         Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Đã làm mới");
 
@@ -547,33 +502,27 @@ public class FormDonHang extends javax.swing.JPanel {
                 "Tên Nhân Viên", "Tên Khách Hàng", "Tên Sản Phẩm", 
                 "Số Lượng", "Giá Bán", "Tổng Tiền", "Màu Sắc", "Kích Thước"
             };
-
-            // Tạo hàng tiêu đề
             Row headerRow = sheet.createRow(0);
             for (int i = 0; i < headers.length; i++) {
                 headerRow.createCell(i).setCellValue(headers[i]);
             }
-
-            // Điền dữ liệu vào sheet
             int rowIndex = 1;
             for (HoaDonChiTiet ct : hoaDonChiTietList) {
                 Row row = sheet.createRow(rowIndex);
-                row.createCell(0).setCellValue(rowIndex); // STT
-                row.createCell(1).setCellValue(ct.getMaHD()); // Mã hóa đơn
-                row.createCell(2).setCellValue(ct.getTrangThai()); // Trạng thái hóa đơn
-                row.createCell(3).setCellValue(ct.getNgay().toString()); // Ngày tạo hóa đơn
-                row.createCell(4).setCellValue(ct.getTenNV()); // Tên nhân viên
-                row.createCell(5).setCellValue(ct.getTenKH()); // Tên khách hàng
-                row.createCell(6).setCellValue(ct.getTenSP()); // Tên sản phẩm
-                row.createCell(7).setCellValue(ct.getSoLuong()); // Số lượng
-                row.createCell(8).setCellValue(ct.getDonGia().doubleValue()); // Giá bán
-                row.createCell(9).setCellValue(ct.getTongTien().doubleValue()); // Tổng tiền
-                row.createCell(10).setCellValue(ct.getMauSac()); // Màu sắc
-                row.createCell(11).setCellValue(ct.getKichThuoc()); // Kích thước
+                row.createCell(0).setCellValue(rowIndex);
+                row.createCell(1).setCellValue(ct.getMaHD());
+                row.createCell(2).setCellValue(ct.getTrangThai());
+                row.createCell(3).setCellValue(ct.getNgay().toString());
+                row.createCell(4).setCellValue(ct.getTenNV());
+                row.createCell(5).setCellValue(ct.getTenKH());
+                row.createCell(6).setCellValue(ct.getTenSP());
+                row.createCell(7).setCellValue(ct.getSoLuong());
+                row.createCell(8).setCellValue(ct.getDonGia().doubleValue());
+                row.createCell(9).setCellValue(ct.getTongTien().doubleValue());
+                row.createCell(10).setCellValue(ct.getMauSac());
+                row.createCell(11).setCellValue(ct.getKichThuoc());
                 rowIndex++;
             }
-
-            // Ghi dữ liệu ra file
             wb.write(out);
             Notifications.getInstance().show(
                 Notifications.Type.SUCCESS,
@@ -591,82 +540,68 @@ public class FormDonHang extends javax.swing.JPanel {
     }
 }
     
-public void inHoaDon() {
-    int selectedRow = tblHoaDon.getSelectedRow();
-    if (selectedRow == -1) {
-        JOptionPane.showMessageDialog(this, "Vui lòng chọn một hóa đơn trước khi in!", "Lỗi", JOptionPane.WARNING_MESSAGE);
-        return;
-    }
-
-    int id = Integer.parseInt(tblHoaDon.getValueAt(selectedRow, 0).toString());
-    Document document = new Document();
-
-    try {
-        BaseFont baseFont = BaseFont.createFont("C:/Windows/Fonts/times.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
-        Font titleFont = new Font(baseFont, 16, Font.BOLD);
-        Font normalFont = new Font(baseFont, 12, Font.NORMAL);
-
-        String fileName = "hoa_don_" + id + "_" + System.currentTimeMillis() + ".pdf";
-        PdfWriter.getInstance(document, new FileOutputStream(fileName));
-        document.open();
-
-        Paragraph title = new Paragraph("HÓA ĐƠN BÁN HÀNG", titleFont);
-        title.setAlignment(Element.ALIGN_CENTER);
-        document.add(title);
-
-        document.add(new Paragraph("Mã hóa đơn: " + tblHoaDon.getValueAt(selectedRow, 1).toString(), normalFont));
-        document.add(new Paragraph("Tên khách hàng: " + tblHoaDon.getValueAt(selectedRow, 5).toString(), normalFont));
-        document.add(new Paragraph("Tổng tiền: " + tblHoaDon.getValueAt(selectedRow, 4).toString() + " VND", normalFont));
-        document.add(new Paragraph("Trạng thái: " + tblHoaDon.getValueAt(selectedRow, 6).toString(), normalFont));
-        document.add(new Paragraph("\nNgày lập: " + new SimpleDateFormat("dd/MM/yyyy").format(new Date()), normalFont));
-        document.add(new Paragraph("\n"));
-
-        PdfPTable table = new PdfPTable(4);
-        table.addCell(new Paragraph("Tên SP", normalFont));
-        table.addCell(new Paragraph("Màu sắc", normalFont));
-        table.addCell(new Paragraph("Số lượng", normalFont));
-        table.addCell(new Paragraph("Thành tiền", normalFont));
-
-        List<HoaDonChiTiet> invoiceDetails = service2.getAllID(id);
-        if (invoiceDetails == null || invoiceDetails.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Không có dữ liệu chi tiết hóa đơn để in!", "Lỗi", JOptionPane.WARNING_MESSAGE);
+    public void inHoaDon() {
+        int selectedRow = tblHoaDon.getSelectedRow();
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(this, "Vui lòng chọn một hóa đơn trước khi in!", "Lỗi", JOptionPane.WARNING_MESSAGE);
             return;
         }
+        int id = Integer.parseInt(tblHoaDon.getValueAt(selectedRow, 0).toString());
+        Document document = new Document();
+        try {
+            BaseFont baseFont = BaseFont.createFont("C:/Windows/Fonts/times.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
+            Font titleFont = new Font(baseFont, 16, Font.BOLD);
+            Font normalFont = new Font(baseFont, 12, Font.NORMAL);
+            String fileName = "hoa_don_" + id + "_" + System.currentTimeMillis() + ".pdf";
+            PdfWriter.getInstance(document, new FileOutputStream(fileName));
+            document.open();
+            Paragraph title = new Paragraph("HÓA ĐƠN BÁN HÀNG", titleFont);
+            title.setAlignment(Element.ALIGN_CENTER);
+            document.add(title);
+            document.add(new Paragraph("Mã hóa đơn: " + tblHoaDon.getValueAt(selectedRow, 1).toString(), normalFont));
+            document.add(new Paragraph("Tên khách hàng: " + tblHoaDon.getValueAt(selectedRow, 5).toString(), normalFont));
+            document.add(new Paragraph("Tổng tiền: " + tblHoaDon.getValueAt(selectedRow, 4).toString() + " VND", normalFont));
+            document.add(new Paragraph("Trạng thái: " + tblHoaDon.getValueAt(selectedRow, 6).toString(), normalFont));
+            document.add(new Paragraph("\nNgày lập: " + new SimpleDateFormat("dd/MM/yyyy").format(new Date()), normalFont));
+            document.add(new Paragraph("\n"));
+            PdfPTable table = new PdfPTable(4);
+            table.addCell(new Paragraph("Tên SP", normalFont));
+            table.addCell(new Paragraph("Màu sắc", normalFont));
+            table.addCell(new Paragraph("Số lượng", normalFont));
+            table.addCell(new Paragraph("Thành tiền", normalFont));
+            List<HoaDonChiTiet> invoiceDetails = service2.getAllID(id);
+            if (invoiceDetails == null || invoiceDetails.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Không có dữ liệu chi tiết hóa đơn để in!", "Lỗi", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            BigDecimal tongTienSanPham = BigDecimal.ZERO;
+            for (HoaDonChiTiet detail : invoiceDetails) {
+            table.addCell(new Paragraph(detail.getTenSP(), normalFont));
+            table.addCell(new Paragraph(detail.getMauSac(), normalFont));
+            table.addCell(new Paragraph(String.valueOf(detail.getSoLuong()), normalFont));
+            table.addCell(new Paragraph(detail.getTongTien().toPlainString(), normalFont));
+                tongTienSanPham = tongTienSanPham.add(detail.getTongTien());
+            }
+            document.add(table);
+            Paragraph totalAmount = new Paragraph("\nTổng tiền sản phẩm: " + String.format("%.0f", tongTienSanPham) + " VND", normalFont);
+            totalAmount.setAlignment(Element.ALIGN_RIGHT);
+            document.add(totalAmount);
 
-        BigDecimal tongTienSanPham = BigDecimal.ZERO;
-
-        for (HoaDonChiTiet detail : invoiceDetails) {
-        table.addCell(new Paragraph(detail.getTenSP(), normalFont));
-        table.addCell(new Paragraph(detail.getMauSac(), normalFont));
-        table.addCell(new Paragraph(String.valueOf(detail.getSoLuong()), normalFont));
-        table.addCell(new Paragraph(detail.getTongTien().toPlainString(), normalFont)); // dùng toPlainString() thay vì toString()
-
-            tongTienSanPham = tongTienSanPham.add(detail.getTongTien());
-        }
-
-        document.add(table);
-
-        // Dòng tổng tiền sản phẩm
-        Paragraph totalAmount = new Paragraph("\nTổng tiền sản phẩm: " + String.format("%.0f", tongTienSanPham) + " VND", normalFont);
-        totalAmount.setAlignment(Element.ALIGN_RIGHT);
-        document.add(totalAmount);
-
-        document.add(new Paragraph("\nCảm ơn quý khách đã mua hàng!", normalFont));
-        JOptionPane.showMessageDialog(this, "✅ Hóa đơn đã được tạo: " + fileName);
-    } catch (Exception e) {
-        e.printStackTrace();
-        JOptionPane.showMessageDialog(this, "❌ Lỗi khi tạo hóa đơn: " + e.getMessage());
-    } finally {
-        if (document.isOpen()) {
-            document.close();
+            document.add(new Paragraph("\nCảm ơn quý khách đã mua hàng!", normalFont));
+            JOptionPane.showMessageDialog(this, "✅ Hóa đơn đã được tạo: " + fileName);
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "❌ Lỗi khi tạo hóa đơn: " + e.getMessage());
+        } finally {
+            if (document.isOpen()) {
+                document.close();
+            }
         }
     }
-}
 
-public void loadHoaDonOnlineData(ArrayList<HoaDonOnlineChiTiet> list) {
+    public void loadHoaDonOnlineData(ArrayList<HoaDonOnlineChiTiet> list) {
         DefaultTableModel tblModel = (DefaultTableModel) tblHoaDonOnline.getModel();
-        tblModel.setRowCount(0); // Xóa tất cả các hàng trong bảng trước khi tải dữ liệu mới
-        //int index = 1;
+        tblModel.setRowCount(0);
         for (HoaDonOnlineChiTiet hoaDon : list) {
             String trangThaiStr = hoaDon.getTrangThai() == 0 ? "Chờ xác nhận" :
                               hoaDon.getTrangThai() == 1 ? "Đã Duyệt" :
@@ -740,81 +675,68 @@ public void loadHoaDonOnlineData(ArrayList<HoaDonOnlineChiTiet> list) {
     }
     
     public void inTatCaHoaDonOnlineTungCai(String folderPath) {
-    try {
-        File folder = new File(folderPath);
-        if (!folder.exists()) {
-            folder.mkdirs(); // Tạo thư mục
-        }
-        BaseFont baseFont = BaseFont.createFont("C:/Windows/Fonts/times.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
-        Font titleFont = new Font(baseFont, 16, Font.BOLD);
-        Font normalFont = new Font(baseFont, 12, Font.NORMAL);
-
-        List<HoaDonOnlineChiTiet> danhSachHoaDon = service3.InHoaDon();
-        if (danhSachHoaDon == null || danhSachHoaDon.isEmpty()) {
-            Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Không có hóa đơn nào !");
-            return;
-        }
-
-        for (HoaDonOnlineChiTiet hoaDon : danhSachHoaDon) {
-            // Tạo file PDF trong thư mục chỉ định
-            String fileName = folderPath + File.separator + "hoa_don_" + hoaDon.getMaHD() + ".pdf";
-            Document document = new Document();
-            PdfWriter.getInstance(document, new FileOutputStream(fileName));
-            document.open();
-
-            Paragraph title = new Paragraph("HÓA ĐƠN BÁN HÀNG", titleFont);
-            title.setAlignment(Element.ALIGN_CENTER);
-            document.add(title);
-
-            // Thông tin hóa đơn
-            document.add(new Paragraph("Mã hóa đơn: " + hoaDon.getMaHD(), normalFont));
-            document.add(new Paragraph("Tên khách hàng: " + hoaDon.getTenKH(), normalFont));
-            document.add(new Paragraph("Số điện thoại: " + hoaDon.getSDT(), normalFont));
-            document.add(new Paragraph("Địa chỉ giao hàng: " + hoaDon.getDiaChiGiaoHang(), normalFont));
-            document.add(new Paragraph("Hình thức vận chuyển: " + hoaDon.getHinhThucVanChuyen(), normalFont));
-            document.add(new Paragraph("\nNgày lập: " + new SimpleDateFormat("dd/MM/yyyy").format(new Date()), normalFont));
-            document.add(new Paragraph("\n"));
-
-            PdfPTable table = new PdfPTable(5); // 5 cột
-            table.addCell(new Paragraph("Tên SP", normalFont));
-            table.addCell(new Paragraph("Màu sắc", normalFont));
-            table.addCell(new Paragraph("Size", normalFont));
-            table.addCell(new Paragraph("Số lượng", normalFont));
-            table.addCell(new Paragraph("Thành tiền", normalFont));
-
-            BigDecimal tongTienSanPham = BigDecimal.ZERO;
-            List<HoaDonOnlineChiTiet> chiTietSanPham = service3.InHoaDonTheoMa(hoaDon.getMaHD());
-            if (chiTietSanPham != null && !chiTietSanPham.isEmpty()) {
-                for (HoaDonOnlineChiTiet detail : chiTietSanPham) {
-                    table.addCell(new Paragraph(detail.getTenSP(), normalFont));
-                    table.addCell(new Paragraph(detail.getMauSac(), normalFont));
-                    table.addCell(new Paragraph(detail.getKichThuoc(), normalFont));
-                    table.addCell(new Paragraph(String.valueOf(detail.getSoLuong()), normalFont));
-                    table.addCell(new Paragraph(detail.getTongTien().toPlainString(), normalFont)); // Dùng toPlainString() thay vì toString()
-                    tongTienSanPham = tongTienSanPham.add(detail.getTongTien());
-                }
+        try {
+            File folder = new File(folderPath);
+            if (!folder.exists()) {
+                folder.mkdirs();
             }
-            document.add(table);
-            Paragraph totalAmount = new Paragraph("\nTổng tiền sản phẩm: " + String.format("%.0f", tongTienSanPham) + " VND", normalFont);
-            totalAmount.setAlignment(Element.ALIGN_RIGHT);
-            document.add(totalAmount);
-
-            document.add(new Paragraph("\nCảm ơn quý khách đã mua hàng!", normalFont));
-            Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Hóa Đơn đã được tạo thanhh công!");
-            document.close();
+            BaseFont baseFont = BaseFont.createFont("C:/Windows/Fonts/times.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
+            Font titleFont = new Font(baseFont, 16, Font.BOLD);
+            Font normalFont = new Font(baseFont, 12, Font.NORMAL);
+            List<HoaDonOnlineChiTiet> danhSachHoaDon = service3.InHoaDon();
+            if (danhSachHoaDon == null || danhSachHoaDon.isEmpty()) {
+                Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Không có hóa đơn nào !");
+                return;
+            }
+            for (HoaDonOnlineChiTiet hoaDon : danhSachHoaDon) {
+                String fileName = folderPath + File.separator + "hoa_don_" + hoaDon.getMaHD() + ".pdf";
+                Document document = new Document();
+                PdfWriter.getInstance(document, new FileOutputStream(fileName));
+                document.open();
+                Paragraph title = new Paragraph("HÓA ĐƠN BÁN HÀNG", titleFont);
+                title.setAlignment(Element.ALIGN_CENTER);
+                document.add(title);
+                document.add(new Paragraph("Mã hóa đơn: " + hoaDon.getMaHD(), normalFont));
+                document.add(new Paragraph("Tên khách hàng: " + hoaDon.getTenKH(), normalFont));
+                document.add(new Paragraph("Số điện thoại: " + hoaDon.getSDT(), normalFont));
+                document.add(new Paragraph("Địa chỉ giao hàng: " + hoaDon.getDiaChiGiaoHang(), normalFont));
+                document.add(new Paragraph("Hình thức vận chuyển: " + hoaDon.getHinhThucVanChuyen(), normalFont));
+                document.add(new Paragraph("\nNgày lập: " + new SimpleDateFormat("dd/MM/yyyy").format(new Date()), normalFont));
+                document.add(new Paragraph("\n"));
+                PdfPTable table = new PdfPTable(5);
+                table.addCell(new Paragraph("Tên SP", normalFont));
+                table.addCell(new Paragraph("Màu sắc", normalFont));
+                table.addCell(new Paragraph("Size", normalFont));
+                table.addCell(new Paragraph("Số lượng", normalFont));
+                table.addCell(new Paragraph("Thành tiền", normalFont));
+                BigDecimal tongTienSanPham = BigDecimal.ZERO;
+                List<HoaDonOnlineChiTiet> chiTietSanPham = service3.InHoaDonTheoMa(hoaDon.getMaHD());
+                if (chiTietSanPham != null && !chiTietSanPham.isEmpty()) {
+                    for (HoaDonOnlineChiTiet detail : chiTietSanPham) {
+                        table.addCell(new Paragraph(detail.getTenSP(), normalFont));
+                        table.addCell(new Paragraph(detail.getMauSac(), normalFont));
+                        table.addCell(new Paragraph(detail.getKichThuoc(), normalFont));
+                        table.addCell(new Paragraph(String.valueOf(detail.getSoLuong()), normalFont));
+                        table.addCell(new Paragraph(detail.getTongTien().toPlainString(), normalFont)); // Dùng toPlainString() thay vì toString()
+                        tongTienSanPham = tongTienSanPham.add(detail.getTongTien());
+                    }
+                }
+                document.add(table);
+                Paragraph totalAmount = new Paragraph("\nTổng tiền sản phẩm: " + String.format("%.0f", tongTienSanPham) + " VND", normalFont);
+                totalAmount.setAlignment(Element.ALIGN_RIGHT);
+                document.add(totalAmount);
+                document.add(new Paragraph("\nCảm ơn quý khách đã mua hàng!", normalFont));
+                Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Hóa Đơn đã được tạo thanhh công!");
+                document.close();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Lỗi khi tạo hóa đơn!" + e.getMessage());
         }
-    } catch (Exception e) {
-        e.printStackTrace();
-        Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Lỗi khi tạo hóa đơn!" + e.getMessage());
     }
-}
 
     
-    /**
-     * This method is called from within the constructor to initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is always
-     * regenerated by the Form Editor.
-     */
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -1674,13 +1596,10 @@ public void loadHoaDonOnlineData(ArrayList<HoaDonOnlineChiTiet> list) {
         Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng chọn một hóa đơn!");
         return;
     }
-
-    // Lấy dữ liệu từ hàng được chọn
     selectedInvoiceId = tblHoaDon.getValueAt(selectedRow, 1).toString(); // Mã hóa đơn
     selectedCustomerName = tblHoaDon.getValueAt(selectedRow, 5).toString(); // Tên khách hàng
     selectedTotalAmount = tblHoaDon.getValueAt(selectedRow, 4).toString(); // Tổng tiền
     selectedStatus = tblHoaDon.getValueAt(selectedRow, 6).toString(); // Trạng thái
-
     System.out.println("Hóa đơn được chọn: Mã = " + selectedInvoiceId);
     }//GEN-LAST:event_tblHoaDonMouseClicked
 

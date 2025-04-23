@@ -36,10 +36,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import raven.toast.Notifications;
 
-/**
- *
- * @author ADMIN
- */
+
 public class FormThuocTinh extends javax.swing.JPanel {
     ChatLieuService service = new ChatLieuService();
     XuatXuService serviceXX = new XuatXuService();
@@ -47,9 +44,7 @@ public class FormThuocTinh extends javax.swing.JPanel {
     MauSacService servicems = new MauSacService();
     NhaCCService servicencc = new NhaCCService();
 
-    /**
-     * Creates new form FormKhoHang
-     */
+
     public FormThuocTinh() {
         initComponents();
         applyTableStyle(tblChatLieu);
@@ -57,7 +52,6 @@ public class FormThuocTinh extends javax.swing.JPanel {
         applyTableStyle(tblKichThuoc);
         applyTableStyle(tblMauSac);
         applyTableStyle(tblNhaCungCap);
-        
         loadChatLieuData(service.searchChatLieu(""));
         loadXuatXuData(serviceXX.searchXuatXu(""));
         loadKichThuocData(servicekt.searchKichThuoc(""));
@@ -66,54 +60,44 @@ public class FormThuocTinh extends javax.swing.JPanel {
     }
     
     private void applyTableStyle(JTable table) {
-
         cmdSearch.setIcon(new FlatSVGIcon("da/icon/svg/search.svg", 0.35f));
         cmdAdd.setIcon(new FlatSVGIcon("da/icon/svg/add.svg", 0.35f));
         cmdUpdate.setIcon(new FlatSVGIcon("da/icon/svg/edit.svg", 0.35f));
         cmdDelete.setIcon(new FlatSVGIcon("da/icon/svg/delete.svg", 0.35f));
         cmdExcel.setIcon(new FlatSVGIcon("da/icon/svg/print.svg", 0.35f));
-        
         cmdUpdate1.setIcon(new FlatSVGIcon("da/icon/svg/edit.svg", 0.35f));
         cmdAdd1.setIcon(new FlatSVGIcon("da/icon/svg/add.svg", 0.35f));
         cmdSearch1.setIcon(new FlatSVGIcon("da/icon/svg/search.svg", 0.35f));
         cmdDelete1.setIcon(new FlatSVGIcon("da/icon/svg/delete.svg", 0.35f));
         cmdExcel1.setIcon(new FlatSVGIcon("da/icon/svg/print.svg", 0.35f));
-        //lblFilter1.setIcon(new FlatSVGIcon("da/icon/svg/filter.svg", 0.35f));
-        
         cmdUpdate2.setIcon(new FlatSVGIcon("da/icon/svg/edit.svg", 0.35f));
         cmdAdd2.setIcon(new FlatSVGIcon("da/icon/svg/add.svg", 0.35f));
         cmdSearch2.setIcon(new FlatSVGIcon("da/icon/svg/search.svg", 0.35f));
         cmdDelete2.setIcon(new FlatSVGIcon("da/icon/svg/delete.svg", 0.35f));
         cmdExcel2.setIcon(new FlatSVGIcon("da/icon/svg/print.svg", 0.35f));
-        
         cmdUpdate3.setIcon(new FlatSVGIcon("da/icon/svg/edit.svg", 0.35f));
         cmdAdd3.setIcon(new FlatSVGIcon("da/icon/svg/add.svg", 0.35f));
         cmdSearch3.setIcon(new FlatSVGIcon("da/icon/svg/search.svg", 0.35f));
         cmdDelete3.setIcon(new FlatSVGIcon("da/icon/svg/delete.svg", 0.35f));
         cmdExcel3.setIcon(new FlatSVGIcon("da/icon/svg/print.svg", 0.35f));
-        
         cmdUpdate4.setIcon(new FlatSVGIcon("da/icon/svg/edit.svg", 0.35f));
         cmdAdd4.setIcon(new FlatSVGIcon("da/icon/svg/add.svg", 0.35f));
         cmdSearch4.setIcon(new FlatSVGIcon("da/icon/svg/search.svg", 0.35f));
         cmdDelete4.setIcon(new FlatSVGIcon("da/icon/svg/delete.svg", 0.35f));
         cmdExcel4.setIcon(new FlatSVGIcon("da/icon/svg/print.svg", 0.35f));
-
         txtSearch.putClientProperty(FlatClientProperties.TEXT_FIELD_TRAILING_ICON, new FlatSVGIcon("da/icon/svg/search.svg", 0.35f));
         txtSearch1.putClientProperty(FlatClientProperties.TEXT_FIELD_TRAILING_ICON, new FlatSVGIcon("da/icon/svg/search.svg", 0.35f));
         txtSearch2.putClientProperty(FlatClientProperties.TEXT_FIELD_TRAILING_ICON, new FlatSVGIcon("da/icon/svg/search.svg", 0.35f));
         txtSearch4.putClientProperty(FlatClientProperties.TEXT_FIELD_TRAILING_ICON, new FlatSVGIcon("da/icon/svg/search.svg", 0.35f));
         txtSearch3.putClientProperty(FlatClientProperties.TEXT_FIELD_TRAILING_ICON, new FlatSVGIcon("da/icon/svg/search.svg", 0.35f));
-        //  Change scroll style
         JScrollPane scroll = (JScrollPane) table.getParent().getParent();
         scroll.setBorder(BorderFactory.createEmptyBorder());
         scroll.getVerticalScrollBar().putClientProperty(FlatClientProperties.STYLE, ""
                 + "background:$Table.background;"
                 + "track:$Table.background;"
                 + "trackArc:999");
-
         table.getTableHeader().putClientProperty(FlatClientProperties.STYLE_CLASS, "table_style");
         table.putClientProperty(FlatClientProperties.STYLE_CLASS, "table_style");
-
         //  To Create table alignment
         table.getTableHeader().setDefaultRenderer(getAlignmentCellRender(table.getTableHeader().getDefaultRenderer(), true));
         table.setDefaultRenderer(Object.class, getAlignmentCellRender(table.getDefaultRenderer(Object.class), false));
@@ -125,13 +109,11 @@ public class FormThuocTinh extends javax.swing.JPanel {
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
                 Component com = oldRender.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
                 if (com instanceof JLabel label) {
-                // Căn chỉnh cột
                     switch (column) {
                         case 0, 4 -> label.setHorizontalAlignment(SwingConstants.CENTER);
                         case 2, 3 -> label.setHorizontalAlignment(SwingConstants.TRAILING);
                         default -> label.setHorizontalAlignment(SwingConstants.LEADING);
                     }
-                    // Nếu không phải header
                     if (!header) {
                         if (column == 4 && value instanceof Number) {
                             double numericValue = ((Number) value).doubleValue();
@@ -142,7 +124,6 @@ public class FormThuocTinh extends javax.swing.JPanel {
                                 label.setForeground(new Color(202, 48, 48));
                             }
                         } else {
-                        // Xử lý màu sắc khi chọn hàng
                             if (isSelected) {
                                 label.setForeground(table.getSelectionForeground());
                             } else {
@@ -160,10 +141,10 @@ public class FormThuocTinh extends javax.swing.JPanel {
     public void loadChatLieuData(ArrayList<ChatLieu> list) {
         DefaultTableModel tblModel = (DefaultTableModel) tblChatLieu.getModel();
         tblModel.setRowCount(0);
-        int index = 1; // Bắt đầu từ 1 (hoặc 0 tùy theo yêu cầu)
+        int index = 1;
         for (ChatLieu chatLieu : list) {
             Object[] thongTinChatLieu = {
-                index++,// Chỉ mục (Index) thay vì ID
+                index++,
                 chatLieu.getTenChatLieu(),
                 chatLieu.getId()
             };
@@ -174,10 +155,10 @@ public class FormThuocTinh extends javax.swing.JPanel {
     public void loadXuatXuData(ArrayList<XuatXu> list) {
         DefaultTableModel tblModel = (DefaultTableModel) tblXuatXu.getModel();
         tblModel.setRowCount(0);
-        int index = 1; // Chỉ mục bắt đầu từ 1
+        int index = 1;
         for (XuatXu xuatXu : list) {
             Object[] thongTinXuatXu = {
-                index++, // Chỉ mục (Index)
+                index++,
                 xuatXu.getTenXuatXu(),
                 xuatXu.getId()
             };
@@ -188,10 +169,10 @@ public class FormThuocTinh extends javax.swing.JPanel {
     public void loadKichThuocData(ArrayList<KichThuoc> list) {
         DefaultTableModel tblModel = (DefaultTableModel) tblKichThuoc.getModel();
         tblModel.setRowCount(0);
-        int index = 1; // Chỉ mục bắt đầu từ 1
+        int index = 1;
         for (KichThuoc kichThuoc : list) {
             Object[] thongTinKichThuoc = {
-                index++, // Chỉ mục (Index)
+                index++,
                 kichThuoc.getTen(),
                 kichThuoc.getId()
             };
@@ -202,10 +183,10 @@ public class FormThuocTinh extends javax.swing.JPanel {
     public void loadMauSacData(ArrayList<MauSac> list) {
         DefaultTableModel tblModel = (DefaultTableModel) tblMauSac.getModel();
         tblModel.setRowCount(0);
-        int index = 1; // Chỉ mục bắt đầu từ 1
+        int index = 1;
         for (MauSac mauSac : list) {
             Object[] thongTinMauSac = {
-                index++, // Chỉ mục (Index)
+                index++,
                 mauSac.getTen(),
                 mauSac.getId()
             };
@@ -216,10 +197,10 @@ public class FormThuocTinh extends javax.swing.JPanel {
     public void loadNhaCungCapData(ArrayList<NhaCC> list) {
         DefaultTableModel tblModel = (DefaultTableModel) tblNhaCungCap.getModel();
         tblModel.setRowCount(0);
-        int index = 1; // Chỉ mục bắt đầu từ 1
+        int index = 1;
         for (NhaCC ncc : list) {
             Object[] thongTinNCC = {
-                index++, // Chỉ mục (Index)
+                index++,
                 ncc.getTen(),
                 ncc.getDiaChi(),
                 ncc.getSdt(),
@@ -285,18 +266,15 @@ public class FormThuocTinh extends javax.swing.JPanel {
         DefaultTableModel model = (DefaultTableModel) tblChatLieu.getModel();
         int[] selectedRows = tblChatLieu.getSelectedRows();
         ArrayList<Integer> idsToDelete = new ArrayList<>();
-        // Kiểm tra xem có hàng nào được chọn không
         if (selectedRows.length == 0) {
             Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng chọn ít nhất một chất liệu để xóa!");
             return;
         }
-        // Lấy ID từ các hàng được chọn
         for (int row : selectedRows) {
-            Object idObj = model.getValueAt(row, 2); // Lấy ID từ cột thứ ba (index 2)
+            Object idObj = model.getValueAt(row, 2);
             if (idObj instanceof Integer) {
                 idsToDelete.add((Integer) idObj);
             } else {
-                // Xử lý trường hợp ID không phải là kiểu Integer
                 Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "ID không hợp lệ!");
                 return;
             }
@@ -305,14 +283,12 @@ public class FormThuocTinh extends javax.swing.JPanel {
         if (confirm != JOptionPane.YES_OPTION) {
             return;
         }
-        // Tiến hành xóa từng ID trong danh sách
         boolean allDeleted = true;
         for (int id : idsToDelete) {
             if (!service.deleteChatLieu(id)) {
                 allDeleted = false;
             }
         }
-        // Cập nhật lại bảng
         if (allDeleted) {
             Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Xóa thành công!");
         } else {
@@ -324,11 +300,9 @@ public class FormThuocTinh extends javax.swing.JPanel {
     public void updateSelectedChatLieu() {
         int selectedRow = tblChatLieu.getSelectedRow();
         if (selectedRow == -1) {
-            // Không có hàng nào được chọn
             Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng chọn một chất liệu để cập nhật!");
             return;
         }
-        // Lấy ID của chất liệu từ cột thứ ba (index 2)
         int id = (int) tblChatLieu.getValueAt(selectedRow, 2);
         String newTenChatLieu = txtNameCL.getText().trim();
         if (newTenChatLieu.isEmpty()) {
@@ -339,7 +313,6 @@ public class FormThuocTinh extends javax.swing.JPanel {
         boolean success = service.updateChatLieu(id, newTenChatLieu);
         if (success) {
             Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Cập nhật thành công!");
-            // Tải lại dữ liệu bảng
             loadChatLieuData(service.getAllChatLieu());
             txtNameCL.setText("");
         } else {
@@ -364,12 +337,10 @@ public class FormThuocTinh extends javax.swing.JPanel {
                 Sheet sheet = wb.createSheet("Danh Sách Chất Liệu");
                 int columnCount = tblChatLieu.getColumnCount();
                 int rowCount = tblChatLieu.getRowCount();
-                // Ghi tiêu đề cột
                 Row rowCol = sheet.createRow(0);
                 for (int i = 0; i < columnCount; i++) {
                     rowCol.createCell(i).setCellValue(tblChatLieu.getColumnName(i));
                 }
-                // Ghi dữ liệu bảng
                 for (int j = 0; j < rowCount; j++) {
                     Row row = sheet.createRow(j + 1);
                     for (int k = 0; k < columnCount; k++) {
@@ -381,7 +352,6 @@ public class FormThuocTinh extends javax.swing.JPanel {
                 }
                 wb.write(out);
                 Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Xuất file thành công!");
-                //openFile(saveFile.getAbsolutePath());
             } catch (IOException e) {
                 e.printStackTrace();
                 Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Lỗi khi xuất file!");
@@ -423,7 +393,7 @@ public class FormThuocTinh extends javax.swing.JPanel {
             return;
         }
         for (int row : selectedRows) {
-            Object idObj = model.getValueAt(row, 2); // Cột thứ 3 chứa ID
+            Object idObj = model.getValueAt(row, 2);
             if (idObj instanceof Integer) {
                 idsToDelete.add((Integer) idObj);
             } else {
@@ -479,12 +449,10 @@ public class FormThuocTinh extends javax.swing.JPanel {
                 Sheet sheet = wb.createSheet("Danh Sách Xuất Xứ");
                 int columnCount = tblXuatXu.getColumnCount();
                 int rowCount = tblXuatXu.getRowCount();
-                // Ghi tiêu đề cột
                 Row rowCol = sheet.createRow(0);
                 for (int i = 0; i < columnCount; i++) {
                     rowCol.createCell(i).setCellValue(tblXuatXu.getColumnName(i));
                 }
-                // Ghi dữ liệu bảng
                 for (int j = 0; j < rowCount; j++) {
                     Row row = sheet.createRow(j + 1);
                     for (int k = 0; k < columnCount; k++) {
@@ -496,7 +464,6 @@ public class FormThuocTinh extends javax.swing.JPanel {
                 }
                 wb.write(out);
                 Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Xuất file thành công!");
-                //openFile(saveFile.getAbsolutePath());
             } catch (IOException e) {
                 e.printStackTrace();
                 Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Lỗi khi xuất file!");
@@ -533,12 +500,10 @@ public class FormThuocTinh extends javax.swing.JPanel {
         DefaultTableModel model = (DefaultTableModel) tblKichThuoc.getModel();
         int[] selectedRows = tblKichThuoc.getSelectedRows();
         ArrayList<Integer> idsToDelete = new ArrayList<>();
-
         if (selectedRows.length == 0) {
             Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng chọn ít nhất một kích thước để xóa!");
             return;
         }
-
         for (int row : selectedRows) {
             Object idObj = model.getValueAt(row, 2); // Cột thứ 3 chứa ID
             if (idObj instanceof Integer) {
@@ -548,25 +513,21 @@ public class FormThuocTinh extends javax.swing.JPanel {
                 return;
             }
         }
-
         int confirm = JOptionPane.showConfirmDialog(null, "Bạn có chắc muốn xóa những kích thước đã chọn?", "Xác nhận xóa", JOptionPane.YES_NO_OPTION);
         if (confirm != JOptionPane.YES_OPTION) {
             return;
         }
-
         boolean allDeleted = true;
         for (int id : idsToDelete) {
             if (!servicekt.deleteKichThuoc(id)) {
                 allDeleted = false;
             }
         }
-
         if (allDeleted) {
             Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Xóa thành công!");
         } else {
             Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Có lỗi xảy ra khi xóa!");
         }
-
         loadKichThuocData(servicekt.getAllKichThuoc());
     }
 
@@ -576,17 +537,13 @@ public class FormThuocTinh extends javax.swing.JPanel {
             Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng chọn một kích thước để cập nhật!");
             return;
         }
-
         int id = (int) tblKichThuoc.getValueAt(selectedRow, 2);
         String newTenKichThuoc = txtNameKT.getText().trim();
-
         if (newTenKichThuoc.isEmpty()) {
             Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng nhập tên kích thước mới!");
             return;
         }
-
         boolean success = servicekt.updateKichThuoc(id, newTenKichThuoc);
-
         if (success) {
             Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Cập nhật thành công!");
             loadKichThuocData(servicekt.getAllKichThuoc());
@@ -604,14 +561,10 @@ public class FormThuocTinh extends javax.swing.JPanel {
                 Sheet sheet = wb.createSheet("Danh Sách Kích Thước");
                 int columnCount = tblKichThuoc.getColumnCount();
                 int rowCount = tblKichThuoc.getRowCount();
-
-                // Ghi tiêu đề cột
                 Row rowCol = sheet.createRow(0);
                 for (int i = 0; i < columnCount; i++) {
                     rowCol.createCell(i).setCellValue(tblKichThuoc.getColumnName(i));
                 }
-
-                // Ghi dữ liệu bảng
                 for (int j = 0; j < rowCount; j++) {
                     Row row = sheet.createRow(j + 1);
                     for (int k = 0; k < columnCount; k++) {
@@ -621,7 +574,6 @@ public class FormThuocTinh extends javax.swing.JPanel {
                         }
                     }
                 }
-
                 wb.write(out);
                 Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Xuất file thành công!");
             } catch (IOException e) {
@@ -641,14 +593,12 @@ public class FormThuocTinh extends javax.swing.JPanel {
         return true;
     }
 
-    // ➕ Thêm màu sắc
     public void addMS() {
         if (!checkFormMS()) {
             return;
         }
         String tenMau = txtNameMS.getText().trim();
         boolean isAdded = servicems.addMauSac(tenMau);
-
         if (isAdded) {
             Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Thêm thành công!");
             loadMauSacData(servicems.getAllMauSac());
@@ -658,19 +608,16 @@ public class FormThuocTinh extends javax.swing.JPanel {
         }
     }
 
-    // ❌ Xóa màu sắc đã chọn
     public void deleteSelectedMS() {
         DefaultTableModel model = (DefaultTableModel) tblMauSac.getModel();
         int[] selectedRows = tblMauSac.getSelectedRows();
         ArrayList<Integer> idsToDelete = new ArrayList<>();
-
         if (selectedRows.length == 0) {
             Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng chọn ít nhất một màu sắc để xóa!");
             return;
         }
-
         for (int row : selectedRows) {
-            Object idObj = model.getValueAt(row, 2); // Cột thứ 3 chứa ID
+            Object idObj = model.getValueAt(row, 2);
             if (idObj instanceof Integer) {
                 idsToDelete.add((Integer) idObj);
             } else {
@@ -678,46 +625,37 @@ public class FormThuocTinh extends javax.swing.JPanel {
                 return;
             }
         }
-
         int confirm = JOptionPane.showConfirmDialog(null, "Bạn có chắc muốn xóa những màu sắc đã chọn?", "Xác nhận xóa", JOptionPane.YES_NO_OPTION);
         if (confirm != JOptionPane.YES_OPTION) {
             return;
         }
-
         boolean allDeleted = true;
         for (int id : idsToDelete) {
             if (!servicems.deleteMauSac(id)) {
                 allDeleted = false;
             }
         }
-
         if (allDeleted) {
             Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Xóa thành công!");
         } else {
             Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Có lỗi xảy ra khi xóa!");
         }
-
         loadMauSacData(servicems.getAllMauSac());
     }
 
-    // ✏️ Cập nhật màu sắc
     public void updateSelectedMauSac() {
         int selectedRow = tblMauSac.getSelectedRow();
         if (selectedRow == -1) {
             Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng chọn một màu sắc để cập nhật!");
             return;
         }
-
         int id = (int) tblMauSac.getValueAt(selectedRow, 2);
         String newTenMau = txtNameMS.getText().trim();
-
         if (newTenMau.isEmpty()) {
             Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng nhập tên màu sắc mới!");
             return;
         }
-
         boolean success = servicems.updateMauSac(id, newTenMau);
-
         if (success) {
             Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Cập nhật thành công!");
             loadMauSacData(servicems.getAllMauSac());
@@ -727,7 +665,6 @@ public class FormThuocTinh extends javax.swing.JPanel {
         }
     }
 
-    // 📤 Xuất danh sách màu sắc ra file Excel
     private void exportMauSacToExcel() {
         JFileChooser jFileChooser = new JFileChooser();
         if (jFileChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
@@ -736,14 +673,10 @@ public class FormThuocTinh extends javax.swing.JPanel {
                 Sheet sheet = wb.createSheet("Danh Sách Màu Sắc");
                 int columnCount = tblMauSac.getColumnCount();
                 int rowCount = tblMauSac.getRowCount();
-
-                // Ghi tiêu đề cột
                 Row rowCol = sheet.createRow(0);
                 for (int i = 0; i < columnCount; i++) {
                     rowCol.createCell(i).setCellValue(tblMauSac.getColumnName(i));
                 }
-
-                // Ghi dữ liệu bảng
                 for (int j = 0; j < rowCount; j++) {
                     Row row = sheet.createRow(j + 1);
                     for (int k = 0; k < columnCount; k++) {
@@ -753,7 +686,6 @@ public class FormThuocTinh extends javax.swing.JPanel {
                         }
                     }
                 }
-
                 wb.write(out);
                 Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Xuất file thành công!");
             } catch (IOException e) {
@@ -765,173 +697,138 @@ public class FormThuocTinh extends javax.swing.JPanel {
 
     
     public boolean checkFormNCC() {
-    if (txtNameNCC.getText().trim().isEmpty() || txtAdress.getText().trim().isEmpty() || txtPhone.getText().trim().isEmpty() || txtEmail.getText().trim().isEmpty()) {
-        Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Vui lòng điền đầy đủ thông tin!");
-        return false;
+        if (txtNameNCC.getText().trim().isEmpty() || txtAdress.getText().trim().isEmpty() || txtPhone.getText().trim().isEmpty() || txtEmail.getText().trim().isEmpty()) {
+            Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Vui lòng điền đầy đủ thông tin!");
+            return false;
+        }
+        if (!txtPhone.getText().matches("^\\d{10,11}$")) {
+            Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Số điện thoại không hợp lệ!");
+            txtPhone.requestFocus();
+            return false;
+        }
+        if (!txtEmail.getText().matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$")) {
+            Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Email không hợp lệ!");
+            txtEmail.requestFocus();
+            return false;
+        }
+        return true;
     }
 
-    // Kiểm tra định dạng số điện thoại (10-11 chữ số)
-    if (!txtPhone.getText().matches("^\\d{10,11}$")) {
-        Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Số điện thoại không hợp lệ!");
-        txtPhone.requestFocus();
-        return false;
-    }
-
-    // Kiểm tra định dạng email hợp lệ
-    if (!txtEmail.getText().matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$")) {
-        Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Email không hợp lệ!");
-        txtEmail.requestFocus();
-        return false;
-    }
-
-    return true;
-}
-
-// ➕ Thêm nhà cung cấp
-public void addNCC() {
-    if (!checkFormNCC()) {
-        return;
-    }
-
-    String tenNCC = txtNameNCC.getText().trim();
-    String diaChi = txtAdress.getText().trim();
-    String soDienThoai = txtPhone.getText().trim();
-    String email = txtEmail.getText().trim();
-
-    boolean isAdded = servicencc.addNhaCungCap(tenNCC, diaChi, soDienThoai, email);
-
-    if (isAdded) {
-        Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Thêm thành công!");
-        loadNhaCungCapData(servicencc.getAllNhaCungCap());
-        txtNameNCC.setText("");
-        txtAdress.setText("");
-        txtPhone.setText("");
-        txtEmail.setText("");
-    } else {
-        Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Thêm thất bại!");
-    }
-}
-
-// ❌ Xóa nhà cung cấp đã chọn
-public void deleteSelectedNCC() {
-    DefaultTableModel model = (DefaultTableModel) tblNhaCungCap.getModel();
-    int[] selectedRows = tblNhaCungCap.getSelectedRows();
-    ArrayList<Integer> idsToDelete = new ArrayList<>();
-
-    if (selectedRows.length == 0) {
-        Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng chọn ít nhất một nhà cung cấp để xóa!");
-        return;
-    }
-
-    for (int row : selectedRows) {
-        Object idObj = model.getValueAt(row, 0); // Cột thứ 1 chứa ID
-        if (idObj instanceof Integer) {
-            idsToDelete.add((Integer) idObj);
-        } else {
-            Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "ID không hợp lệ!");
+    public void addNCC() {
+        if (!checkFormNCC()) {
             return;
         }
-    }
-
-    int confirm = JOptionPane.showConfirmDialog(null, "Bạn có chắc muốn xóa những nhà cung cấp đã chọn?", "Xác nhận xóa", JOptionPane.YES_NO_OPTION);
-    if (confirm != JOptionPane.YES_OPTION) {
-        return;
-    }
-
-    boolean allDeleted = true;
-    for (int id : idsToDelete) {
-        if (!servicencc.deleteNhaCungCap(id)) {
-            allDeleted = false;
+        String tenNCC = txtNameNCC.getText().trim();
+        String diaChi = txtAdress.getText().trim();
+        String soDienThoai = txtPhone.getText().trim();
+        String email = txtEmail.getText().trim();
+        boolean isAdded = servicencc.addNhaCungCap(tenNCC, diaChi, soDienThoai, email);
+        if (isAdded) {
+            Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Thêm thành công!");
+            loadNhaCungCapData(servicencc.getAllNhaCungCap());
+            txtNameNCC.setText("");
+            txtAdress.setText("");
+            txtPhone.setText("");
+            txtEmail.setText("");
+        } else {
+            Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Thêm thất bại!");
         }
     }
 
-    if (allDeleted) {
-        Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Xóa thành công!");
-    } else {
-        Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Có lỗi xảy ra khi xóa!");
-    }
-
-    loadNhaCungCapData(servicencc.getAllNhaCungCap());
-}
-
-// ✏️ Cập nhật nhà cung cấp
-public void updateSelectedNCC() {
-    int selectedRow = tblNhaCungCap.getSelectedRow();
-    if (selectedRow == -1) {
-        Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng chọn một nhà cung cấp để cập nhật!");
-        return;
-    }
-
-    int id = (int) tblNhaCungCap.getValueAt(selectedRow, 0);
-    String newTenNCC = txtNameNCC.getText().trim();
-    String newDiaChi = txtAdress.getText().trim();
-    String newSoDienThoai = txtPhone.getText().trim();
-    String newEmail = txtEmail.getText().trim();
-
-    if (!checkFormNCC()) {
-        return;
-    }
-
-    boolean success = servicencc.updateNhaCungCap(id, newTenNCC, newDiaChi, newSoDienThoai, newEmail);
-
-    if (success) {
-        Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Cập nhật thành công!");
-        loadNhaCungCapData(servicencc.getAllNhaCungCap());
-        txtNameNCC.setText("");
-        txtAdress.setText("");
-        txtPhone.setText("");
-        txtEmail.setText("");
-    } else {
-        Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Có lỗi xảy ra khi cập nhật!");
-    }
-}
-
-// 📤 Xuất danh sách nhà cung cấp ra file Excel
-private void exportNCCToExcel() {
-    JFileChooser jFileChooser = new JFileChooser();
-    if (jFileChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
-        File saveFile = new File(jFileChooser.getSelectedFile().getAbsolutePath() + ".xlsx");
-        try (Workbook wb = new XSSFWorkbook(); FileOutputStream out = new FileOutputStream(saveFile)) {
-            Sheet sheet = wb.createSheet("Danh Sách Nhà Cung Cấp");
-            int columnCount = tblNhaCungCap.getColumnCount();
-            int rowCount = tblNhaCungCap.getRowCount();
-
-            // Ghi tiêu đề cột
-            Row rowCol = sheet.createRow(0);
-            for (int i = 0; i < columnCount; i++) {
-                rowCol.createCell(i).setCellValue(tblNhaCungCap.getColumnName(i));
+    public void deleteSelectedNCC() {
+        DefaultTableModel model = (DefaultTableModel) tblNhaCungCap.getModel();
+        int[] selectedRows = tblNhaCungCap.getSelectedRows();
+        ArrayList<Integer> idsToDelete = new ArrayList<>();
+        if (selectedRows.length == 0) {
+            Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng chọn ít nhất một nhà cung cấp để xóa!");
+            return;
+        }
+        for (int row : selectedRows) {
+            Object idObj = model.getValueAt(row, 0);
+            if (idObj instanceof Integer) {
+                idsToDelete.add((Integer) idObj);
+            } else {
+                Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "ID không hợp lệ!");
+                return;
             }
+        }
+        int confirm = JOptionPane.showConfirmDialog(null, "Bạn có chắc muốn xóa những nhà cung cấp đã chọn?", "Xác nhận xóa", JOptionPane.YES_NO_OPTION);
+        if (confirm != JOptionPane.YES_OPTION) {
+            return;
+        }
+        boolean allDeleted = true;
+        for (int id : idsToDelete) {
+            if (!servicencc.deleteNhaCungCap(id)) {
+                allDeleted = false;
+            }
+        }
+        if (allDeleted) {
+            Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Xóa thành công!");
+        } else {
+            Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Có lỗi xảy ra khi xóa!");
+        }
+        loadNhaCungCapData(servicencc.getAllNhaCungCap());
+    }
 
-            // Ghi dữ liệu bảng
-            for (int j = 0; j < rowCount; j++) {
-                Row row = sheet.createRow(j + 1);
-                for (int k = 0; k < columnCount; k++) {
-                    Object value = tblNhaCungCap.getValueAt(j, k);
-                    if (value != null) {
-                        row.createCell(k).setCellValue(value.toString());
+    public void updateSelectedNCC() {
+        int selectedRow = tblNhaCungCap.getSelectedRow();
+        if (selectedRow == -1) {
+            Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng chọn một nhà cung cấp để cập nhật!");
+            return;
+        }
+        int id = (int) tblNhaCungCap.getValueAt(selectedRow, 0);
+        String newTenNCC = txtNameNCC.getText().trim();
+        String newDiaChi = txtAdress.getText().trim();
+        String newSoDienThoai = txtPhone.getText().trim();
+        String newEmail = txtEmail.getText().trim();
+        if (!checkFormNCC()) {
+            return;
+        }
+        boolean success = servicencc.updateNhaCungCap(id, newTenNCC, newDiaChi, newSoDienThoai, newEmail);
+        if (success) {
+            Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Cập nhật thành công!");
+            loadNhaCungCapData(servicencc.getAllNhaCungCap());
+            txtNameNCC.setText("");
+            txtAdress.setText("");
+            txtPhone.setText("");
+            txtEmail.setText("");
+        } else {
+            Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Có lỗi xảy ra khi cập nhật!");
+        }
+    }
+
+    private void exportNCCToExcel() {
+        JFileChooser jFileChooser = new JFileChooser();
+        if (jFileChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
+            File saveFile = new File(jFileChooser.getSelectedFile().getAbsolutePath() + ".xlsx");
+            try (Workbook wb = new XSSFWorkbook(); FileOutputStream out = new FileOutputStream(saveFile)) {
+                Sheet sheet = wb.createSheet("Danh Sách Nhà Cung Cấp");
+                int columnCount = tblNhaCungCap.getColumnCount();
+                int rowCount = tblNhaCungCap.getRowCount();
+                Row rowCol = sheet.createRow(0);
+                for (int i = 0; i < columnCount; i++) {
+                    rowCol.createCell(i).setCellValue(tblNhaCungCap.getColumnName(i));
+                }
+                for (int j = 0; j < rowCount; j++) {
+                    Row row = sheet.createRow(j + 1);
+                    for (int k = 0; k < columnCount; k++) {
+                        Object value = tblNhaCungCap.getValueAt(j, k);
+                        if (value != null) {
+                            row.createCell(k).setCellValue(value.toString());
+                        }
                     }
                 }
+                wb.write(out);
+                Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Xuất file thành công!");
+            } catch (IOException e) {
+                e.printStackTrace();
+                Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Lỗi khi xuất file!");
             }
-
-            wb.write(out);
-            Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Xuất file thành công!");
-        } catch (IOException e) {
-            e.printStackTrace();
-            Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Lỗi khi xuất file!");
         }
     }
-}
 
 
 
-
-    
-
-    /**
-     * This method is called from within the constructor to initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is always
-     * regenerated by the Form Editor.
-     */
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {

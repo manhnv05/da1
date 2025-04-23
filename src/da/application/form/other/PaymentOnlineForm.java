@@ -19,7 +19,6 @@ public class PaymentOnlineForm extends JPanel {
     private HoaDonOnlineService service1 = new HoaDonOnlineService();
     private GioHangService service2 = new GioHangService();
     private String Email;
-
     private List<Integer> productIds;
 
     public PaymentOnlineForm(String Email) {
@@ -31,11 +30,9 @@ public class PaymentOnlineForm extends JPanel {
 
     private void init() {
         setLayout(new MigLayout("wrap 2,fillx,insets n 35 n 35", "[fill,200]"));
-
         JLabel lbContactDetail = new JLabel("Thông tin đơn hàng");
         lbContactDetail.putClientProperty(FlatClientProperties.STYLE, "font:bold +2;");
         add(lbContactDetail, "gapy 10 10,span 2");
-
         add(new JLabel("Hình thức thanh toán"), "span 2");
         JComboBox<String> comboPaymentType = new JComboBox<>();
         comboPaymentType.addItem("Chuyển khoản ngân hàng");
@@ -44,10 +41,8 @@ public class PaymentOnlineForm extends JPanel {
         comboPaymentType.addItem("Cổng thanh toán trực tuyến");
         comboPaymentType.addItem("Thẻ tín dụng/ghi nợ");
         add(comboPaymentType, "gapy n 5,span 2");
-
         add(new JLabel("Mã Hóa Đơn"));
         add(new JLabel("Tên người nhận"));
-
         JTextField txtName = new JTextField();
         JTextField txtEmail = new JTextField();
         txtName.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Mã hóa đơn");
@@ -55,11 +50,9 @@ public class PaymentOnlineForm extends JPanel {
         add(txtName);
         add(txtEmail);
         txtName.setEnabled(false);
-
         JLabel lbRequestDetail = new JLabel("Yêu cầu chi tiết");
         lbRequestDetail.putClientProperty(FlatClientProperties.STYLE, "font:bold +2;");
         add(lbRequestDetail, "gapy 10 10,span 2");
-
         add(new JLabel("SĐT liên hệ"));
         add(new JLabel("Ngày"));
         JTextField txtSDT = new JTextField();
@@ -71,24 +64,20 @@ public class PaymentOnlineForm extends JPanel {
         datePicker.now();
         add(txtSDT);
         add(dateEditor);
-
         add(new JLabel("Địa chỉ nhận hàng"), "gapy 5,span 2");
         JTextField txtDiaChiNhanHang = new JTextField();
         txtDiaChiNhanHang.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Địa chỉ nhận hàng");
         add(txtDiaChiNhanHang, "Span 2");
-
         add(new JLabel("Phương thức vận chuyển"), "gapy 5,span 2");
         JComboBox<String> comboAccount = new JComboBox<>();
         comboAccount.addItem("Vận chuyển bình thường");
         comboAccount.addItem("Vận chuyển nhanh");
         comboAccount.addItem("Vận chuyển siêu tốc");
         add(comboAccount, "Span 2");
-
         add(new JLabel("Lưu ý"), "gapy 5,span 2");
         JTextField txtLuuY = new JTextField();
         txtLuuY.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Lưu ý cho người bán");
         add(txtLuuY, "Span 2");
-
         JButton cmdCancel = new JButton("Cancel");
         JButton cmdPayment = new JButton("Thêm Hóa Đơn") {
             @Override
@@ -96,7 +85,6 @@ public class PaymentOnlineForm extends JPanel {
                 return true;
             }
         };
-
         cmdCancel.addActionListener(actionEvent -> {
             ModalBorderAction modalAction = ModalBorderAction.getModalBorderAction(this);
             if (modalAction != null) {
@@ -105,9 +93,7 @@ public class PaymentOnlineForm extends JPanel {
                 System.out.println("ModalBorderAction is null. Ensure the modal is configured properly.");
             }
         });
-
         cmdPayment.addActionListener(actionEvent -> {
-            // Lấy thông tin từ form
             String maHoaDon = "HDO" + System.currentTimeMillis(); // Mã hóa đơn tự động sinh
             String tenKhachHang = txtEmail.getText().trim(); // Tên khách hàng
             String soDienThoai = txtSDT.getText().trim();
@@ -115,27 +101,21 @@ public class PaymentOnlineForm extends JPanel {
             String hinhThucThanhToan = (String) comboPaymentType.getSelectedItem();
             String hinhThucVanChuyen = (String) comboAccount.getSelectedItem();
             String luuy = txtLuuY.getText().trim();
-
             if (tenKhachHang.isEmpty() || soDienThoai.isEmpty() || diaChiGiaoHang.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "Vui lòng nhập đầy đủ thông tin cần thiết!", "Lỗi", JOptionPane.ERROR_MESSAGE);
                 return;
             }
-
-            // Gọi phương thức thêm hóa đơn
             int hoaDonID = service1.addHoaDonOnline(maHoaDon, soDienThoai, tenKhachHang, diaChiGiaoHang, hinhThucThanhToan, hinhThucVanChuyen, luuy);
             if (hoaDonID == -1) {
                 JOptionPane.showMessageDialog(this, "Thêm hóa đơn thất bại!", "Lỗi", JOptionPane.ERROR_MESSAGE);
                 return;
             }
-
-            // Nếu thêm hóa đơn thành công, tiếp tục thêm chi tiết hóa đơn
             List<HoaDonOnlineChiTiet> chiTietList = new ArrayList<>();
             for (Integer productId : productIds) {
                 HoaDonOnlineChiTiet chiTiet = new HoaDonOnlineChiTiet(productId);
                 chiTiet.setHoadononlineID(hoaDonID);
                 chiTietList.add(chiTiet);
             }
-
             boolean detailsSuccess = service1.addChiTietHoaDon(chiTietList);
             if (detailsSuccess) {
                 boolean deleted = service2.deleteGioHangByIds(productIds);
@@ -144,7 +124,6 @@ public class PaymentOnlineForm extends JPanel {
                 } else {
                     JOptionPane.showMessageDialog(this, "Thêm hóa đơn thành công nhưng không thể cập nhật trạng thái giỏ hàng!", "Lỗi", JOptionPane.WARNING_MESSAGE);
                 }
-                // Đóng modal nếu có
                 ModalBorderAction modalAction = ModalBorderAction.getModalBorderAction(this);
                 if (modalAction != null) {
                     modalAction.doAction(SimpleModalBorder.OK_OPTION);
@@ -155,7 +134,6 @@ public class PaymentOnlineForm extends JPanel {
                 JOptionPane.showMessageDialog(this, "Thêm hóa đơn thành công nhưng thêm chi tiết thất bại!", "Lỗi", JOptionPane.WARNING_MESSAGE);
             }
         });
-
         add(cmdCancel, "grow 0");
         add(cmdPayment, "grow 0, al trailing");
     }

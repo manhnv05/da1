@@ -49,7 +49,6 @@ import java.security.NoSuchAlgorithmException;
 public class FormNhanVien extends javax.swing.JPanel {
     NhanVienService service = new NhanVienService();
 
-   
     public FormNhanVien() {
         initComponents();
         applyTableStyle(tblNhanVien);
@@ -64,7 +63,6 @@ public class FormNhanVien extends javax.swing.JPanel {
         cmdExcel.setIcon(new FlatSVGIcon("da/icon/svg/print.svg", 0.35f));
         cmdDetails.setIcon(new FlatSVGIcon("da/icon/svg/details.svg", 0.35f));
         cmdSearch.setIcon(new FlatSVGIcon("da/icon/svg/search.svg", 0.35f));
-        
         txtSearch.putClientProperty(FlatClientProperties.TEXT_FIELD_TRAILING_ICON, new FlatSVGIcon("da/icon/svg/search.svg", 0.35f));
         //  Change scroll style
         JScrollPane scroll = (JScrollPane) table.getParent().getParent();
@@ -73,10 +71,8 @@ public class FormNhanVien extends javax.swing.JPanel {
                 + "background:$Table.background;"
                 + "track:$Table.background;"
                 + "trackArc:999");
-
         table.getTableHeader().putClientProperty(FlatClientProperties.STYLE_CLASS, "table_style");
         table.putClientProperty(FlatClientProperties.STYLE_CLASS, "table_style");
-
         //  To Create table alignment
         table.getTableHeader().setDefaultRenderer(getAlignmentCellRender(table.getTableHeader().getDefaultRenderer(), true));
         table.setDefaultRenderer(Object.class, getAlignmentCellRender(table.getDefaultRenderer(Object.class), false));
@@ -88,13 +84,11 @@ public class FormNhanVien extends javax.swing.JPanel {
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
                 Component com = oldRender.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
                 if (com instanceof JLabel label) {
-                // Căn chỉnh cột
                     switch (column) {
                         case 0, 2, 3 -> label.setHorizontalAlignment(SwingConstants.CENTER);
                         case 1 -> label.setHorizontalAlignment(SwingConstants.TRAILING);
                         default -> label.setHorizontalAlignment(SwingConstants.LEADING);
                     }
-                    // Nếu không phải header
                     if (!header) {
                         if (column == 4 && value instanceof Number) {
                             double numericValue = ((Number) value).doubleValue();
@@ -105,7 +99,6 @@ public class FormNhanVien extends javax.swing.JPanel {
                                 label.setForeground(new Color(202, 48, 48));
                             }
                         } else {
-                        // Xử lý màu sắc khi chọn hàng
                             if (isSelected) {
                                 label.setForeground(table.getSelectionForeground());
                             } else {
@@ -122,10 +115,10 @@ public class FormNhanVien extends javax.swing.JPanel {
     public void loadNhanVienData(ArrayList<NhanVien> list) {
         DefaultTableModel tblModel = (DefaultTableModel) tblNhanVien.getModel();
         tblModel.setRowCount(0);
-        int index = 1; // Bắt đầu từ 1 (hoặc 0 tùy theo yêu cầu)
+        int index = 1;
         for (NhanVien nhanVien : list) {
             Object[] thongTinNhanVien = {
-                index++,// Chỉ mục (Index) thay vì ID
+                index++,
                 nhanVien.getId(),
                 nhanVien.getMaNV(),
                 nhanVien.getHo() + " " + nhanVien.getTen(),
@@ -149,33 +142,23 @@ public class FormNhanVien extends javax.swing.JPanel {
             Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui Lòng chọn nhân viên!");
             return;
         }
-
-        // Lấy ID nhân viên từ cột thứ 2 (cột có chỉ số 1)
-        Object idObj = tblNhanVien.getValueAt(selectedRow, 1); // Lấy ID từ cột thứ 2 (cột có chỉ số 1)
-
+        Object idObj = tblNhanVien.getValueAt(selectedRow, 1);
         if (idObj == null) {
             Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "ID nhân viên không hợp lệ!");
             return;
         }
-
         int id = 0;
         try {
-            id = Integer.parseInt(idObj.toString()); // Chuyển đổi giá trị sang kiểu Integer
+            id = Integer.parseInt(idObj.toString());
         } catch (NumberFormatException e) {
             Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "ID nhân viên không hợp lệ!");
             return;
         }
-
-        // Lấy đối tượng NhanVien từ cơ sở dữ liệu hoặc danh sách nhân viên (giả sử có một phương thức tìm nhân viên theo ID)
-        NhanVien nhanVien = service.getNhanVienById(id); // Phương thức lấy nhân viên theo ID từ service hoặc từ database
-
-        // Kiểm tra nếu không có nhân viên tương ứng với ID
+        NhanVien nhanVien = service.getNhanVienById(id);
         if (nhanVien == null) {
             Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Nhân viên không tồn tại!");
             return;
         }
-
-        // Chuyển sang form UpdateNhanVien và truyền thông tin nhân viên
         Application.showForm(new UpdateNhanVien(nhanVien));
     }
     
@@ -185,33 +168,23 @@ public class FormNhanVien extends javax.swing.JPanel {
             Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui Lòng chọn nhân viên!");
             return;
         }
-
-        // Lấy ID nhân viên từ cột thứ 2 (cột có chỉ số 1)
-        Object idObj = tblNhanVien.getValueAt(selectedRow, 1); // Lấy ID từ cột thứ 2 (cột có chỉ số 1)
-
+        Object idObj = tblNhanVien.getValueAt(selectedRow, 1);
         if (idObj == null) {
             Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "ID nhân viên không hợp lệ!");
             return;
         }
-
         int id = 0;
         try {
-            id = Integer.parseInt(idObj.toString()); // Chuyển đổi giá trị sang kiểu Integer
+            id = Integer.parseInt(idObj.toString());
         } catch (NumberFormatException e) {
             Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "ID nhân viên không hợp lệ!");
             return;
         }
-
-        // Lấy đối tượng NhanVien từ cơ sở dữ liệu hoặc danh sách nhân viên (giả sử có một phương thức tìm nhân viên theo ID)
-        NhanVien nhanVien = service.getNhanVienById(id); // Phương thức lấy nhân viên theo ID từ service hoặc từ database
-
-        // Kiểm tra nếu không có nhân viên tương ứng với ID
+        NhanVien nhanVien = service.getNhanVienById(id);
         if (nhanVien == null) {
             Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Nhân viên không tồn tại!");
             return;
         }
-
-        // Chuyển sang form UpdateNhanVien và truyền thông tin nhân viên
         Application.showForm(new ChiTietNhanVien(nhanVien));
     }
     
@@ -221,15 +194,11 @@ public class FormNhanVien extends javax.swing.JPanel {
             Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui Lòng chọn nhân viên cần xóa!");
             return;
         }
-
-        // Lấy ID nhân viên từ cột thứ 2 (cột có chỉ số 1)
-        Object idObj = tblNhanVien.getValueAt(selectedRow, 1); // Lấy ID từ cột thứ 2 (cột có chỉ số 1)
-
+        Object idObj = tblNhanVien.getValueAt(selectedRow, 1);
         if (idObj == null) {
             Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "ID nhân viên không hợp lệ!");
             return;
         }
-
         int id = 0;
         try {
             id = Integer.parseInt(idObj.toString()); // Chuyển đổi giá trị sang kiểu Integer
@@ -237,12 +206,9 @@ public class FormNhanVien extends javax.swing.JPanel {
             Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "ID nhân viên không hợp lệ!");
             return;
         }
-
-        // Xác nhận trước khi xóa
         int confirm = javax.swing.JOptionPane.showConfirmDialog(this, "Bạn có chắc chắn muốn xóa nhân viên này?", "Xác nhận", javax.swing.JOptionPane.YES_NO_OPTION);
         if (confirm == javax.swing.JOptionPane.YES_OPTION) {
-            boolean isDeleted = service.deleteNhanVien(id); // Gọi phương thức xóa nhân viên từ service
-
+            boolean isDeleted = service.deleteNhanVien(id);
             if (isDeleted) {
                 Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Xóa nhân viên thành công!");
                 loadNhanVienData(service.searchNhanVien("")); // Load lại danh sách nhân viên
@@ -256,21 +222,15 @@ public class FormNhanVien extends javax.swing.JPanel {
         JFileChooser jFileChooser = new JFileChooser();
         if (jFileChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
             File saveFile = new File(jFileChooser.getSelectedFile().getAbsolutePath() + ".xlsx");
-
             ArrayList<NhanVien> nhanVienList = service.getAllNhanVien();
-
             try (Workbook wb = new XSSFWorkbook(); FileOutputStream out = new FileOutputStream(saveFile)) {
                 Sheet sheet = wb.createSheet("Danh Sách Nhân Viên");
-
-                // Column headers
                 String[] headers = {"STT", "ID", "ID Vai Trò", "Mã Nhân Viên", "Họ", "Tên", "Email", "Địa Chỉ", 
                                     "Chức Vụ", "Ngày Vào Làm", "Giới Tính", "Ngày Sinh", "SĐT", "Trạng Thái"};
                 Row rowCol = sheet.createRow(0);
                 for (int i = 0; i < headers.length; i++) {
                     rowCol.createCell(i).setCellValue(headers[i]);
                 }
-
-                // Data rows
                 int rowIndex = 1;
                 for (NhanVien nv : nhanVienList) {
                     Row row = sheet.createRow(rowIndex++);
@@ -289,7 +249,6 @@ public class FormNhanVien extends javax.swing.JPanel {
                     row.createCell(12).setCellValue(nv.getSdt());
                     row.createCell(13).setCellValue(nv.getTrangThai());
                 }
-
                 wb.write(out);
                 Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Xuất file thành công!");
             } catch (IOException e) {
@@ -300,7 +259,7 @@ public class FormNhanVien extends javax.swing.JPanel {
     }
     
 
- private String hashPassword(String password) {
+    private String hashPassword(String password) {
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-256");
             byte[] hashedBytes = md.digest(password.getBytes());
@@ -321,7 +280,6 @@ public class FormNhanVien extends javax.swing.JPanel {
             Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Không có vai trò nào!");
             return;
         }
-
         cbVaiTro.setModel(new DefaultComboBoxModel<>(list.toArray(new VaiTro[0])));
         cbVaiTro.setRenderer(new DefaultListCellRenderer() {
             @Override
@@ -341,23 +299,16 @@ public class FormNhanVien extends javax.swing.JPanel {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
         gbc.fill = GridBagConstraints.HORIZONTAL;
-
-        // Add fields to the panel
         gbc.gridx = 0; gbc.gridy = 0; panel.add(new JLabel("Họ:"), gbc);
         gbc.gridx = 1; panel.add(txtHo, gbc);
-
         gbc.gridx = 0; gbc.gridy = 1; panel.add(new JLabel("Tên:"), gbc);
         gbc.gridx = 1; panel.add(txtTen, gbc);
-
         gbc.gridx = 0; gbc.gridy = 2; panel.add(new JLabel("Email:"), gbc);
         gbc.gridx = 1; panel.add(txtEmail, gbc);
-
         gbc.gridx = 0; gbc.gridy = 3; panel.add(new JLabel("Mật khẩu:"), gbc);
         gbc.gridx = 1; panel.add(txtMatKhau, gbc);
-
         gbc.gridx = 0; gbc.gridy = 4; panel.add(new JLabel("Vai trò:"), gbc);
         gbc.gridx = 1; panel.add(cbVaiTro, gbc);
-
         return panel;
     }
 
@@ -366,17 +317,14 @@ public class FormNhanVien extends javax.swing.JPanel {
             Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng điền đầy đủ thông tin!");
             return false;
         }
-
         if (!email.matches("^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$")) {
             Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Email không hợp lệ!");
             return false;
         }
-
         if (matKhau.length() < 6) {
             Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Mật khẩu phải có ít nhất 6 ký tự!");
             return false;
         }
-
         return true;
     }
 
@@ -384,29 +332,21 @@ public class FormNhanVien extends javax.swing.JPanel {
         if (!validateInputs(ho, ten, email, matKhau, vaiTro)) {
             return false;
         }
-
-        // Check if email already exists
         if (nguoiDungService.isEmailExists(email)) {
             Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Email đã tồn tại!");
             return false;
         }
-
-        // Encrypt the password
         String encryptedPassword = hashPassword(matKhau);
         if (encryptedPassword == null) {
             Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Lỗi khi mã hóa mật khẩu!");
             return false;
         }
-
-        // Create a new NguoiDung object
         NguoiDung nguoiDung = new NguoiDung();
         nguoiDung.setHo(ho);
         nguoiDung.setTen(ten);
         nguoiDung.setEmail(email);
         nguoiDung.setMatKhau(encryptedPassword);
         nguoiDung.setIdVaiTro(vaiTro.getId());
-
-        // Add the new account
         boolean isAdded = nguoiDungService.AddTKNV(nguoiDung);
         if (!isAdded) {
             Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Thêm tài khoản thất bại!");
@@ -417,28 +357,23 @@ public class FormNhanVien extends javax.swing.JPanel {
     public void themTaiKhoan() {
         NguoiDungService nguoiDungService = new NguoiDungService();
         VaiTroService vaiTroService = new VaiTroService();
-
         JTextField txtHo = new JTextField();
         JTextField txtTen = new JTextField();
         JTextField txtEmail = new JTextField();
         JPasswordField txtMatKhau = new JPasswordField();
         JComboBox<VaiTro> cbVaiTro = new JComboBox<>();
-
         initializeVaiTroComboBox(cbVaiTro, vaiTroService);
         JPanel panel = createAddAccountPanel(txtHo, txtTen, txtEmail, txtMatKhau, cbVaiTro);
-
         while (true) {
             int result = JOptionPane.showConfirmDialog(null, panel, "Thêm Tài Khoản Mới", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
             if (result != JOptionPane.OK_OPTION) {
-                return; // User canceled
+                return;
             }
-
             String ho = txtHo.getText().trim();
             String ten = txtTen.getText().trim();
             String email = txtEmail.getText().trim();
             String matKhau = new String(txtMatKhau.getPassword()).trim();
             VaiTro vaiTro = (VaiTro) cbVaiTro.getSelectedItem();
-
             if (processAddAccount(ho, ten, email, matKhau, vaiTro, nguoiDungService)) {
                 Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Thêm tài khoản thành công!");
                 break;

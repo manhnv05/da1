@@ -5,9 +5,6 @@ import da.component.Item;
 import da.component.ScrollBar;
 import da.model.SanPham;
 import java.awt.Component;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import javax.swing.SwingUtilities;
 
 public class FormHome extends javax.swing.JPanel {
 
@@ -25,14 +22,6 @@ public void setEvent(EventItem event) {
     public void addItem(SanPham data) {
         Item item = new Item();
         item.setData(data);
-//        item.addMouseListener(new MouseAdapter() {
-//            @Override
-//            public void mousePressed(MouseEvent me) {
-//                if (SwingUtilities.isLeftMouseButton(me)) {
-//                    event.itemClick(item, data);
-//                }
-//            }
-//        });
         panelItem1.add(item);
         panelItem1.repaint();
         panelItem1.revalidate();
@@ -54,10 +43,7 @@ public void setEvent(EventItem event) {
         panelItem1.revalidate();
     }
 
-//    public Point getPanelItemLocation() {
-//        Point p = scroll.getLocation();
-//        return new Point(p.x, p.y - scroll.getViewport().getViewPosition().y);
-//    }
+
 
 
     @SuppressWarnings("unchecked")

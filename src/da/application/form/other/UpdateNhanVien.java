@@ -1,7 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
- */
+
 package da.application.form.other;
 
 import da.application.Application;
@@ -13,16 +10,11 @@ import java.util.HashSet;
 import javax.swing.DefaultComboBoxModel;
 import raven.toast.Notifications;
 
-/**
- *
- * @author ADMIN
- */
+
 public class UpdateNhanVien extends javax.swing.JPanel {
         NhanVienService service = new NhanVienService();
         private NhanVien nhanVien;
-    /**
-     * Creates new form AddNhanVien
-     */
+
     public UpdateNhanVien(NhanVien nhanVien) {
         initComponents();
         this.nhanVien = nhanVien;
@@ -35,57 +27,47 @@ public class UpdateNhanVien extends javax.swing.JPanel {
     public void initChucVu() {
         DefaultComboBoxModel<String> boxModel = new DefaultComboBoxModel<>();
         boxModel.addElement("-- Chọn chức vụ --");
-
-        HashSet<String> chucVuSet = service.getAllChucVu();  // Lấy danh sách các chức vụ
+        HashSet<String> chucVuSet = service.getAllChucVu();
         for (String chucVu : chucVuSet) {
             if (chucVu != null) {
-                boxModel.addElement(chucVu);  // Thêm vào ComboBoxModel
+                boxModel.addElement(chucVu);
             }
         }
-        cboChucVu.setModel(boxModel);  // Gán model cho ComboBox
+        cboChucVu.setModel(boxModel);
     }
 
     public void initTrangThai() {
         DefaultComboBoxModel<String> boxModel = new DefaultComboBoxModel<>();
         boxModel.addElement("-- Chọn trạng thái --");
-
-        HashSet<String> trangThaiSet = service.getAllTrangThai();  // Lấy danh sách các trạng thái
+        HashSet<String> trangThaiSet = service.getAllTrangThai();
         for (String trangThai : trangThaiSet) {
             if (trangThai != null) {
-                boxModel.addElement(trangThai);  // Thêm vào ComboBoxModel
+                boxModel.addElement(trangThai);
             }
         }
-        cboTrangThai.setModel(boxModel);  // Gán model cho ComboBox
+        cboTrangThai.setModel(boxModel);
     }
 
     private void initUI() {
         DateTimeFormatter df = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-
         if (datePicker1 != null) {
             datePicker1.setEditor(txtNgaySinh);
-
-            // Lắng nghe sự kiện khi người dùng chọn ngày
             datePicker1.addDateSelectionListener(event -> {
                 LocalDate date = datePicker1.getSelectedDate();
                 if (date != null) {
-                    txtNgaySinh.setText(date.format(df));  // Chuyển LocalDate thành String
+                    txtNgaySinh.setText(date.format(df));
                 }
             });
-
             datePicker1.setDateSelectionAble(date -> date != null && !date.isAfter(LocalDate.now()));
         }
-
         if (datePicker2 != null) {
             datePicker2.setEditor(txtNgayLam);
-
-            // Lắng nghe sự kiện khi người dùng chọn ngày
             datePicker2.addDateSelectionListener(event -> {
                 LocalDate date = datePicker2.getSelectedDate();
                 if (date != null) {
-                    txtNgayLam.setText(date.format(df));  // Chuyển LocalDate thành String
+                    txtNgayLam.setText(date.format(df));
                 }
             });
-
             datePicker2.setDateSelectionAble(date -> date != null && !date.isAfter(LocalDate.now()));
         }
     }
@@ -93,48 +75,32 @@ public class UpdateNhanVien extends javax.swing.JPanel {
     public NhanVien getNhanVienFromForm() {
         NhanVien nhanVien = new NhanVien();
         nhanVien.setId(this.nhanVien.getId());
-
-        // Lấy thông tin từ các trường trong form và gán vào đối tượng NhanVien
         nhanVien.setMaNV(txtMa.getText());
         nhanVien.setHo(txtHo.getText());
         nhanVien.setTen(txtTen.getText());
         nhanVien.setSdt(txtSDT.getText());
         nhanVien.setEmail(txtEmail.getText());
         nhanVien.setDiaChi(txtDiaChi.getText());
-
-        // Lấy giới tính từ ComboBox
         nhanVien.setGioiTinh(cboGioiTinh.getSelectedItem().equals("Nam"));
-
-        // Lấy ngày sinh và ngày làm
         nhanVien.setNgaySinh(txtNgaySinh.getText());
         nhanVien.setNgayVaoLam(txtNgayLam.getText());
-
-        // Lấy chức vụ và trạng thái từ ComboBox
         nhanVien.setChucVu(cboChucVu.getSelectedItem().toString());
         nhanVien.setTrangThai(cboTrangThai.getSelectedItem().toString());
-
         return nhanVien;
     }
 
     public void populateForm(NhanVien nhanVien) {
         if (nhanVien != null) {
             DateTimeFormatter df = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-
-            // Điền thông tin vào các trường văn bản
             txtMa.setText(nhanVien.getMaNV());
             txtHo.setText(nhanVien.getHo());
             txtTen.setText(nhanVien.getTen());
             txtSDT.setText(nhanVien.getSdt());
             txtEmail.setText(nhanVien.getEmail());
             txtDiaChi.setText(nhanVien.getDiaChi());
-
-            // Điền giới tính vào combo box
             cboGioiTinh.setSelectedItem(nhanVien.isGioiTinh() ? "Nam" : "Nữ");
-
-            // Điền ngày sinh và ngày vào làm
             try {
                 if (nhanVien.getNgaySinh() != null && !nhanVien.getNgaySinh().isEmpty()) {
-                    // Đảm bảo định dạng ngày tháng khớp với định dạng dự kiến
                     DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy"); // Định dạng hiện tại trong cơ sở dữ liệu
                     LocalDate ngaySinh = LocalDate.parse(nhanVien.getNgaySinh(), inputFormatter);
                     datePicker1.setSelectedDate(ngaySinh);
@@ -147,12 +113,9 @@ public class UpdateNhanVien extends javax.swing.JPanel {
                     txtNgayLam.setText(ngayVaoLam.format(df));
                 }
             } catch (Exception e) {
-                // Debug thông tin lỗi
                 System.err.println("Error parsing dates:");
                 e.printStackTrace();
             }
-
-            // Điền chức vụ và trạng thái vào combo box
             cboChucVu.setSelectedItem(nhanVien.getChucVu());
             cboTrangThai.setSelectedItem(nhanVien.getTrangThai());
         }
@@ -163,25 +126,18 @@ public class UpdateNhanVien extends javax.swing.JPanel {
         try {
             boolean result = service.updateNhanVien(updatedNhanVien);
             if (result) {
-                // Show success notification
                 Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Cập nhật nhân viên thành công!");
                 Application.showForm(new FormNhanVien());
             } else {
-                // Show error notification
                 Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Cập nhật nhân viên thất bại!");
             }
         } catch (Exception e) {
             e.printStackTrace();
-            // Show detailed error notification
             Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Lỗi: " + e.getMessage());
         }
     }
 
-    /**
-     * This method is called from within the constructor to initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is always
-     * regenerated by the Form Editor.
-     */
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {

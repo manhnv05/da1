@@ -42,11 +42,9 @@ public class PaymentForm extends JPanel {
 
     private void init() {
         setLayout(new MigLayout("wrap 2,fillx,insets n 35 n 35", "[fill,200]"));
-
         JLabel lbContactDetail = new JLabel("Thông tin hóa đơn");
         lbContactDetail.putClientProperty(FlatClientProperties.STYLE, "font:bold +2;");
         add(lbContactDetail, "gapy 10 10,span 2");
-
         add(new JLabel("Hình thức thanh toán"), "span 2");
         JComboBox<String> comboPaymentType = new JComboBox<>();
         comboPaymentType.addItem("Chuyển khoản ngân hàng");
@@ -55,10 +53,8 @@ public class PaymentForm extends JPanel {
         comboPaymentType.addItem("Cổng thanh toán trực tuyến");
         comboPaymentType.addItem("Thẻ tín dụng/ghi nợ");
         add(comboPaymentType, "gapy n 5,span 2");
-
         add(new JLabel("Mã Hóa Đơn"));
         add(new JLabel("Tên Khách Hàng"));
-
         JTextField txtName = new JTextField();
         JTextField txtEmail = new JTextField();
         txtName.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Mã hóa đơn");
@@ -66,11 +62,9 @@ public class PaymentForm extends JPanel {
         add(txtName);
         add(txtEmail);
         txtName.setEnabled(false);
-
         JLabel lbRequestDetail = new JLabel("Yêu cầu chi tiết");
         lbRequestDetail.putClientProperty(FlatClientProperties.STYLE, "font:bold +2;");
         add(lbRequestDetail, "gapy 10 10,span 2");
-
         add(new JLabel("Ngày"), "gapy 5,span 2");
         JFormattedTextField dateEditor = new JFormattedTextField();
         DatePicker datePicker = new DatePicker();
@@ -78,24 +72,20 @@ public class PaymentForm extends JPanel {
         datePicker.setDateSelectionAble((date) -> !date.isAfter(LocalDate.now()));
         datePicker.now();
         add(dateEditor, "Span 2");
-
         add(new JLabel("Nhân viên bán hàng"), "gapy 5,span 2");
         cboNhanVien = new JComboBox<>();
         add(cboNhanVien, "Span 2");
-
         add(new JLabel("Trạng thái"), "gapy 5,span 2");
         JComboBox<String> comboAccount = new JComboBox<>();
         comboAccount.addItem("Chưa thanh toán");
         comboAccount.addItem("Đã thanh toán");
         add(comboAccount, "Span 2");
-
         add(new JLabel("Ghi chú"), "gapy 5,span 2");
         JTextArea textArea = new JTextArea(3, 20);
         textArea.setText("Cảm ơn quý khách đã chọn mua hàng của chúng tôi!");
         textArea.setEnabled(false);
         textArea.putClientProperty(FlatClientProperties.STYLE, "border:1,1,1,1;font:-1;background:null;");
         add(textArea, "gapy 5 5,span 2");
-
         JButton cmdCancel = new JButton("Cancel");
         JButton cmdPayment = new JButton("Thêm Hóa Đơn") {
             @Override
@@ -103,61 +93,51 @@ public class PaymentForm extends JPanel {
                 return true;
             }
         };
-
         cmdCancel.addActionListener(actionEvent -> ModalBorderAction.getModalBorderAction(this).doAction(SimpleModalBorder.CANCEL_OPTION));
-
         cmdPayment.addActionListener(actionEvent -> {
-            // Lấy thông tin từ form
-            String maHoaDon = "HD" + System.currentTimeMillis(); // Mã hóa đơn tự động sinh
-            String tenKhachHang = txtEmail.getText().trim(); // Tên khách hàng
-            String ghiChu = textArea.getText().trim(); // Ghi chú
-            String hinhThucThanhToan = (String) comboPaymentType.getSelectedItem(); // Hình thức thanh toán
-            int trangThai = comboAccount.getSelectedIndex(); // 0: Chưa thanh toán, 1: Đã thanh toán
-
+            String maHoaDon = "HD" + System.currentTimeMillis();
+            String tenKhachHang = txtEmail.getText().trim();
+            String ghiChu = textArea.getText().trim();
+            String hinhThucThanhToan = (String) comboPaymentType.getSelectedItem();
+            int trangThai = comboAccount.getSelectedIndex();
             if (tenKhachHang.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "Tên khách hàng không được để trống!", "Lỗi", JOptionPane.ERROR_MESSAGE);
                 return;
             }
-            // Lấy nhân viên ID từ combo box
             int nhanVienID = cboNhanVien.getSelectedIndex() > 0 ? cboNhanVien.getSelectedIndex() : -1;
             if (nhanVienID == -1) {
                 JOptionPane.showMessageDialog(this, "Vui lòng chọn nhân viên bán hàng!", "Lỗi", JOptionPane.ERROR_MESSAGE);
                 return;
             }
-
-            // Gọi phương thức thêm hóa đơn
             int hoaDonID = service1.addHoaDon(maHoaDon, trangThai, ghiChu, tenKhachHang, nhanVienID, hinhThucThanhToan);
             if (hoaDonID == -1) {
                 JOptionPane.showMessageDialog(this, "Thêm hóa đơn thất bại!", "Lỗi", JOptionPane.ERROR_MESSAGE);
                 return;
             }
-
-            // Nếu thêm hóa đơn thành công, tiếp tục thêm chi tiết hóa đơn
             List<HoaDonChiTiet> chiTietList = new ArrayList<>();
             for (Integer productId : productIds) {
-                HoaDonChiTiet chiTiet = new HoaDonChiTiet(productId); // Đơn giá giả định
-                chiTiet.setHoaDonID(hoaDonID); // Gắn ID hóa đơn
+                HoaDonChiTiet chiTiet = new HoaDonChiTiet(productId); 
+                chiTiet.setHoaDonID(hoaDonID);
                 chiTietList.add(chiTiet);
             }
-
             boolean detailsSuccess = service1.addChiTietHoaDon(chiTietList);
             if (detailsSuccess) {
-            boolean deleted = service2.deleteGioHangByIds(productIds); // Gọi phương thức xóa ẩn
+                boolean deleted = service2.deleteGioHangByIds(productIds);
                 if (deleted) {
-            JOptionPane.showMessageDialog(this, "Thêm hóa đơn và chi tiết hóa đơn thành công! Giỏ hàng đã được cập nhật.", "Thành Công", JOptionPane.INFORMATION_MESSAGE);
-        } else {
-            JOptionPane.showMessageDialog(this, "Thêm hóa đơn thành công nhưng không thể cập nhật trạng thái giỏ hàng!", "Lỗi", JOptionPane.WARNING_MESSAGE);
-        }
-        ModalBorderAction.getModalBorderAction(this).doAction(SimpleModalBorder.OK_OPTION);
-    } else {
-        JOptionPane.showMessageDialog(this, "Thêm hóa đơn thành công nhưng thêm chi tiết thất bại!", "Lỗi", JOptionPane.WARNING_MESSAGE);
-    }
-                    });
-
-                    add(cmdCancel, "grow 0");
-                    add(cmdPayment, "grow 0, al trailing");
+                    JOptionPane.showMessageDialog(this, "Thêm hóa đơn và chi tiết hóa đơn thành công! Giỏ hàng đã được cập nhật.", "Thành Công", JOptionPane.INFORMATION_MESSAGE);
+                } else {
+                    JOptionPane.showMessageDialog(this, "Thêm hóa đơn thành công nhưng không thể cập nhật trạng thái giỏ hàng!", "Lỗi", JOptionPane.WARNING_MESSAGE);
                 }
-
-                private JComboBox<String> cboNhanVien;
-                private JTextField txtEmail;
+                ModalBorderAction.getModalBorderAction(this).doAction(SimpleModalBorder.OK_OPTION);
+            } else {
+                JOptionPane.showMessageDialog(this, "Thêm hóa đơn thành công nhưng thêm chi tiết thất bại!", "Lỗi", JOptionPane.WARNING_MESSAGE);
+            }
+        });
+        add(cmdCancel, "grow 0");
+        add(cmdPayment, "grow 0, al trailing");
+    }
+    
+    
+    private JComboBox<String> cboNhanVien;
+    private JTextField txtEmail;
             }

@@ -21,10 +21,7 @@ import raven.chart.data.pie.DefaultPieDataset;
 import raven.chart.line.LineChart;
 import raven.chart.pie.PieChart;
 
-/**
- *
- * @author Raven
- */
+
 public class DashboardForm extends SimpleForm {
 
     public DashboardForm() {
@@ -104,7 +101,6 @@ public class DashboardForm extends SimpleForm {
     }
 
     private void createBarChart() {
-        // BarChart 1
         barChart1 = new HorizontalBarChart();
         JLabel header1 = new JLabel("Monthly Income");
         header1.putClientProperty(FlatClientProperties.STYLE, ""

@@ -5,7 +5,6 @@ import com.formdev.flatlaf.FlatClientProperties;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import da.model.SanPham;
 import da.service.SanPhamService;
-import java.awt.Color;
 import java.awt.Component;
 import java.util.ArrayList;
 import javax.swing.BorderFactory;
@@ -18,10 +17,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import raven.toast.Notifications;
 
-/**
- *
- * @author ADMIN
- */
+
 public class FormLuuTru extends javax.swing.JPanel {
     SanPhamService service = new SanPhamService();
 
@@ -33,28 +29,18 @@ public class FormLuuTru extends javax.swing.JPanel {
 
     }
 
-   
-
     private void applyTableStyle(JTable table) {
-
         cmdSearch.setIcon(new FlatSVGIcon("da/icon/svg/search.svg", 0.35f));
         cmdUpdate.setIcon(new FlatSVGIcon("da/icon/svg/edit.svg", 0.35f));
-        //cmdDelete.setIcon(new FlatSVGIcon("da/icon/svg/delete.svg", 0.35f));
-        //cmdExcel.setIcon(new FlatSVGIcon("da/icon/svg/print.svg", 0.35f));
-
         txtSearch.putClientProperty(FlatClientProperties.TEXT_FIELD_TRAILING_ICON, new FlatSVGIcon("da/icon/svg/search.svg", 0.35f));
-        //  Change scroll style
         JScrollPane scroll = (JScrollPane) table.getParent().getParent();
         scroll.setBorder(BorderFactory.createEmptyBorder());
         scroll.getVerticalScrollBar().putClientProperty(FlatClientProperties.STYLE, ""
                 + "background:$Table.background;"
                 + "track:$Table.background;"
                 + "trackArc:999");
-
         table.getTableHeader().putClientProperty(FlatClientProperties.STYLE_CLASS, "table_style");
         table.putClientProperty(FlatClientProperties.STYLE_CLASS, "table_style");
-
-        //  To Create table alignment
         table.getTableHeader().setDefaultRenderer(getAlignmentCellRender(table.getTableHeader().getDefaultRenderer(), true));
         table.setDefaultRenderer(Object.class, getAlignmentCellRender(table.getDefaultRenderer(Object.class), false));
     }
@@ -65,13 +51,11 @@ public class FormLuuTru extends javax.swing.JPanel {
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
                 Component com = oldRender.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
                 if (com instanceof JLabel label) {
-                // Căn chỉnh cột
                     switch (column) {
                         case 0, 2, 3, 4 -> label.setHorizontalAlignment(SwingConstants.CENTER);
                         case 1 -> label.setHorizontalAlignment(SwingConstants.TRAILING);
                         default -> label.setHorizontalAlignment(SwingConstants.LEADING);
                     }
-
                 }
                 return com;
             }

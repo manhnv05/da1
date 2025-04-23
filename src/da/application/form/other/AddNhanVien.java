@@ -7,20 +7,14 @@ import da.service.NhanVienService;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
-import java.util.Map;
 import javax.swing.DefaultComboBoxModel;
 import raven.toast.Notifications;
 
-/**
- *
- * @author ADMIN
- */
+
 public class AddNhanVien extends javax.swing.JPanel {
         NhanVienService service = new NhanVienService();
 
-    /**
-     * Creates new form AddNhanVien
-     */
+
     public AddNhanVien() {
         initComponents();
         initUI();
@@ -31,61 +25,51 @@ public class AddNhanVien extends javax.swing.JPanel {
     public void initChucVu() {
         DefaultComboBoxModel<String> boxModel = new DefaultComboBoxModel<>();
         boxModel.addElement("-- Chọn chức vụ --");
-
-        HashSet<String> chucVuSet = service.getAllChucVu();  // Lấy danh sách các chức vụ
+        HashSet<String> chucVuSet = service.getAllChucVu();
         for (String chucVu : chucVuSet) {
             if (chucVu != null) {
-                boxModel.addElement(chucVu);  // Thêm vào ComboBoxModel
+                boxModel.addElement(chucVu);
             }
         }
-        cboChucVu.setModel(boxModel);  // Gán model cho ComboBox
+        cboChucVu.setModel(boxModel);
     }
 
     public void initTrangThai() {
         DefaultComboBoxModel<String> boxModel = new DefaultComboBoxModel<>();
         boxModel.addElement("-- Chọn trạng thái --");
-
-        HashSet<String> trangThaiSet = service.getAllTrangThai();  // Lấy danh sách các trạng thái
+        HashSet<String> trangThaiSet = service.getAllTrangThai();
         for (String trangThai : trangThaiSet) {
             if (trangThai != null) {
-                boxModel.addElement(trangThai);  // Thêm vào ComboBoxModel
+                boxModel.addElement(trangThai);
             }
         }
-        cboTrangThai.setModel(boxModel);  // Gán model cho ComboBox
+        cboTrangThai.setModel(boxModel);
     }
 
 
     
     private void initUI() {
         DateTimeFormatter df = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-
         if (datePicker1 != null) {
             datePicker1.setEditor(txtNgaySinh);
-
-            // Lắng nghe sự kiện khi người dùng chọn ngày
             datePicker1.addDateSelectionListener(event -> {
                 LocalDate date = datePicker1.getSelectedDate();
                 txtNgaySinh.setText((date != null) ? date.format(df) : "");
             });
-
             datePicker1.setDateSelectionAble(date -> date != null && !date.isAfter(LocalDate.now()));
         }
-
         if (datePicker2 != null) {
             datePicker2.setEditor(txtNgayLam);
-
-            // Lắng nghe sự kiện khi người dùng chọn ngày
             datePicker2.addDateSelectionListener(event -> {
                 LocalDate date = datePicker2.getSelectedDate();
                 txtNgayLam.setText((date != null) ? date.format(df) : "");
             });
-
             datePicker2.setDateSelectionAble(date -> date != null && !date.isAfter(LocalDate.now()));
         }
     }
     
     public boolean checkMa() {     
-        String maNV = txtMa.getText().trim(); // Giả sử bạn dùng txtMa thay vì txtID
+        String maNV = txtMa.getText().trim();
         if (service.checkMaNhanVienExists(maNV)) {
             Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Mã Nhân Viên đã tồn tại. Vui lòng nhập mã khác!");
             txtMa.requestFocus();
@@ -108,8 +92,6 @@ public class AddNhanVien extends javax.swing.JPanel {
         String maPattern = "^[A-Z]{2}\\d{4}$"; // Ví dụ: NV0001, HS1234
         String emailPattern = "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$";
         String sdtPattern = "^(0\\d{9})$";
-
-        // Kiểm tra mã nhân viên
         if (txtMa.getText().trim().isEmpty()) {
             Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Bạn chưa nhập mã nhân viên!");
             txtMa.requestFocus();
@@ -119,22 +101,16 @@ public class AddNhanVien extends javax.swing.JPanel {
             txtMa.requestFocus();
             return false;
         }
-
-        // Kiểm tra họ
         if (txtHo.getText().trim().isEmpty()) {
             Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Bạn chưa nhập họ!");
             txtHo.requestFocus();
             return false;
         }
-
-        // Kiểm tra tên nhân viên
         if (txtTen.getText().trim().isEmpty()) {
             Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Bạn chưa nhập tên nhân viên!");
             txtTen.requestFocus();
             return false;
         }
-
-        // Kiểm tra email
         if (txtEmail.getText().trim().isEmpty()) {
             Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Bạn chưa nhập email!");
             txtEmail.requestFocus();
@@ -144,8 +120,6 @@ public class AddNhanVien extends javax.swing.JPanel {
             txtEmail.requestFocus();
             return false;
         }
-
-        // Kiểm tra số điện thoại
         if (txtSDT.getText().trim().isEmpty()) {
             Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Bạn chưa nhập số điện thoại!");
             txtSDT.requestFocus();
@@ -155,28 +129,21 @@ public class AddNhanVien extends javax.swing.JPanel {
             txtSDT.requestFocus();
             return false;
         }
-
-        // Kiểm tra địa chỉ
         if (txtDiaChi.getText().trim().isEmpty()) {
             Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Bạn chưa nhập địa chỉ!");
             txtDiaChi.requestFocus();
             return false;
         }
-
-        // Kiểm tra chọn chức vụ
         if (cboChucVu.getSelectedItem().toString().trim().isEmpty()) {
             Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Bạn chưa chọn chức vụ!");
             cboChucVu.requestFocus();
             return false;
         }
-
-        // Kiểm tra chọn trạng thái
         if (cboTrangThai.getSelectedItem().toString().trim().isEmpty()) {
             Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Bạn chưa chọn trạng thái!");
             cboTrangThai.requestFocus();
             return false;
         }
-
         return true;
     }
 
@@ -189,20 +156,15 @@ public class AddNhanVien extends javax.swing.JPanel {
                     String ten = txtTen.getText().trim();
                     String email = txtEmail.getText().trim();
                     String sdt = txtSDT.getText().trim();
-                    String diaChi = txtDiaChi.getText().trim(); // Nếu có cột này trong DB
-
+                    String diaChi = txtDiaChi.getText().trim();
                     String gioiTinhStr = cboGioiTinh.getSelectedItem().toString();
                     boolean gioiTinh = gioiTinhStr.equalsIgnoreCase("Nam");
-
-                    String ngaySinh = txtNgaySinh.getText().trim(); // định dạng dd-MM-yyyy
-                    String ngayVaoLam = txtNgayLam.getText().trim(); // định dạng dd-MM-yyyy
-
+                    String ngaySinh = txtNgaySinh.getText().trim();
+                    String ngayVaoLam = txtNgayLam.getText().trim();
                     String chucVu = cboChucVu.getSelectedItem().toString();
                     String trangThai = cboTrangThai.getSelectedItem().toString();
                     int idVaiTro = 2;
-                    // Tạo nhân viên mới
                     NhanVien nv = new NhanVien(0, idVaiTro, ma, ho, ten, email, diaChi, chucVu, ngayVaoLam, gioiTinh, ngaySinh, sdt, trangThai);
-
                     boolean result = service.addNhanVien(nv);
                     if (result) {
                         Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Thêm nhân viên thành công!");
@@ -219,14 +181,6 @@ public class AddNhanVien extends javax.swing.JPanel {
     }
 
 
-
-
-
-    /**
-     * This method is called from within the constructor to initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is always
-     * regenerated by the Form Editor.
-     */
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {

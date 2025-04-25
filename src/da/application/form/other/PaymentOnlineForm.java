@@ -103,9 +103,15 @@ public class PaymentOnlineForm extends JPanel {
             String hinhThucThanhToan = (String) comboPaymentType.getSelectedItem();
             String hinhThucVanChuyen = (String) comboAccount.getSelectedItem();
             String luuy = txtLuuY.getText().trim();
+            String tenPattern = "^[\\p{Lu}][\\p{L}]*([\\s][\\p{Lu}][\\p{L}]*)*$";
             String sdtPattern = "^(0\\d{9})$";
             if (tenKhachHang.isEmpty() || soDienThoai.isEmpty() || diaChiGiaoHang.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "Vui lòng nhập đầy đủ thông tin cần thiết!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            if (!tenKhachHang.matches(tenPattern)) {
+                JOptionPane.showMessageDialog(this, "Tên không hợp lệ! Tên chỉ chứa chữ cái và mỗi từ phải viết hoa chữ cái đầu.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                //txtEmail.requestFocus();
                 return;
             }
             if (!soDienThoai.matches(sdtPattern)) {

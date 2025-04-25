@@ -246,4 +246,17 @@ public class NhanVienService {
         }
         return false;
     }
+    public boolean checkSdtExists(String sdt) {
+    String SQL = "SELECT COUNT(*) FROM NhanVien WHERE sdt = ?";
+    try (PreparedStatement ps = conn.prepareStatement(SQL)) {
+        ps.setString(1, sdt);
+        ResultSet rs = ps.executeQuery();
+        if (rs.next()) {
+            return rs.getInt(1) > 0; // Nếu số lượng > 0 tức là số điện thoại đã tồn tại
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return false; // Số điện thoại chưa tồn tại
+}
 }

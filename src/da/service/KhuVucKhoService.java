@@ -104,4 +104,20 @@ public class KhuVucKhoService {
 
         return list;
     }
+    
+    public boolean isTenKhuVucExists(String tenKhuVuc) {
+    String sql = "SELECT COUNT(*) AS count FROM KhuVucKho WHERE tenKhuVuc = ? AND statuss = 1";
+    try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        ps.setString(1, tenKhuVuc); // Thay thế tham số
+        try (ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                int count = rs.getInt("count");
+                return count > 0; // Trả về true nếu tên khu vực đã tồn tại
+            }
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return false;
+}
 }

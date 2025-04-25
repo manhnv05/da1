@@ -259,21 +259,6 @@ public class FormNhanVien extends javax.swing.JPanel {
     }
     
 
-    private String hashPassword(String password) {
-        try {
-            MessageDigest md = MessageDigest.getInstance("SHA-256");
-            byte[] hashedBytes = md.digest(password.getBytes());
-            StringBuilder sb = new StringBuilder();
-            for (byte b : hashedBytes) {
-                sb.append(String.format("%02x", b));
-            }
-            return sb.toString();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
     private void initializeVaiTroComboBox(JComboBox<VaiTro> cbVaiTro, VaiTroService vaiTroService) {
         List<VaiTro> list = vaiTroService.getAllVaiTro();
         if (list == null || list.isEmpty()) {
@@ -336,16 +321,11 @@ public class FormNhanVien extends javax.swing.JPanel {
             Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Email đã tồn tại!");
             return false;
         }
-        String encryptedPassword = hashPassword(matKhau);
-        if (encryptedPassword == null) {
-            Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Lỗi khi mã hóa mật khẩu!");
-            return false;
-        }
         NguoiDung nguoiDung = new NguoiDung();
         nguoiDung.setHo(ho);
         nguoiDung.setTen(ten);
         nguoiDung.setEmail(email);
-        nguoiDung.setMatKhau(encryptedPassword);
+        nguoiDung.setMatKhau(matKhau);
         nguoiDung.setIdVaiTro(vaiTro.getId());
         boolean isAdded = nguoiDungService.AddTKNV(nguoiDung);
         if (!isAdded) {

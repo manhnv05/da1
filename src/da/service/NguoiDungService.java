@@ -6,7 +6,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import org.mindrot.jbcrypt.BCrypt; // Import BCrypt library
+import org.mindrot.jbcrypt.BCrypt; //
 
 /**
  *
@@ -94,22 +94,26 @@ public class NguoiDungService {
 
 
     public boolean AddTKNV(NguoiDung nguoiDung) {
-        String sql = "INSERT INTO NguoiDung (ho, ten, email, matKhau, idVaiTro) VALUES (?, ?, ?, ?, ?)";
+    // Câu lệnh SQL thêm tài khoản nhân viên
+    String sql = "INSERT INTO NguoiDung (ho, ten, email, matKhau, idVaiTro) VALUES (?, ?, ?, ?, ?)";
 
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, nguoiDung.getHo());
-            ps.setString(2, nguoiDung.getTen());
-            ps.setString(3, nguoiDung.getEmail());
-            ps.setString(4, hashPassword(nguoiDung.getMatKhau())); // Hash the password using BCrypt
-            ps.setInt(5, nguoiDung.getIdVaiTro());
+    try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        // Thiết lập các giá trị cho PreparedStatement
+        ps.setString(1, nguoiDung.getHo());
+        ps.setString(2, nguoiDung.getTen());
+        ps.setString(3, nguoiDung.getEmail());
+        ps.setString(4, hashPassword(nguoiDung.getMatKhau())); // Hash mật khẩu trước khi lưu
+        ps.setInt(5, nguoiDung.getIdVaiTro());
 
-            int affectedRows = ps.executeUpdate();
-            return affectedRows > 0;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
+        // Thực thi câu lệnh và kiểm tra số hàng bị ảnh hưởng
+        int affectedRows = ps.executeUpdate();
+        return affectedRows > 0;
+    } catch (SQLException e) {
+        // Log lỗi và trả về false nếu có lỗi xảy ra
+        e.printStackTrace();
+        return false;
     }
+}
 
     public int getIdNguoiDungByEmail(String email) {
         String sql = "SELECT id FROM NguoiDung WHERE email = ?";

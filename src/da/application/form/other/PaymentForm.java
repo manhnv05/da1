@@ -14,6 +14,7 @@ import javax.swing.*;
 import raven.datetime.component.date.DatePicker;
 import raven.modal.component.ModalBorderAction;
 import raven.modal.component.SimpleModalBorder;
+import raven.toast.Notifications;
 
 public class PaymentForm extends JPanel {
     private NhanVienService service = new NhanVienService();
@@ -100,8 +101,14 @@ public class PaymentForm extends JPanel {
             String ghiChu = textArea.getText().trim();
             String hinhThucThanhToan = (String) comboPaymentType.getSelectedItem();
             int trangThai = comboAccount.getSelectedIndex();
+            String tenPattern = "^[\\p{Lu}][\\p{L}]*([\\s][\\p{Lu}][\\p{L}]*)*$"; // Tên: tương tự họ
             if (tenKhachHang.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "Tên khách hàng không được để trống!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            if (!tenKhachHang.matches(tenPattern)) {
+                JOptionPane.showMessageDialog(this, "Tên không hợp lệ! Tên chỉ chứa chữ cái và mỗi từ phải viết hoa chữ cái đầu.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                //txtEmail.requestFocus();
                 return;
             }
             int nhanVienID = cboNhanVien.getSelectedIndex() > 0 ? cboNhanVien.getSelectedIndex() : -1;

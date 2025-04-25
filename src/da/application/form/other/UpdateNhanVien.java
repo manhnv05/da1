@@ -5,6 +5,7 @@ import da.application.Application;
 import da.model.NhanVien;
 import da.service.NhanVienService;
 import java.time.LocalDate;
+import java.time.Period;
 import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
 import javax.swing.DefaultComboBoxModel;
@@ -120,9 +121,142 @@ public class UpdateNhanVien extends javax.swing.JPanel {
             cboTrangThai.setSelectedItem(nhanVien.getTrangThai());
         }
     }
+    
+    public boolean checkForm() {
+    String maPattern = "^[A-Z]{2}\\d{4}$"; // Ví dụ: NV0001, HS1234
+    String emailPattern = "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$";
+    String sdtPattern = "^(0\\d{9})$";
+    String hoPattern = "^[\\p{Lu}][\\p{L}]*([\\s][\\p{Lu}][\\p{L}]*)*$"; // Họ: mỗi từ viết hoa chữ cái đầu, hỗ trợ Unicode
+    String tenPattern = "^[\\p{Lu}][\\p{L}]*([\\s][\\p{Lu}][\\p{L}]*)*$"; // Tên: tương tự họ
+    // Kiểm tra họ
+    if (txtHo.getText().trim().isEmpty()) {
+        Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Bạn chưa nhập họ!");
+        txtHo.requestFocus();
+        return false;
+    }
+    if (!txtHo.getText().trim().matches(hoPattern)) {
+        Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Họ không hợp lệ! Họ chỉ chứa chữ cái và mỗi từ phải viết hoa chữ cái đầu.");
+        txtHo.requestFocus();
+        return false;
+    }
+
+    // Kiểm tra tên
+    if (txtTen.getText().trim().isEmpty()) {
+        Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Bạn chưa nhập tên nhân viên!");
+        txtTen.requestFocus();
+        return false;
+    }
+    if (!txtTen.getText().trim().matches(tenPattern)) {
+        Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Tên không hợp lệ! Tên chỉ chứa chữ cái và mỗi từ phải viết hoa chữ cái đầu.");
+        txtTen.requestFocus();
+        return false;
+    }
+
+    // Kiểm tra số điện thoại
+    if (txtSDT.getText().trim().isEmpty()) {
+        Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Bạn chưa nhập số điện thoại!");
+        txtSDT.requestFocus();
+        return false;
+    } else if (!txtSDT.getText().trim().matches(sdtPattern)) {
+        Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Số điện thoại không hợp lệ!");
+        txtSDT.requestFocus();
+        return false;
+    } else if (service.checkSdtExists(txtSDT.getText().trim())) {
+        Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Số điện thoại đã tồn tại, vui lòng nhập số khác!");
+        txtSDT.requestFocus();
+        return false;
+    }
+
+    // Kiểm tra email
+    if (txtEmail.getText().trim().isEmpty()) {
+        Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Bạn chưa nhập email!");
+        txtEmail.requestFocus();
+        return false;
+    } else if (!txtEmail.getText().trim().matches(emailPattern)) {
+        Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Email không hợp lệ!");
+        txtEmail.requestFocus();
+        return false;
+    } else if (service.checkEmailNhanVienExists(txtEmail.getText().trim())) {
+        Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Email đã tồn tại, vui lòng nhập email khác!");
+        txtEmail.requestFocus();
+        return false;
+    }
+
+    // Kiểm tra mã nhân viên
+    if (txtMa.getText().trim().isEmpty()) {
+        Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Bạn chưa nhập mã nhân viên!");
+        txtMa.requestFocus();
+        return false;
+    } else if (!txtMa.getText().trim().matches(maPattern)) {
+        Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Mã không hợp lệ!");
+        txtMa.requestFocus();
+        return false;
+    }
+
+    // Kiểm tra địa chỉ
+    if (txtDiaChi.getText().trim().isEmpty()) {
+        Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Bạn chưa nhập địa chỉ!");
+        txtDiaChi.requestFocus();
+        return false;
+    }
+
+    // Kiểm tra ngày sinh
+    if (datePicker1 != null) {
+        LocalDate ngaySinh = datePicker1.getSelectedDate();
+        if (ngaySinh == null) {
+            Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Bạn chưa nhập ngày sinh!");
+            datePicker1.requestFocus();
+            return false;
+        }
+        int tuoi = Period.between(ngaySinh, LocalDate.now()).getYears();
+        if (tuoi < 18) {
+            Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Nhân viên phải đủ 18 tuổi trở lên!");
+            datePicker1.requestFocus();
+            return false;
+        }
+    } else {
+        Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Không thể kiểm tra ngày sinh, vui lòng kiểm tra lại!");
+        return false;
+    }
+
+    // Kiểm tra ngày vào làm
+    if (datePicker2 != null) {
+        LocalDate ngayLam = datePicker2.getSelectedDate();
+        if (ngayLam == null) {
+            Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Bạn chưa nhập ngày vào làm!");
+            datePicker2.requestFocus();
+            return false;
+        }
+        if (ngayLam.isAfter(LocalDate.now())) {
+            Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Ngày vào làm không được lớn hơn ngày hiện tại!");
+            datePicker2.requestFocus();
+            return false;
+        }
+    } else {
+        Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Không thể kiểm tra ngày vào làm, vui lòng kiểm tra lại!");
+        return false;
+    }
+
+    // Kiểm tra chức vụ
+    if (cboChucVu.getSelectedItem() == null || cboChucVu.getSelectedItem().toString().equals("-- Chọn chức vụ --")) {
+        Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Bạn chưa chọn chức vụ!");
+        cboChucVu.requestFocus();
+        return false;
+    }
+
+    // Kiểm tra trạng thái
+    if (cboTrangThai.getSelectedItem() == null || cboTrangThai.getSelectedItem().toString().equals("-- Chọn trạng thái --")) {
+        Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Bạn chưa chọn trạng thái!");
+        cboTrangThai.requestFocus();
+        return false;
+    }
+
+    return true; // Nếu tất cả điều kiện đều hợp lệ
+}
 
     public void update() {
-        NhanVien updatedNhanVien = getNhanVienFromForm();
+        if (checkForm()) {
+            NhanVien updatedNhanVien = getNhanVienFromForm();
         try {
             boolean result = service.updateNhanVien(updatedNhanVien);
             if (result) {
@@ -135,6 +269,8 @@ public class UpdateNhanVien extends javax.swing.JPanel {
             e.printStackTrace();
             Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Lỗi: " + e.getMessage());
         }
+        }
+        
     }
 
 

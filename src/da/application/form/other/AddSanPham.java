@@ -115,10 +115,15 @@ public class AddSanPham extends javax.swing.JPanel {
     }
     
     public boolean checkForm() {
-        String ma = "^[A-Z]{2}\\d{4}$";
+        String ma = "^[A-Z]{2}\\d*$";
         String ten = "^[\\p{L}\\s]+$";
         if (txtMa.getText().trim().isEmpty()) {
             Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Bạn chưa nhập mã sản phẩm!");
+            txtMa.requestFocus();
+            return false;
+        }
+        if (txtMa.getText().trim().length() > 10) {
+            Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Tên sản phẩm không được vượt quá 50 ký tự!");
             txtMa.requestFocus();
             return false;
         }
@@ -169,28 +174,6 @@ public class AddSanPham extends javax.swing.JPanel {
             txtGia.requestFocus();
             return false;
         }
-//        if (txtSoLuong.getText().trim().isEmpty()) {
-//            Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Bạn chưa nhập số lượng tồn!");
-//            txtSoLuong.requestFocus();
-//            return false;
-//        }
-//        try {
-//            int slt = Integer.parseInt(txtSoLuong.getText().trim());
-//            if (slt < 0) {
-//                Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Số lượng tồn không được âm!");
-//                txtSoLuong.requestFocus();
-//                return false;
-//            }
-//            if (slt > 1000) {
-//                Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Số lượng tồn không được vượt quá 1000!");
-//                txtSoLuong.requestFocus();
-//                return false;
-//            }
-//        } catch (NumberFormatException e) {
-//            Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Số lượng tồn phải là số nguyên!");
-//            txtSoLuong.requestFocus();
-//            return false;
-//        }
         if (txaMoTa.getText().trim().isEmpty()) {
             Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Bạn chưa nhập mô tả sản phẩm!");
             txaMoTa.requestFocus();
@@ -201,32 +184,39 @@ public class AddSanPham extends javax.swing.JPanel {
             txaMoTa.requestFocus();
             return false;
         }
-        if (cboChatLieu.getSelectedItem() == null || cboChatLieu.getSelectedItem().toString().trim().isEmpty()) {
+        // Kiểm tra Khu vực kho
+        if (cboKhuVucKho.getSelectedItem() == null || cboKhuVucKho.getSelectedItem().toString().equals("-- Chọn khu vực kho --")) {
+            Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Bạn chưa chọn khu vực kho!");
+            cboKhuVucKho.requestFocus();
+            return false;
+        }
+
+// Kiểm tra Chất liệu
+        if (cboChatLieu.getSelectedItem() == null || cboChatLieu.getSelectedItem().toString().equals("-- Chọn chất liệu --")) {
             Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Bạn chưa chọn chất liệu!");
             cboChatLieu.requestFocus();
             return false;
         }
-        if (cboXuatXu.getSelectedItem() == null || cboXuatXu.getSelectedItem().toString().trim().isEmpty()) {
+        if (cboXuatXu.getSelectedItem() == null || cboXuatXu.getSelectedItem().toString().equals("-- Chọn xuất xứ --")) {
             Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Bạn chưa chọn xuất xứ!");
             cboXuatXu.requestFocus();
             return false;
         }
-        if (cboNhaCC.getSelectedItem() == null || cboNhaCC.getSelectedItem().toString().trim().isEmpty()) {
+        if (cboNhaCC.getSelectedItem() == null || cboNhaCC.getSelectedItem().toString().equals("-- Chọn nhà cung cấp --")) {
             Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Bạn chưa chọn nhà cung cấp!");
             cboNhaCC.requestFocus();
             return false;
         }
-        if (cboKichThuoc.getSelectedItem() == null || cboKichThuoc.getSelectedItem().toString().trim().isEmpty()) {
+        if (cboKichThuoc.getSelectedItem() == null || cboKichThuoc.getSelectedItem().toString().equals("-- Chọn kích thước --")) {
             Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Bạn chưa chọn kích thước!");
             cboKichThuoc.requestFocus();
             return false;
         }
-        if (cboMauSac.getSelectedItem() == null || cboMauSac.getSelectedItem().toString().trim().isEmpty()) {
+        if (cboMauSac.getSelectedItem() == null || cboMauSac.getSelectedItem().toString().equals("-- Chọn màu sắc --")) {
             Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Bạn chưa chọn màu sắc!");
             cboMauSac.requestFocus();
             return false;
         }
-
         return true;
     }
     

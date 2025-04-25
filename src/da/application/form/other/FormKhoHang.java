@@ -134,7 +134,6 @@ public class FormKhoHang extends javax.swing.JPanel {
         cmdUpdate.setIcon(new FlatSVGIcon("da/icon/svg/edit.svg", 0.35f));
         cmdUpdate1.setIcon(new FlatSVGIcon("da/icon/svg/edit.svg", 0.35f));
         cmdAdd1.setIcon(new FlatSVGIcon("da/icon/svg/add.svg", 0.35f));
-        cmdDelete1.setIcon(new FlatSVGIcon("da/icon/svg/delete.svg", 0.35f));
         cmdExcel1.setIcon(new FlatSVGIcon("da/icon/svg/print.svg", 0.35f));
         txtSearch.putClientProperty(FlatClientProperties.TEXT_FIELD_TRAILING_ICON, new FlatSVGIcon("da/icon/svg/search.svg", 0.35f));
         txtSearch1.putClientProperty(FlatClientProperties.TEXT_FIELD_TRAILING_ICON, new FlatSVGIcon("da/icon/svg/search.svg", 0.35f));
@@ -228,56 +227,80 @@ public class FormKhoHang extends javax.swing.JPanel {
     }
 
     private KhuVucKho showInputDialog() {
-        JTextField txtTenKhuVuc = new JTextField();
-        JTextArea txtMoTa = new JTextArea(5, 20);
-        JScrollPane scrollMoTa = new JScrollPane(txtMoTa);
-        JPanel panel = new JPanel(new GridBagLayout());
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(10, 10, 10, 10);
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        panel.add(new JLabel("Tên Khu Vực:"), gbc);
-        gbc.gridx = 1;
-        panel.add(txtTenKhuVuc, gbc);
-        gbc.gridx = 0;
-        gbc.gridy = 1;
-        panel.add(new JLabel("Mô Tả:"), gbc);
-        gbc.gridx = 1;
-        panel.add(scrollMoTa, gbc);
-        while (true) {
-            int result = JOptionPane.showConfirmDialog(
-                null,
-                panel,
-                "Thêm Khu Vực Kho",
-                JOptionPane.OK_CANCEL_OPTION,
-                JOptionPane.PLAIN_MESSAGE
-            );
-            if (result != JOptionPane.OK_OPTION) {
-                return null;
-            }
-            String tenKhuVuc = txtTenKhuVuc.getText().trim();
-            String moTa = txtMoTa.getText().trim();
+    JTextField txtTenKhuVuc = new JTextField();
+    JTextArea txtMoTa = new JTextArea(5, 20);
+    JScrollPane scrollMoTa = new JScrollPane(txtMoTa);
+    JPanel panel = new JPanel(new GridBagLayout());
+    GridBagConstraints gbc = new GridBagConstraints();
+    gbc.insets = new Insets(10, 10, 10, 10);
+    gbc.fill = GridBagConstraints.HORIZONTAL;
 
-            if (tenKhuVuc.isEmpty()) {
-                Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Tên khu vực kho không được để trống!");
-                continue;
-            }
-            if (tenKhuVuc.length() > 50) {
-                Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Tên khu vực không được vượt quá 50 kí tự!");
-                continue;
-            }
-            if (moTa.isEmpty()) {
-                Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Mô tả không được để trống!");
-                continue;
-            }
-            if (moTa.length() > 255) {
-                Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Mô tả không được vượt quá 255 kí tự!");
-                continue;
-            }
-            return new KhuVucKho(0, tenKhuVuc, moTa);
+    // Thiết lập giao diện nhập liệu
+    gbc.gridx = 0;
+    gbc.gridy = 0;
+    panel.add(new JLabel("Tên Khu Vực:"), gbc);
+    gbc.gridx = 1;
+    panel.add(txtTenKhuVuc, gbc);
+    gbc.gridx = 0;
+    gbc.gridy = 1;
+    panel.add(new JLabel("Mô Tả:"), gbc);
+    gbc.gridx = 1;
+    panel.add(scrollMoTa, gbc);
+
+    while (true) {
+        int result = JOptionPane.showConfirmDialog(
+            null,
+            panel,
+            "Thêm Khu Vực Kho",
+            JOptionPane.OK_CANCEL_OPTION,
+            JOptionPane.PLAIN_MESSAGE
+        );
+        if (result != JOptionPane.OK_OPTION) {
+            return null; // Người dùng nhấn hủy
+        }
+
+        String tenKhuVuc = txtTenKhuVuc.getText().trim();
+        String moTa = txtMoTa.getText().trim();
+
+        // Kiểm tra các điều kiện
+        if (tenKhuVuc.isEmpty()) {
+            Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Tên khu vực kho không được để trống!");
+            continue;
+        }
+        if (tenKhuVuc.length() > 50) {
+            Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Tên khu vực không được vượt quá 50 kí tự!");
+            continue;
+        }
+        if (isTenKhuVucExists(tenKhuVuc)) {
+            Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Tên khu vực kho đã tồn tại!");
+            continue;
+        }
+
+        if (moTa.isEmpty()) {
+            Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Mô tả không được để trống!");
+            continue;
+        }
+        if (moTa.length() > 255) {
+            Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Mô tả không được vượt quá 255 kí tự!");
+            continue;
+        }
+
+        // Kiểm tra trùng tên khu vực
+        
+        // Nếu tất cả điều kiện đều hợp lệ, trả về đối tượng KhuVucKho
+        return new KhuVucKho(0, tenKhuVuc, moTa);
+    }
+}
+
+private boolean isTenKhuVucExists(String tenKhuVuc) {
+    List<KhuVucKho> existingKhuVucKhoList = service.getAllKhuVucKho(); // Lấy danh sách toàn bộ khu vực kho
+    for (KhuVucKho khuVucKho : existingKhuVucKhoList) {
+        if (khuVucKho.getTenKhuVuc().equalsIgnoreCase(tenKhuVuc)) {
+            return true; // Tên khu vực đã tồn tại
         }
     }
+    return false; // Tên khu vực chưa tồn tại
+}
     
     public void update() {
         int selectedRow = tblKhuVuc.getSelectedRow();
@@ -480,9 +503,14 @@ public class FormKhoHang extends javax.swing.JPanel {
 
     private boolean processNhapKho(String maNhap, NhaCC nhaCungCap, NhanVien nhanVien, String ngayNhapStr,
                                    String soLuongStr, SanPham sanPham, NhapKhoService service2) {
+        String maPattern = "^[A-Z]{2}\\d*$";
         if (maNhap.isEmpty() || nhaCungCap == null || nhanVien == null || ngayNhapStr.isEmpty() ||
             soLuongStr.isEmpty() || sanPham == null) {
             Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Vui lòng điền đầy đủ thông tin!");
+            return false;
+        }
+        if (!maNhap.matches(maPattern)) {
+            Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Mã không hợp lệ!");
             return false;
         }
         Timestamp ngayNhap;
@@ -839,7 +867,6 @@ public class FormKhoHang extends javax.swing.JPanel {
         cmdSearch1 = new javax.swing.JButton();
         cmdAdd1 = new javax.swing.JButton();
         cmdUpdate1 = new javax.swing.JButton();
-        cmdDelete1 = new javax.swing.JButton();
         cmdExcel1 = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
         tblNhapKho = new javax.swing.JTable();
@@ -1160,14 +1187,6 @@ public class FormKhoHang extends javax.swing.JPanel {
         });
         crazyPanel7.add(cmdUpdate1);
 
-        cmdDelete1.setText("Delete");
-        cmdDelete1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cmdDelete1ActionPerformed(evt);
-            }
-        });
-        crazyPanel7.add(cmdDelete1);
-
         cmdExcel1.setText("Excel");
         cmdExcel1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1269,10 +1288,6 @@ public class FormKhoHang extends javax.swing.JPanel {
         updateNhapKho();
     }//GEN-LAST:event_cmdUpdate1ActionPerformed
 
-    private void cmdDelete1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdDelete1ActionPerformed
-        deleteNhapKho();
-    }//GEN-LAST:event_cmdDelete1ActionPerformed
-
     private void cmdExcel1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdExcel1ActionPerformed
         exportNhapKhoToExcel();
     }//GEN-LAST:event_cmdExcel1ActionPerformed
@@ -1288,7 +1303,6 @@ public class FormKhoHang extends javax.swing.JPanel {
     private javax.swing.JButton cmdAdd;
     private javax.swing.JButton cmdAdd1;
     private javax.swing.JButton cmdDelete;
-    private javax.swing.JButton cmdDelete1;
     private javax.swing.JButton cmdExcel1;
     private javax.swing.JButton cmdSearch;
     private javax.swing.JButton cmdSearch1;

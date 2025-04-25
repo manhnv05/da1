@@ -14,24 +14,25 @@ public class MauSacService {
 
     // 🔍 Tìm kiếm màu sắc theo từ khóa
     public ArrayList<MauSac> searchMauSac(String keyword) {
-        String SQL = "SELECT id, tenMau FROM MauSac";
-        
+        ArrayList<MauSac> mauSacList = new ArrayList<>();
+        String SQL = "SELECT id, tenMau FROM MauSac WHERE statuss = 1";
+
         if (keyword != null && !keyword.trim().isEmpty()) {
-            SQL += " WHERE tenMau LIKE ? ";
+            SQL += " AND tenMau LIKE ?";
         }
 
-        ArrayList<MauSac> mauSacList = new ArrayList<>();
-        try {
-            PreparedStatement ps = conn.prepareStatement(SQL);
+        try (PreparedStatement ps = conn.prepareStatement(SQL)) {
             if (keyword != null && !keyword.trim().isEmpty()) {
                 ps.setString(1, "%" + keyword.trim() + "%");
             }
-            
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                int id = rs.getInt("id");
-                String tenMau = rs.getString("tenMau");
-                mauSacList.add(new MauSac(id, tenMau));
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    mauSacList.add(new MauSac(
+                        rs.getInt("id"),
+                        rs.getString("tenMau")
+                    ));
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -41,7 +42,7 @@ public class MauSacService {
     
     // 📋 Lấy danh sách tất cả màu sắc
     public ArrayList<MauSac> getAllMauSac() {
-        String SQL = "SELECT id, tenMau FROM MauSac";
+        String SQL = "SELECT id, tenMau FROM MauSac WHERE statuss = 1";
         ArrayList<MauSac> mauSacList = new ArrayList<>();
         
         try (PreparedStatement ps = conn.prepareStatement(SQL);
@@ -86,7 +87,7 @@ public class MauSacService {
 
     // ❌ Xóa màu sắc theo ID
     public boolean deleteMauSac(int id) {
-        String SQL = "DELETE FROM MauSac WHERE id = ?";
+        String SQL = "UPDATE MauSac SET statuss = 0 WHERE id = ?";
         try {
             PreparedStatement ps = conn.prepareStatement(SQL);
             ps.setInt(1, id);

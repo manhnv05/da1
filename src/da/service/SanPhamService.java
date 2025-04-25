@@ -193,7 +193,7 @@ public class SanPhamService {
 
 
     public HashSet<String> getAllChatLieu() {
-        String SQL = "SELECT DISTINCT cl.tenChatLieu FROM SanPham sp LEFT JOIN ChatLieu cl ON sp.idChatLieu = cl.id";
+        String SQL = "SELECT DISTINCT cl.tenChatLieu FROM SanPham sp LEFT JOIN ChatLieu cl ON sp.idChatLieu = cl.id WHERE cl.statuss = 1";
         HashSet<String> chatLieuSet = new HashSet<>();
         try (PreparedStatement ps = conn.prepareStatement(SQL);
              ResultSet rs = ps.executeQuery()) {
@@ -207,7 +207,7 @@ public class SanPhamService {
     }
 
     public HashSet<String> getAllXuatXu() {
-        String SQL = "SELECT DISTINCT xu.tenXuatXu FROM SanPham sp LEFT JOIN XuatXu xu ON sp.idXuatXu = xu.id";
+        String SQL = "SELECT DISTINCT xu.tenXuatXu FROM SanPham sp LEFT JOIN XuatXu xu ON sp.idXuatXu = xu.id WHERE xu.statuss = 1";
         HashSet<String> xuatXuSet = new HashSet<>();
         try (PreparedStatement ps = conn.prepareStatement(SQL);
              ResultSet rs = ps.executeQuery()) {
@@ -222,7 +222,7 @@ public class SanPhamService {
 
 
     public HashSet<String> getAllKichThuoc() {
-        String SQL = "SELECT DISTINCT k.tenKT FROM SanPham sp LEFT JOIN KichThuoc k ON sp.idKichThuoc = k.id";
+        String SQL = "SELECT DISTINCT k.tenKT FROM SanPham sp LEFT JOIN KichThuoc k ON sp.idKichThuoc = k.id WHERE k.statuss = 1";
         HashSet<String> kichThuocSet = new HashSet<>();
         try (PreparedStatement ps = conn.prepareStatement(SQL);
              ResultSet rs = ps.executeQuery()) {
@@ -237,7 +237,7 @@ public class SanPhamService {
 
 
     public HashSet<String> getAllMauSac() {
-        String SQL = "SELECT DISTINCT m.tenMau FROM SanPham sp LEFT JOIN MauSac m ON sp.idMauSac = m.id";
+        String SQL = "SELECT DISTINCT m.tenMau FROM SanPham sp LEFT JOIN MauSac m ON sp.idMauSac = m.id WHERE m.statuss = 1";
         HashSet<String> mauSacSet = new HashSet<>();
         try (PreparedStatement ps = conn.prepareStatement(SQL);
              ResultSet rs = ps.executeQuery()) {
@@ -251,7 +251,7 @@ public class SanPhamService {
     }
 
     public HashSet<String> getAllNhaCungCap() {
-        String SQL = "SELECT DISTINCT ncc.tenNCC FROM SanPham sp LEFT JOIN NhaCungCap ncc ON sp.idNhaCungCap = ncc.id";
+        String SQL = "SELECT DISTINCT ncc.tenNCC FROM SanPham sp LEFT JOIN NhaCungCap ncc ON sp.idNhaCungCap = ncc.id WHERE ncc.statuss = 1";
         HashSet<String> nhaCungCapSet = new HashSet<>();
         try (PreparedStatement ps = conn.prepareStatement(SQL);
              ResultSet rs = ps.executeQuery()) {
@@ -265,7 +265,7 @@ public class SanPhamService {
     }
     
     public HashSet<String> getAllKhuVucKho() {
-        String SQL = "SELECT DISTINCT kvk.tenKhuVuc FROM SanPham sp LEFT JOIN KhuVucKho kvk ON sp.idKhuVucKho = kvk.id";
+        String SQL = "SELECT DISTINCT kvk.tenKhuVuc FROM SanPham sp LEFT JOIN KhuVucKho kvk ON sp.idKhuVucKho = kvk.id WHERE kvk.statuss = 1";
         HashSet<String> khuVucKhoSet = new HashSet<>();
         try (PreparedStatement ps = conn.prepareStatement(SQL);
              ResultSet rs = ps.executeQuery()) {

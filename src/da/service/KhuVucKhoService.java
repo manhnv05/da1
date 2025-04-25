@@ -15,7 +15,7 @@ public class KhuVucKhoService {
     // Lấy toàn bộ khu vực kho
     public ArrayList<KhuVucKho> getAllKhuVucKho() {
         ArrayList<KhuVucKho> list = new ArrayList<>();
-        String sql = "SELECT id, tenKhuVuc, moTa FROM KhuVucKho";
+        String sql = "SELECT id, tenKhuVuc, moTa FROM KhuVucKho WHERE statuss = 1";
 
         try (PreparedStatement ps = conn.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
@@ -69,7 +69,7 @@ public class KhuVucKhoService {
 
     // Xóa khu vực kho
     public boolean deleteKhuVucKho(int id) {
-        String sql = "DELETE FROM KhuVucKho WHERE id = ?";
+        String sql = "UPDATE KhuVucKho SET statuss = 0 WHERE id = ?";
 
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, id);
@@ -84,7 +84,7 @@ public class KhuVucKhoService {
     // Tìm kiếm theo tên
     public ArrayList<KhuVucKho> searchKhuVucKhoByName(String keyword) {
         ArrayList<KhuVucKho> list = new ArrayList<>();
-        String sql = "SELECT id, tenKhuVuc, moTa FROM KhuVucKho WHERE tenKhuVuc LIKE ?";
+        String sql = "SELECT id, tenKhuVuc, moTa FROM KhuVucKho WHERE statuss = 1 AND tenKhuVuc LIKE ?";
 
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, "%" + keyword + "%");

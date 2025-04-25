@@ -22,37 +22,39 @@ public class NhapKhoService {
     }
 
     public List<NhapKho> getListNhapKho() {
-        List<NhapKho> list = new ArrayList<>();
-        String sql = "SELECT " +
-            "nk.id, nk.maNhap, nk.soLuong, nk.ngayNhap, nk.tongTien, " +
-            "ncc.tenNCC AS tenNhaCungCap, " +
-            "nv.ho + ' ' + nv.ten AS tenNhanVien, " +
-            "sp.tenSP AS tenSanPham " +
-            "FROM NhapKho nk " +
-            "JOIN NhaCungCap ncc ON nk.idNhaCungCap = ncc.id " +
-            "JOIN NhanVien nv ON nk.idNhanVien = nv.id " +
-            "JOIN SanPham sp ON nk.idSanPham = sp.id";
+    List<NhapKho> list = new ArrayList<>();
+    String sql = "SELECT " +
+        "nk.id, nk.maNhap, nk.soLuong, nk.ngayNhap, nk.tongTien, " +
+        "ncc.tenNCC AS tenNhaCungCap, " +
+        "nv.ho + ' ' + nv.ten AS tenNhanVien, " +
+        "sp.tenSP AS tenSanPham " +
+        "FROM NhapKho nk " +
+        "JOIN NhaCungCap ncc ON nk.idNhaCungCap = ncc.id " +
+        "JOIN NhanVien nv ON nk.idNhanVien = nv.id " +
+        "JOIN SanPham sp ON nk.idSanPham = sp.id " +  // ← thêm khoảng trắng ở cuối dòng này
+        "WHERE nk.statuss = 1";
 
-        try (PreparedStatement ps = conn.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
-            while (rs.next()) {
-                NhapKho nk = new NhapKho();
-                nk.setId(rs.getInt("id"));
-                nk.setManhap(rs.getString("maNhap"));
-                nk.setSoLuong(rs.getInt("soLuong"));
-                nk.setNgaynhap(rs.getTimestamp("ngayNhap"));
-                nk.setTongtien(rs.getDouble("tongTien"));
-                nk.setNhacungcap(rs.getString("tenNhaCungCap"));
-                nk.setNhanvien(rs.getString("tenNhanVien"));
-                nk.setSanPham(rs.getString("tenSanPham"));
-                list.add(nk);
-            }
-        } catch (SQLException e) {
-            System.out.println("Lỗi khi truy vấn NhapKho: " + e.getMessage());
+    try (PreparedStatement ps = conn.prepareStatement(sql);
+         ResultSet rs = ps.executeQuery()) {
+        while (rs.next()) {
+            NhapKho nk = new NhapKho();
+            nk.setId(rs.getInt("id"));
+            nk.setManhap(rs.getString("maNhap"));
+            nk.setSoLuong(rs.getInt("soLuong"));
+            nk.setNgaynhap(rs.getTimestamp("ngayNhap"));
+            nk.setTongtien(rs.getDouble("tongTien"));
+            nk.setNhacungcap(rs.getString("tenNhaCungCap"));
+            nk.setNhanvien(rs.getString("tenNhanVien"));
+            nk.setSanPham(rs.getString("tenSanPham"));
+            list.add(nk);
         }
-
-        return list;
+    } catch (SQLException e) {
+        System.out.println("Lỗi khi truy vấn NhapKho: " + e.getMessage());
     }
+
+    return list;
+}
+
 
 
     public boolean addNhapKho(NhapKho nhapKho, int idNhaCungCap, int idNhanVien, int idSanPham) {
@@ -200,7 +202,7 @@ public class NhapKhoService {
     }
 
     public boolean deleteNhapKho(int id) {
-        String delete = "DELETE FROM NhapKho WHERE id = ?";
+        String delete = "UPDATE NhapKho SET statuss = 0 WHERE id = ?";
         try {
             PreparedStatement ps = conn.prepareStatement(delete);
             ps.setInt(1, id);
@@ -214,7 +216,7 @@ public class NhapKhoService {
     
     
     public int getIdNhanVienByNhapKhoId(int idNhapKho) {
-    String sql = "SELECT idNhanVien FROM NhapKho WHERE id = ?";
+    String sql = "SELECT idNhanVien FROM NhapKho WHERE  id = ?";
     int idNhanVien = -1; // Giá trị mặc định nếu không tìm thấy
 
     try (PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -270,27 +272,29 @@ public class NhapKhoService {
     
     public List<NhapKho> searchNhapKho(String keyword) {
     List<NhapKho> list = new ArrayList<>();
-    String sql = "SELECT " +
-        "nk.id, nk.maNhap, nk.soLuong, nk.ngayNhap, nk.tongTien, " +
-        "ncc.tenNCC AS tenNhaCungCap, " +
-        "nv.ho + ' ' + nv.ten AS tenNhanVien, " +
-        "sp.tenSP AS tenSanPham " +
-        "FROM NhapKho nk " +
-        "JOIN NhaCungCap ncc ON nk.idNhaCungCap = ncc.id " +
-        "JOIN NhanVien nv ON nk.idNhanVien = nv.id " +
-        "JOIN SanPham sp ON nk.idSanPham = sp.id";
 
-    // Thêm điều kiện tìm kiếm nếu từ khóa được cung cấp
+    String sql = "SELECT " +
+            "nk.id, nk.maNhap, nk.soLuong, nk.ngayNhap, nk.tongTien, " +
+            "ncc.tenNCC AS tenNhaCungCap, " +
+            "nv.ho + ' ' + nv.ten AS tenNhanVien, " +
+            "sp.tenSP AS tenSanPham " +
+            "FROM NhapKho nk " +
+            "JOIN NhaCungCap ncc ON nk.idNhaCungCap = ncc.id " +
+            "JOIN NhanVien nv ON nk.idNhanVien = nv.id " +
+            "JOIN SanPham sp ON nk.idSanPham = sp.id " +
+            "WHERE nk.statuss = 1"; // Giả sử cột statuss thuộc bảng NhapKho
+
+    // Thêm điều kiện tìm kiếm nếu có keyword
     if (keyword != null && !keyword.trim().isEmpty()) {
-        sql += " WHERE nk.maNhap LIKE ? OR nv.ho + ' ' + nv.ten LIKE ? OR sp.tenSP LIKE ?";
+        sql += " AND (nk.maNhap LIKE ? OR nv.ho + ' ' + nv.ten LIKE ? OR sp.tenSP LIKE ?)";
     }
 
     try (PreparedStatement ps = conn.prepareStatement(sql)) {
         if (keyword != null && !keyword.trim().isEmpty()) {
             String searchPattern = "%" + keyword.trim() + "%";
-            ps.setString(1, searchPattern); // Tìm theo mã nhập
-            ps.setString(2, searchPattern); // Tìm theo tên nhân viên
-            ps.setString(3, searchPattern); // Tìm theo tên sản phẩm
+            ps.setString(1, searchPattern);
+            ps.setString(2, searchPattern);
+            ps.setString(3, searchPattern);
         }
 
         try (ResultSet rs = ps.executeQuery()) {
@@ -313,5 +317,6 @@ public class NhapKhoService {
 
     return list;
 }
+
 }
     

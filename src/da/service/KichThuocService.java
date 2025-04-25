@@ -21,41 +21,43 @@ public class KichThuocService {
     
     // 🔍 Tìm kiếm kích thước theo từ khóa
     public ArrayList<KichThuoc> searchKichThuoc(String keyword) {
-        String SQL = "SELECT id, tenKT FROM KichThuoc";
-        
+        ArrayList<KichThuoc> kichThuocList = new ArrayList<>();
+        String SQL = "SELECT id, tenKT FROM KichThuoc WHERE statuss = 1";
+
+        // Nếu có từ khóa thì thêm điều kiện
         if (keyword != null && !keyword.trim().isEmpty()) {
-            SQL += " WHERE tenKT LIKE ? ";
+            SQL += " AND tenKT LIKE ?";
         }
 
-        ArrayList<KichThuoc> kichThuocList = new ArrayList<>();
-        try {
-            PreparedStatement ps = conn.prepareStatement(SQL);
+        try (PreparedStatement ps = conn.prepareStatement(SQL)) {
             if (keyword != null && !keyword.trim().isEmpty()) {
                 ps.setString(1, "%" + keyword.trim() + "%");
             }
-            
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                int id = rs.getInt("id");
-                String ten = rs.getString("tenKT");
-                KichThuoc kichThuoc = new KichThuoc(id, ten);
-                kichThuocList.add(kichThuoc);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    kichThuocList.add(new KichThuoc(
+                        rs.getInt("id"),
+                        rs.getString("tenKT")
+                    ));
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
         return kichThuocList;
     }
     
     // 📋 Lấy danh sách tất cả kích thước
     public ArrayList<KichThuoc> getAllKichThuoc() {
-        String SQL = "SELECT id, tenKT FROM KichThuoc";
+        String SQL = "SELECT id, tenKT FROM KichThuoc WHERE statuss = 1";
         ArrayList<KichThuoc> kichThuocList = new ArrayList<>();
         
         try (PreparedStatement ps = conn.prepareStatement(SQL);
              ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
-                kichThuocList.add(new KichThuoc(rs.getInt("id"), rs.getString("ten")));
+                kichThuocList.add(new KichThuoc(rs.getInt("id"), rs.getString("tenKT")));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -94,7 +96,7 @@ public class KichThuocService {
 
     // ❌ Xóa kích thước theo ID
     public boolean deleteKichThuoc(int id) {
-        String SQL = "DELETE FROM KichThuoc WHERE id = ?";
+        String SQL = "UPDATE KichThuoc SET statuss = 0 WHERE id = ?";
         try {
             PreparedStatement ps = conn.prepareStatement(SQL);
             ps.setInt(1, id);

@@ -64,6 +64,9 @@
               </Properties>
             </Component>
             <Component class="javax.swing.JTextField" name="txtMa">
+              <Properties>
+                <Property name="enabled" type="boolean" value="false"/>
+              </Properties>
             </Component>
             <Component class="javax.swing.JTextField" name="txtTen">
             </Component>

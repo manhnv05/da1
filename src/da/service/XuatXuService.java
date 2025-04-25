@@ -21,30 +21,32 @@ public class XuatXuService {
     
     // 🔍 Tìm kiếm Xuất Xứ theo từ khóa
     public ArrayList<XuatXu> searchXuatXu(String keyword) {
-        String SQL = "SELECT id, tenXuatXu FROM XuatXu";
-        if (keyword != null && !keyword.trim().isEmpty()) {
-            SQL += " WHERE tenXuatXu LIKE ? ";
-        }
+        ArrayList<XuatXu> list = new ArrayList<>();
+        String SQL = "SELECT id, tenXuatXu FROM XuatXu WHERE statuss = 1";
         
-        ArrayList<XuatXu> xuatXuList = new ArrayList<>();
-        try {
-            PreparedStatement ps = conn.prepareStatement(SQL);
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            SQL += " AND tenXuatXu LIKE ?";
+        }
+
+        try (PreparedStatement ps = conn.prepareStatement(SQL)) {
             if (keyword != null && !keyword.trim().isEmpty()) {
                 ps.setString(1, "%" + keyword.trim() + "%");
             }
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                xuatXuList.add(new XuatXu(rs.getInt("id"), rs.getString("tenXuatXu")));
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    list.add(new XuatXu(rs.getInt("id"), rs.getString("tenXuatXu")));
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return xuatXuList;
+
+        return list;
     }
     
     // 📜 Lấy toàn bộ danh sách Xuất Xứ
     public ArrayList<XuatXu> getAllXuatXu() {
-        String SQL = "SELECT id, tenXuatXu FROM XuatXu";
+        String SQL = "SELECT id, tenXuatXu FROM XuatXu WHERE statuss = 1";
         ArrayList<XuatXu> xuatXuList = new ArrayList<>();
         
         try (PreparedStatement ps = conn.prepareStatement(SQL);
@@ -87,7 +89,7 @@ public class XuatXuService {
 
     // ❌ Xóa Xuất Xứ theo ID
     public boolean deleteXuatXu(int id) {
-        String SQL = "DELETE FROM XuatXu WHERE id = ?";
+        String SQL = "UPDATE XuatXu SET statuss = 0 WHERE id = ?";
         try {
             PreparedStatement ps = conn.prepareStatement(SQL);
             ps.setInt(1, id);

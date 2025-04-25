@@ -22,49 +22,52 @@ public class NhanVienService {
     }
     
     public ArrayList<NhanVien> searchNhanVien(String keyword) {
-        String SQL = "SELECT * FROM NhanVien";
+    String SQL = "SELECT * FROM NhanVien WHERE statuss = 1";
+
+    // Sử dụng StringBuilder để thêm điều kiện động nếu có keyword
+    if (keyword != null && !keyword.trim().isEmpty()) {
+        SQL += " AND (maNV LIKE ? OR ho LIKE ? OR ten LIKE ?)";
+    }
+
+    ArrayList<NhanVien> nhanVienList = new ArrayList<>();
+    try {
+        PreparedStatement ps = conn.prepareStatement(SQL);
 
         if (keyword != null && !keyword.trim().isEmpty()) {
-            SQL += " WHERE maNV LIKE ? OR ho LIKE ? OR ten LIKE ?";
+            String searchPattern = "%" + keyword.trim() + "%";
+            ps.setString(1, searchPattern);
+            ps.setString(2, searchPattern);
+            ps.setString(3, searchPattern);
         }
 
-        ArrayList<NhanVien> nhanVienList = new ArrayList<>();
-        try {
-            PreparedStatement ps = conn.prepareStatement(SQL);
-            if (keyword != null && !keyword.trim().isEmpty()) {
-                String searchPattern = "%" + keyword.trim() + "%";
-                ps.setString(1, searchPattern);
-                ps.setString(2, searchPattern);
-                ps.setString(3, searchPattern);
-            }
-
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                nhanVienList.add(new NhanVien(
-                        rs.getInt("id"),
-                        rs.getInt("idVaiTro"),
-                        rs.getString("maNV"),
-                        rs.getString("ho"),
-                        rs.getString("ten"),
-                        rs.getString("email"),
-                        rs.getString("diaChi"),
-                        rs.getString("chucVu"),
-                        rs.getString("ngayVaoLam"),
-                        rs.getBoolean("gioiTinh"),
-                        rs.getString("ngaySinh"),
-                        rs.getString("sdt"),
-                        rs.getString("trangThai")
-                ));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            nhanVienList.add(new NhanVien(
+                    rs.getInt("id"),
+                    rs.getInt("idVaiTro"),
+                    rs.getString("maNV"),
+                    rs.getString("ho"),
+                    rs.getString("ten"),
+                    rs.getString("email"),
+                    rs.getString("diaChi"),
+                    rs.getString("chucVu"),
+                    rs.getString("ngayVaoLam"),
+                    rs.getBoolean("gioiTinh"),
+                    rs.getString("ngaySinh"),
+                    rs.getString("sdt"),
+                    rs.getString("trangThai")
+            ));
         }
-        return nhanVienList;
+    } catch (SQLException e) {
+        e.printStackTrace();
     }
+    return nhanVienList;
+}
+
 
     // 📋 Lấy danh sách tất cả nhân viên
     public ArrayList<NhanVien> getAllNhanVien() {
-        String SQL = "SELECT * FROM NhanVien";
+        String SQL = "SELECT * FROM NhanVien where statuss = 1";
         ArrayList<NhanVien> nhanVienList = new ArrayList<>();
 
         try (PreparedStatement ps = conn.prepareStatement(SQL);
@@ -143,7 +146,7 @@ public class NhanVienService {
 
 
     public boolean deleteNhanVien(int id) {
-        String SQL = "DELETE FROM NhanVien WHERE id = ?";
+        String SQL = "UPDATE NhanVien SET statuss = 0 WHERE id = ?";
         try (PreparedStatement ps = conn.prepareStatement(SQL)) {
             ps.setInt(1, id);
             return ps.executeUpdate() > 0;
@@ -152,6 +155,7 @@ public class NhanVienService {
             return false;
         }
     }
+
     
     public boolean checkMaNhanVienExists(String maNV) {
         String SQL = "SELECT COUNT(*) FROM NhanVien WHERE maNV = ?";

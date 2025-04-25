@@ -137,8 +137,8 @@ public class UpdateSanPham extends javax.swing.JPanel {
         return true;
     }
 
-    public boolean checkForm(){
-        String ma = "^[A-Z]{2}\\d{4}$";
+    public boolean checkForm() {
+        String ma = "^[A-Z]{2}\\d{3}$";
         String ten = "^[\\p{L}\\s]+$";
         if (txtMa.getText().trim().isEmpty()) {
             Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, "Bạn chưa nhập mã sản phẩm!");
@@ -271,18 +271,20 @@ public class UpdateSanPham extends javax.swing.JPanel {
     }
 
     public void update() {
-        SanPham updatedSanPham = getSanPhamFromForm();
-        try {
-            boolean result = service.updateSanPham(updatedSanPham);
-            if (result) {
-                Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Cập nhật sản phẩm thành công!");
-                Application.showForm(new FormQLSanPham());
-            } else {
-                Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Cập nhật sản phẩm thất bại!");
+        if (checkForm()) {
+            SanPham updatedSanPham = getSanPhamFromForm();
+            try {
+                boolean result = service.updateSanPham(updatedSanPham);
+                if (result) {
+                    Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Cập nhật sản phẩm thành công!");
+                    Application.showForm(new FormQLSanPham());
+                } else {
+                    Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Cập nhật sản phẩm thất bại!");
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Lỗi: " + e.getMessage());
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-            Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_CENTER, "Lỗi: " + e.getMessage());
         }
     }
 
@@ -426,6 +428,8 @@ public class UpdateSanPham extends javax.swing.JPanel {
 
         jLabel4.setText("Mã SP");
         crazyPanel1.add(jLabel4);
+
+        txtMa.setEnabled(false);
         crazyPanel1.add(txtMa);
         crazyPanel1.add(txtTen);
 

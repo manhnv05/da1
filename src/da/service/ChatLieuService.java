@@ -21,31 +21,33 @@ public class ChatLieuService {
     }
     
     public ArrayList<ChatLieu> searchChatLieu(String keyword) {
-        String SQL = "SELECT id, tenChatLieu FROM ChatLieu";
-        if (keyword != null && !keyword.trim().isEmpty()) {
-            SQL += " WHERE tenChatLieu LIKE ? ";
-        }
         ArrayList<ChatLieu> chatLieuList = new ArrayList<>();
-        try {
-            PreparedStatement ps = conn.prepareStatement(SQL);
+        String SQL = "SELECT id, tenChatLieu FROM ChatLieu WHERE statuss = 1";
+        
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            SQL += " AND tenChatLieu LIKE ?";
+        }
+
+        try (PreparedStatement ps = conn.prepareStatement(SQL)) {
             if (keyword != null && !keyword.trim().isEmpty()) {
                 ps.setString(1, "%" + keyword.trim() + "%");
             }
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                int id = rs.getInt("id");
-                String tenChatLieu = rs.getString("tenChatLieu");
-                ChatLieu chatLieu = new ChatLieu(id, tenChatLieu);
-                chatLieuList.add(chatLieu);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    int id = rs.getInt("id");
+                    String tenChatLieu = rs.getString("tenChatLieu");
+                    chatLieuList.add(new ChatLieu(id, tenChatLieu));
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return chatLieuList;
     }
+
     
     public ArrayList<ChatLieu> getAllChatLieu() {
-        String SQL = "SELECT id, tenChatLieu FROM ChatLieu";
+        String SQL = "SELECT id, tenChatLieu FROM ChatLieu WHERE statuss = 1";
         ArrayList<ChatLieu> chatLieuList = new ArrayList<>();
         
         try (PreparedStatement ps = conn.prepareStatement(SQL);
@@ -90,7 +92,7 @@ public class ChatLieuService {
 
     // ❌ Xóa ChatLieu theo ID
     public boolean deleteChatLieu(int id) {
-        String SQL = "DELETE FROM ChatLieu WHERE id = ?";
+        String SQL = "UPDATE ChatLieu SET statuss = 0 WHERE id = ?";
         try {
             PreparedStatement ps = conn.prepareStatement(SQL);
             ps.setInt(1, id);
